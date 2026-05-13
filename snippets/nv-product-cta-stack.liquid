@@ -1,0 +1,132 @@
+{% comment %}
+  NutraVora product CTA stack.
+
+  This snippet is the reusable rendering surface for product CTAs across the
+  theme. It consumes the centralized conversion resolver and outputs the
+  correct CTA composition for:
+  - amazon_attribution
+  - buy_with_prime
+  - hybrid
+
+  Inputs:
+  - product: Product object
+  - template_override: optional mode override
+  - class: optional wrapper class
+  - product_form_id: optional existing product form id to bind Add to Cart
+  - primary_label: optional primary CTA text override
+  - secondary_label: optional secondary CTA text override
+  - show_secondary_amazon: optional boolean override for hybrid mode
+  - suppress_buy_with_prime_primary: optional boolean
+  - show_amazon_disclosure: optional boolean
+{% endcomment %}
+{%- liquid
+  assign resolved_template_override = template_override | strip
+  assign wrapper_class = class | default: 'nv-product-cta-stack'
+
+  assign render_secondary_amazon = show_secondary_amazon
+  assign suppress_buy_with_prime_primary = suppress_buy_with_prime_primary
+  assign show_amazon_disclosure = show_amazon_disclosure
+-%}
+
+{%- capture resolved_mode -%}{% render 'nv-conversion-context', product: product, field: 'mode', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_mode = resolved_mode | strip -%}
+{%- capture primary_kind -%}{% render 'nv-conversion-context', product: product, field: 'primary_kind', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign primary_kind = primary_kind | strip -%}
+{%- capture show_secondary_amazon_resolved -%}{% render 'nv-conversion-context', product: product, field: 'show_secondary_amazon', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign show_secondary_amazon_resolved = show_secondary_amazon_resolved | strip -%}
+{%- capture resolved_shopify_label -%}{% render 'nv-conversion-context', product: product, field: 'shopify_label', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_shopify_label = resolved_shopify_label | strip -%}
+{%- capture resolved_buy_with_prime_label -%}{% render 'nv-conversion-context', product: product, field: 'buy_with_prime_label', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_buy_with_prime_label = resolved_buy_with_prime_label | strip -%}
+{%- capture cta_stack_order -%}{% render 'nv-conversion-context', product: product, field: 'cta_stack_order', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign cta_stack_order = cta_stack_order | strip -%}
+{%- assign shopify_label = primary_label | default: resolved_shopify_label -%}
+{%- assign buy_with_prime_label = primary_label | default: resolved_buy_with_prime_label -%}
+
+{%- liquid
+  if render_secondary_amazon == blank
+    assign render_secondary_amazon = false
+    if show_secondary_amazon_resolved == 'true'
+      assign render_secondary_amazon = true
+    endif
+  endif
+-%}
+
+{%- capture primary_cta_markup -%}
+  {%- case primary_kind -%}
+    {%- when 'amazon' -%}
+      {% render 'nv-amazon-cta',
+        product: product,
+        template_override: template_override,
+        label: primary_label,
+        wrapper_class: 'nv-product-cta-stack__primary',
+        class: 'btn nv-amz-btn nv-btn nv-btn--amazon nv-btn--md',
+        analytics_context: 'primary-amazon-cta',
+        show_disclosure: show_amazon_disclosure
+      %}
+    {%- when 'buy_with_prime' -%}
+      {%- unless suppress_buy_with_prime_primary -%}
+        <div class="nv-product-cta-stack__primary">
+          {% render 'nv-buy-with-prime-slot',
+            product: product,
+            template_override: template_override,
+            placeholder_label: buy_with_prime_label,
+            placement: 'cta'
+          %}
+        </div>
+      {%- endunless -%}
+    {%- when 'add_to_cart' -%}
+      <div class="nv-product-cta-stack__primary">
+        {%- if product_form_id != blank -%}
+          <button
+            type="submit"
+            form="{{ product_form_id }}"
+            class="btn nv-btn nv-btn--primary nv-btn--md"
+            data-nv-cta="add-to-cart"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            {% if product.available %}{{ shopify_label }}{% else %}Sold out{% endif %}
+          </button>
+        {%- elsif product -%}
+          {% form 'product', product, class: 'nv-product-cta-stack__form' %}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button
+              type="submit"
+              class="btn nv-btn nv-btn--primary nv-btn--md"
+              data-nv-cta="add-to-cart"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {% if product.available %}{{ shopify_label }}{% else %}Sold out{% endif %}
+            </button>
+          {% endform %}
+        {%- endif -%}
+      </div>
+  {%- endcase -%}
+{%- endcapture -%}
+
+{%- capture secondary_cta_markup -%}
+  {%- if resolved_mode == 'hybrid' and render_secondary_amazon -%}
+    <div class="nv-product-cta-stack__secondary">
+      {% render 'nv-amazon-cta',
+        product: product,
+        template_override: template_override,
+        label: secondary_label,
+        wrapper_class: 'nv-product-cta-stack__secondary-slot',
+        class: 'btn btn--ghost nv-amz-btn nv-amz-btn--secondary nv-btn nv-btn--amazon nv-btn--md',
+        show_subtext: false,
+        analytics_context: 'secondary-amazon-cta',
+        show_disclosure: show_amazon_disclosure
+      %}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="{{ wrapper_class }}" data-nv-conversion-mode="{{ resolved_mode }}" data-nv-cta-order="{{ cta_stack_order }}">
+  {%- if cta_stack_order == 'secondary_first' -%}
+    {{ secondary_cta_markup }}
+    {{ primary_cta_markup }}
+  {%- else -%}
+    {{ primary_cta_markup }}
+    {{ secondary_cta_markup }}
+  {%- endif -%}
+</div>

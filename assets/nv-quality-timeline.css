@@ -1,0 +1,386 @@
+/* ============================================
+   NutraVora Quality Timeline Section
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+.nv-timeline {
+  background: var(--nv-green-dark);
+  padding: var(--nv-space-20) 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.nv-timeline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(49, 92, 74, 0.4) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 50%,
+      rgba(200, 169, 107, 0.08) 0%,
+      transparent 60%
+    );
+  pointer-events: none;
+}
+
+.nv-timeline--light {
+  background: var(--nv-cream-warm);
+}
+
+.nv-timeline--light::before {
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(49, 92, 74, 0.05) 0%,
+      transparent 60%
+    );
+}
+
+.nv-timeline__inner {
+  max-width: var(--nv-content-width);
+  margin: 0 auto;
+  padding: 0 var(--nv-space-6);
+  position: relative;
+  z-index: 1;
+}
+
+.nv-timeline__header {
+  text-align: center;
+  margin-bottom: var(--nv-space-16);
+}
+
+.nv-timeline__eyebrow {
+  color: var(--nv-gold-primary);
+  margin-bottom: var(--nv-space-3);
+}
+
+.nv-timeline--light .nv-timeline__eyebrow {
+  color: var(--nv-green-primary);
+}
+
+.nv-timeline__heading {
+  color: var(--nv-white);
+  margin-bottom: var(--nv-space-4);
+}
+
+.nv-timeline--light .nv-timeline__heading {
+  color: var(--nv-text-primary);
+}
+
+.nv-timeline__subheading {
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.nv-timeline--light .nv-timeline__subheading {
+  color: var(--nv-text-muted);
+}
+
+.nv-timeline__track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.nv-timeline__track::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 24px;
+  bottom: 24px;
+  width: 1.5px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(200, 169, 107, 0.4) 10%,
+    rgba(200, 169, 107, 0.4) 90%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+}
+
+.nv-timeline--light .nv-timeline__track::before {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--nv-border-mid) 10%,
+    var(--nv-border-mid) 90%,
+    transparent 100%
+  );
+}
+
+.nv-timeline__step {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: var(--nv-space-6);
+  align-items: center;
+  padding: var(--nv-space-6) 0;
+  position: relative;
+}
+
+.nv-timeline__step:nth-child(odd) .nv-timeline__step-content {
+  grid-column: 1;
+  text-align: right;
+}
+
+.nv-timeline__step:nth-child(odd) .nv-timeline__step-node {
+  grid-column: 2;
+}
+
+.nv-timeline__step:nth-child(odd) .nv-timeline__step-visual {
+  grid-column: 3;
+}
+
+.nv-timeline__step:nth-child(even) .nv-timeline__step-content {
+  grid-column: 3;
+  text-align: left;
+}
+
+.nv-timeline__step:nth-child(even) .nv-timeline__step-node {
+  grid-column: 2;
+}
+
+.nv-timeline__step:nth-child(even) .nv-timeline__step-visual {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.nv-timeline__step-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.nv-timeline__step-dot {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--nv-gold-primary);
+  border: 3px solid var(--nv-green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow:
+    0 0 0 6px rgba(200, 169, 107, 0.15),
+    var(--nv-shadow-md);
+  transition:
+    transform var(--nv-duration-base) var(--nv-ease-bounce),
+    box-shadow var(--nv-duration-base) var(--nv-ease-default);
+}
+
+.nv-timeline--light .nv-timeline__step-dot {
+  border-color: var(--nv-cream-warm);
+  box-shadow:
+    0 0 0 6px rgba(49, 92, 74, 0.08),
+    var(--nv-shadow-md);
+}
+
+.nv-timeline__step:hover .nv-timeline__step-dot {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 10px rgba(200, 169, 107, 0.12),
+    var(--nv-shadow-lg);
+}
+
+.nv-timeline__step-number {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--nv-green-primary);
+  color: var(--nv-white);
+  font-size: 10px;
+  font-weight: var(--nv-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--nv-green-dark);
+}
+
+.nv-timeline--light .nv-timeline__step-number {
+  border-color: var(--nv-cream-warm);
+}
+
+.nv-timeline__step-content {
+  padding: var(--nv-space-4);
+}
+
+.nv-timeline__step-label {
+  font-size: var(--nv-text-xs);
+  font-weight: var(--nv-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--nv-tracking-widest);
+  color: var(--nv-gold-primary);
+  margin-bottom: var(--nv-space-2);
+  display: block;
+}
+
+.nv-timeline--light .nv-timeline__step-label {
+  color: var(--nv-green-primary);
+}
+
+.nv-timeline__step-title {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-xl);
+  font-weight: var(--nv-weight-regular);
+  color: var(--nv-white);
+  margin-bottom: var(--nv-space-3);
+  line-height: var(--nv-leading-snug);
+}
+
+.nv-timeline--light .nv-timeline__step-title {
+  color: var(--nv-text-primary);
+}
+
+.nv-timeline__step-body {
+  font-size: var(--nv-text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: var(--nv-leading-relaxed);
+}
+
+.nv-timeline--light .nv-timeline__step-body {
+  color: var(--nv-text-muted);
+}
+
+.nv-timeline__step-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nv-timeline__step-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--nv-radius-xl);
+  padding: var(--nv-space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nv-space-3);
+  max-width: 220px;
+  width: 100%;
+  transition:
+    background var(--nv-duration-base) var(--nv-ease-default),
+    border-color var(--nv-duration-base) var(--nv-ease-default),
+    transform var(--nv-duration-base) var(--nv-ease-default);
+}
+
+.nv-timeline--light .nv-timeline__step-card {
+  background: var(--nv-white);
+  border-color: var(--nv-border-light);
+  box-shadow: var(--nv-shadow-sm);
+}
+
+.nv-timeline__step:hover .nv-timeline__step-card {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(200, 169, 107, 0.30);
+  transform: translateY(-3px);
+}
+
+.nv-timeline--light .nv-timeline__step:hover .nv-timeline__step-card {
+  box-shadow: var(--nv-shadow-md);
+  border-color: var(--nv-border-brand);
+  transform: translateY(-3px);
+}
+
+.nv-timeline__step-card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.nv-timeline__step-card-image {
+  width: 100%;
+  border-radius: var(--nv-radius-md);
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+}
+
+.nv-timeline__step-card-label {
+  font-size: 12px;
+  font-weight: var(--nv-weight-semibold);
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  line-height: var(--nv-leading-snug);
+}
+
+.nv-timeline--light .nv-timeline__step-card-label {
+  color: var(--nv-text-muted);
+}
+
+.nv-timeline__cta {
+  text-align: center;
+  margin-top: var(--nv-space-12);
+}
+
+@media (max-width: 768px) {
+  .nv-timeline {
+    padding: var(--nv-space-12) 0;
+  }
+
+  .nv-timeline__track::before {
+    left: 24px;
+    top: 0;
+    bottom: 0;
+  }
+
+  .nv-timeline__step {
+    grid-template-columns: 48px 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--nv-space-4);
+    padding: var(--nv-space-5) 0;
+  }
+
+  .nv-timeline__step:nth-child(odd) .nv-timeline__step-content,
+  .nv-timeline__step:nth-child(even) .nv-timeline__step-content {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .nv-timeline__step:nth-child(odd) .nv-timeline__step-node,
+  .nv-timeline__step:nth-child(even) .nv-timeline__step-node {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    padding-top: 4px;
+  }
+
+  .nv-timeline__step:nth-child(odd) .nv-timeline__step-visual,
+  .nv-timeline__step:nth-child(even) .nv-timeline__step-visual {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+
+  .nv-timeline__step-dot {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .nv-timeline__step-card {
+    max-width: 100%;
+    flex-direction: row;
+    padding: var(--nv-space-3) var(--nv-space-4);
+  }
+
+  .nv-timeline__step-card-icon {
+    font-size: 24px;
+  }
+
+  .nv-timeline__step-title {
+    font-size: var(--nv-text-lg);
+  }
+}

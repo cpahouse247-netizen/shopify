@@ -1,0 +1,562 @@
+{%- liquid
+  assign tab_blocks = section.blocks | where: 'type', 'tab'
+  assign desktop_columns = section.settings.products_per_row_desktop | default: '4'
+  assign mobile_columns = section.settings.products_per_row_mobile | default: '2'
+-%}
+
+<section
+  class="section nv-section nv-home-best-sellers nv-home-best-sellers--{{ section.settings.background_tone }}"
+  style="
+    --nv-home-best-sellers-padding-top: {{ section.settings.padding_top }}px;
+    --nv-home-best-sellers-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --nv-home-best-sellers-max-width: {{ section.settings.content_max_width }}px;
+    --nv-home-best-sellers-columns: {{ desktop_columns }};
+    --nv-home-best-sellers-columns-mobile: {{ mobile_columns }};
+    --nv-home-best-sellers-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-home-best-sellers-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --nv-home-best-sellers-tab-size: {{ section.settings.tab_font_size }}px;
+    --nv-home-best-sellers-grid-gap: {{ section.settings.grid_gap }}px;
+    --nv-home-best-sellers-card-bg: {{ section.settings.card_background_color }};
+    --nv-home-best-sellers-card-border: {{ section.settings.card_border_color }};
+    --nv-home-best-sellers-card-radius: {{ section.settings.card_border_radius }}px;
+    --nv-home-best-sellers-card-padding: {{ section.settings.card_padding }}px;
+    --nv-home-best-sellers-card-shadow-opacity: {{ section.settings.card_shadow_opacity | divided_by: 100.0 }};
+    --nv-home-best-sellers-image-bg: {{ section.settings.image_stage_color }};
+    --nv-home-best-sellers-image-radius: {{ section.settings.image_stage_radius }}px;
+  "
+  {% if tab_blocks.size > 0 %}data-nv-tabs data-nv-tabs-default="tab-{{ tab_blocks.first.id }}"{% endif %}
+>
+  <div class="container nv-home-best-sellers__inner">
+    <div class="section-heading nv-home-best-sellers__head nv-home-best-sellers__head--{{ section.settings.heading_alignment }}">
+      <div>
+        <h2 class="nv-section-heading" data-nv-animate="fade-up">{{ section.settings.heading }}</h2>
+        {% if section.settings.subtext != blank %}
+          <p class="nv-home-best-sellers__subtext nv-section-subheading" data-nv-animate="fade-up" data-nv-delay="100">
+            {{ section.settings.subtext }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="nv-home-best-sellers__intro-divider" aria-hidden="true">
+      <span></span>
+    </div>
+
+    {% if tab_blocks.size > 0 %}
+      <div class="nv-home-best-sellers__tabs" role="tablist" aria-label="Where to start categories">
+        {% for block in tab_blocks %}
+          <button
+            class="nv-home-best-sellers__tab {% if forloop.first %}is-active{% endif %}"
+            id="nv-tab-{{ section.id }}-{{ forloop.index }}"
+            type="button"
+            role="tab"
+            data-tab-target="tab-{{ block.id }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-controls="nv-panel-{{ section.id }}-{{ forloop.index }}"
+            {{ block.shopify_attributes }}
+          >{{ block.settings.label }}</button>
+        {% endfor %}
+      </div>
+
+      {% for block in tab_blocks %}
+        {%- liquid
+          assign source_collection = block.settings.collection
+          assign max_products = block.settings.products_limit | default: 4
+        -%}
+        <div
+          class="product-grid nv-home-best-sellers__grid"
+          id="nv-panel-{{ section.id }}-{{ forloop.index }}"
+          role="tabpanel"
+          tabindex="0"
+          aria-labelledby="nv-tab-{{ section.id }}-{{ forloop.index }}"
+          data-tab-panel="tab-{{ block.id }}"
+          data-nv-animate="fade-up"
+          data-nv-delay="200"
+          {% unless forloop.first %}hidden{% endunless %}
+        >
+          {% if source_collection != blank and source_collection.products_count > 0 %}
+            {% for product in source_collection.products limit: max_products %}
+              <div>
+                {% render 'nv-product-card',
+                  product: product,
+                  card_class: 'product-card product-card--premium product-card--catalog product-card--surface-soft product-card--hover-lift',
+                  show_price: section.settings.show_price,
+                  show_compare_at_price: section.settings.show_compare_at_price,
+                  show_sale_badge: section.settings.show_sale_badge,
+                  show_sold_out_badge: section.settings.show_sold_out_badge,
+                  show_prime_note: section.settings.show_prime_note,
+                  show_prime_tag_on_cards: section.settings.show_prime_tag_on_cards,
+                  show_delivery_tag_on_cards: section.settings.show_delivery_tag_on_cards,
+                  prime_tag_position: section.settings.prime_tag_position,
+                  show_cta: false,
+                  show_amazon_overlay: false,
+                  show_overlay_actions: true,
+                  show_vendor: true,
+                  card_border_radius: section.settings.card_border_radius,
+                  card_padding: section.settings.card_padding,
+                  card_gap: section.settings.card_gap,
+                  image_area_height: section.settings.image_area_height,
+                  image_fit: section.settings.image_fit,
+                  title_font_size: section.settings.card_title_font_size,
+                  price_font_size: section.settings.card_price_font_size,
+                  compare_price_font_size: section.settings.card_compare_price_font_size,
+                  meta_font_size: section.settings.card_meta_font_size
+                %}
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="nv-home-best-sellers__empty" {{ block.shopify_attributes }}>
+              <p>{{ block.settings.empty_state_text }}</p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="nv-home-best-sellers__empty">
+        <p>Add tab blocks in the Theme Editor to build this merchandising section.</p>
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_divider %}
+      <div class="nv-home-best-sellers__divider" aria-hidden="true"></div>
+    {% endif %}
+  </div>
+
+  <div class="nv-quick-view" data-nv-quick-view aria-hidden="true">
+    <div class="nv-quick-view__overlay" data-nv-quick-view-close></div>
+    <aside class="nv-quick-view__panel" role="dialog" aria-modal="true" aria-labelledby="NvQuickViewTitle-{{ section.id }}" tabindex="-1">
+      <button type="button" class="nv-quick-view__close" data-nv-quick-view-close aria-label="Close quick view">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="nv-quick-view__media">
+        <button type="button" class="nv-quick-view__arrow nv-quick-view__arrow--prev" data-nv-quick-view-prev aria-label="Previous product image" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <img src="{{ 'hero_square.jpeg' | asset_url }}" alt="" class="nv-quick-view__image" data-nv-quick-view-image loading="lazy" width="900" height="900">
+        <button type="button" class="nv-quick-view__arrow nv-quick-view__arrow--next" data-nv-quick-view-next aria-label="Next product image" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="nv-quick-view__content">
+        <p class="nv-quick-view__vendor" data-nv-quick-view-vendor></p>
+        <h3 id="NvQuickViewTitle-{{ section.id }}" class="nv-quick-view__title" data-nv-quick-view-title></h3>
+        <div class="nv-quick-view__rating" data-nv-quick-view-rating aria-label="Product reviews"></div>
+        <div class="nv-quick-view__price">
+          <strong data-nv-quick-view-price></strong>
+          <s data-nv-quick-view-compare hidden></s>
+        </div>
+        <div class="nv-quick-view__description-wrap">
+          <p class="nv-quick-view__description" data-nv-quick-view-description></p>
+          <button type="button" class="nv-quick-view__description-toggle" data-nv-quick-view-description-toggle hidden>Show more</button>
+        </div>
+        <div class="nv-quick-view__actions" data-nv-quick-view-actions></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 640px) {
+    #shopify-section-{{ section.id }} .nv-best-sellers__grid,
+    #shopify-section-{{ section.id }} [class*="best-sellers"] .grid,
+    #shopify-section-{{ section.id }} [class*="product-grid"],
+    #shopify-section-{{ section.id }} .nv-home-best-sellers__grid {
+      display: flex !important;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: var(--nv-space-4);
+      padding: 0 var(--nv-space-4) var(--nv-space-4);
+      scrollbar-width: none;
+    }
+
+    #shopify-section-{{ section.id }} .nv-best-sellers__grid::-webkit-scrollbar,
+    #shopify-section-{{ section.id }} [class*="best-sellers"] .grid::-webkit-scrollbar,
+    #shopify-section-{{ section.id }} .nv-home-best-sellers__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .nv-best-sellers__grid > *,
+    #shopify-section-{{ section.id }} [class*="best-sellers"] .grid > *,
+    #shopify-section-{{ section.id }} [class*="product-grid"] > *,
+    #shopify-section-{{ section.id }} .nv-home-best-sellers__grid > * {
+      min-width: 200px;
+      max-width: 200px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "NV Home Best Sellers",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Where to Start" },
+    { "type": "textarea", "id": "subtext", "label": "Subheading", "default": "A considered edit of NutraVora formulas to help first-time shoppers enter through the right product page." },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Section max width",
+      "min": 960,
+      "max": 1400,
+      "step": 20,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "subheading_alignment",
+      "label": "Subheading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 28,
+      "max": 60,
+      "step": 1,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "tab_font_size",
+      "label": "Tab font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Product grid gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "background_tone",
+      "label": "Background tone",
+      "default": "white",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "cream", "label": "Soft cream" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_desktop",
+      "label": "Products per row on desktop",
+      "default": "4",
+      "options": [
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Products per row on mobile",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_at_price",
+      "label": "Show compare-at price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_out_badge",
+      "label": "Show sold out badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_note",
+      "label": "Show Prime note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_tag_on_cards",
+      "label": "Show Prime tag on cards",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery_tag_on_cards",
+      "label": "Show delivery tag on cards",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "prime_tag_position",
+      "label": "Prime tag position",
+      "default": "under_price",
+      "options": [
+        { "value": "under_image", "label": "Under image" },
+        { "value": "under_price", "label": "Under price" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Product card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 14,
+      "max": 34,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card content gap",
+      "min": 8,
+      "max": 22,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Card shadow opacity",
+      "min": 0,
+      "max": 18,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "image_stage_color",
+      "label": "Image stage color",
+      "default": "#F7F4EE"
+    },
+    {
+      "type": "range",
+      "id": "image_stage_radius",
+      "label": "Image stage radius",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_area_height",
+      "label": "Image area height",
+      "min": 180,
+      "max": 320,
+      "step": 10,
+      "default": 240,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "default": "contain",
+      "options": [
+        { "value": "contain", "label": "Contain" },
+        { "value": "cover", "label": "Cover" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size",
+      "label": "Product title font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_price_font_size",
+      "label": "Price font size",
+      "min": 16,
+      "max": 24,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_compare_price_font_size",
+      "label": "Compare price font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_meta_font_size",
+      "label": "Meta text font size",
+      "min": 10,
+      "max": 15,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show bottom divider",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Tab label",
+          "default": "Best Sellers"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Source collection"
+        },
+        {
+          "type": "range",
+          "id": "products_limit",
+          "label": "Max products to show",
+          "min": 2,
+          "max": 8,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "text",
+          "id": "empty_state_text",
+          "label": "Empty state text",
+          "default": "Assign a collection to this tab to show products."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "NV Home Best Sellers",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "Best Sellers" } },
+        { "type": "tab", "settings": { "label": "Daily Support" } },
+        { "type": "tab", "settings": { "label": "New Arrivals" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

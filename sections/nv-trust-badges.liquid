@@ -1,0 +1,92 @@
+<section class="section nv-trust">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <h2 class="nv-trust__title">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subtext != blank %}
+      <p class="nv-trust__sub">{{ section.settings.subtext }}</p>
+    {% endif %}
+    {% assign badge_blocks = section.blocks | where: 'type', 'badge' %}
+    {% if badge_blocks.size > 0 %}
+      <div class="nv-trust__grid">
+        {% for block in badge_blocks %}
+          <div class="nv-trust__item" {{ block.shopify_attributes }}>
+            {% if block.settings.icon != blank %}
+              <img class="nv-trust__icon" src="{{ block.settings.icon | image_url: width: 120 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+            {% endif %}
+            <h3>{{ block.settings.title }}</h3>
+            {% if block.settings.text != blank %}
+              <p>{{ block.settings.text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if section.settings.show_fda_disclaimer %}
+      <p class="nv-disclaimer">{{ section.settings.fda_disclaimer }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Trust Badges",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trusted, clean, and compliant"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Every NutraVora formula is crafted for transparency, safety, and results."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fda_disclaimer",
+      "label": "Show FDA disclaimer",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "fda_disclaimer",
+      "label": "FDA disclaimer text",
+      "default": "*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Third-party tested"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Independently verified for purity and potency."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Trust Badges",
+      "category": "Trust"
+    }
+  ]
+}
+{% endschema %}

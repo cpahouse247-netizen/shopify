@@ -1,0 +1,356 @@
+{%- liquid
+  assign posts_per_page = section.settings.posts_per_page | default: 6
+  assign heading_text = section.settings.section_heading
+  if heading_text == blank
+    assign heading_text = blog.title
+  endif
+-%}
+
+<section
+  class="section nv-blog-editorial nv-blog-editorial--template"
+  style="
+    --nv-blog-editorial-bg: {{ section.settings.background_color }};
+    --nv-blog-editorial-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-blog-editorial-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-blog-editorial-max-width: {{ section.settings.content_max_width }}px;
+    --nv-blog-editorial-columns: {{ section.settings.columns_desktop }};
+    --nv-blog-editorial-columns-mobile: {{ section.settings.columns_mobile }};
+    --nv-blog-editorial-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-blog-editorial-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --nv-blog-editorial-title-size: {{ section.settings.card_title_font_size }}px;
+    --nv-blog-editorial-excerpt-size: {{ section.settings.card_excerpt_font_size }}px;
+    --nv-blog-editorial-image-ratio: {{ section.settings.card_image_ratio }};
+  "
+>
+  <div class="container nv-blog-editorial__inner">
+    <div class="nv-blog-editorial__intro nv-blog-editorial__intro--{{ section.settings.heading_alignment }}">
+      {% if heading_text != blank %}
+        <h1 class="nv-blog-editorial__heading">{{ heading_text }}</h1>
+      {% endif %}
+
+      {% if section.settings.show_decorative_divider %}
+        <div class="nv-blog-editorial__divider" aria-hidden="true">
+          <span class="nv-blog-editorial__divider-line"></span>
+          <span class="nv-blog-editorial__divider-mark"></span>
+          <span class="nv-blog-editorial__divider-line"></span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.section_subheading != blank %}
+        <div class="nv-blog-editorial__subheading rte">
+          {{ section.settings.section_subheading }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% paginate blog.articles by posts_per_page %}
+      {% if blog.articles_count > 0 %}
+        <div class="nv-blog-editorial__grid nv-blog-editorial__grid--{{ section.settings.content_alignment }}">
+          {% for article in blog.articles %}
+            {%- liquid
+              assign category_label = blank
+              if article.tags.size > 0
+                assign category_label = article.tags.first
+              endif
+            -%}
+            <article class="nv-blog-editorial__card">
+              <a href="{{ article.url }}" class="nv-blog-editorial__media-link">
+                <div class="nv-blog-editorial__media">
+                  {% if article.image != blank %}
+                    {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'nv-blog-editorial__image', alt: article.title, sizes: '(min-width: 990px) 30vw, 100vw' }}
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'nv-blog-editorial__placeholder' }}
+                  {% endif %}
+
+                  {% if section.settings.show_date_badge %}
+                    <div class="nv-blog-editorial__date-badge">
+                      <span class="nv-blog-editorial__date-day">{{ article.published_at | date: '%d' }}</span>
+                      <span class="nv-blog-editorial__date-month">{{ article.published_at | date: '%b' }}</span>
+                    </div>
+                  {% endif %}
+
+                  {% if section.settings.show_category_tag and category_label != blank %}
+                    <span class="nv-blog-editorial__tag">{{ category_label }}</span>
+                  {% endif %}
+                </div>
+              </a>
+
+              <div class="nv-blog-editorial__content">
+                <h2 class="nv-blog-editorial__title">
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h2>
+
+                {% if section.settings.show_meta_line %}
+                  <p class="nv-blog-editorial__meta">
+                    <span>{{ article.author }}</span>
+                    <span aria-hidden="true">•</span>
+                    <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+                  </p>
+                {% endif %}
+
+                {% if section.settings.show_excerpt %}
+                  <p class="nv-blog-editorial__excerpt">
+                    {{ article.excerpt_or_content | strip_html | truncatewords: 24 }}
+                  </p>
+                {% endif %}
+
+                {% if section.settings.show_continue_reading %}
+                  <a class="nv-blog-editorial__read-more" href="{{ article.url }}">
+                    {{ section.settings.continue_reading_label }}
+                  </a>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <nav class="nv-blog-pagination" role="navigation" aria-label="Blog pagination">
+            {% if paginate.previous %}
+              <a class="nv-blog-pagination__link nv-blog-pagination__link--arrow" href="{{ paginate.previous.url }}" aria-label="Previous page">
+                <span aria-hidden="true">Previous</span>
+              </a>
+            {% else %}
+              <span class="nv-blog-pagination__link nv-blog-pagination__link--arrow is-disabled" aria-hidden="true">
+                <span>Previous</span>
+              </span>
+            {% endif %}
+
+            <div class="nv-blog-pagination__pages">
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a class="nv-blog-pagination__link" href="{{ part.url }}">{{ part.title }}</a>
+                {% else %}
+                  {% if part.title == paginate.current_page %}
+                    <span class="nv-blog-pagination__link is-active" aria-current="page">{{ part.title }}</span>
+                  {% else %}
+                    <span class="nv-blog-pagination__ellipsis">{{ part.title }}</span>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            {% if paginate.next %}
+              <a class="nv-blog-pagination__link nv-blog-pagination__link--arrow" href="{{ paginate.next.url }}" aria-label="Next page">
+                <span aria-hidden="true">Next</span>
+              </a>
+            {% else %}
+              <span class="nv-blog-pagination__link nv-blog-pagination__link--arrow is-disabled" aria-hidden="true">
+                <span>Next</span>
+              </span>
+            {% endif %}
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="nv-blog-editorial__empty">
+          <p>There are no articles in this blog yet.</p>
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main blog",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Heading override",
+      "info": "Leave blank to use the current blog title."
+    },
+    {
+      "type": "richtext",
+      "id": "section_subheading",
+      "label": "Subheading",
+      "default": "<p>Ingredient stories, education, and practical wellness guidance from NutraVora.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_divider",
+      "label": "Show decorative divider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date_badge",
+      "label": "Show date badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category_tag",
+      "label": "Show category/tag",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_meta_line",
+      "label": "Show meta line",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_continue_reading",
+      "label": "Show continue reading link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "continue_reading_label",
+      "label": "Continue reading label",
+      "default": "Continue reading"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Card content alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size",
+      "label": "Card title font size",
+      "min": 16,
+      "max": 30,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_excerpt_font_size",
+      "label": "Card excerpt font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1400,
+      "step": 20,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_image_ratio",
+      "label": "Card image ratio",
+      "default": "4 / 3",
+      "options": [
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 3", "label": "Landscape" },
+        { "value": "3 / 4", "label": "Portrait" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main blog"
+    }
+  ]
+}
+{% endschema %}

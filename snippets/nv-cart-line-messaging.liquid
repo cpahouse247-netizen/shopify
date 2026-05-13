@@ -1,0 +1,24 @@
+{% comment %}
+  Per-line fulfillment and trust messaging for cart page and drawer.
+
+  Inputs:
+  - item: cart item
+  - context: cart | drawer
+{% endcomment %}
+{% if item != blank %}
+  {%- liquid
+    assign context = context | default: 'cart'
+    assign line_mode = item.product.metafields.custom.conversion_mode.value | default: item.product.metafields.custom.conversion_mode | default: settings.default_conversion_mode | downcase | strip
+    assign line_bwp_enabled = item.product.metafields.custom.buy_with_prime_enabled.value | default: item.product.metafields.custom.buy_with_prime_enabled
+  -%}
+
+  <div class="nv-cart-line-message nv-cart-line-message--{{ context }}" data-nv-line-mode="{{ line_mode }}">
+    {% if line_mode == 'amazon_attribution' %}
+      <p>Purchase path for this item may continue on Amazon from the product page.</p>
+    {% elsif line_mode == 'buy_with_prime' or line_mode == 'hybrid' or line_bwp_enabled %}
+      <p>Prime-enabled or Amazon-powered fulfillment support may be available for this item.</p>
+    {% else %}
+      <p>Delivery details and fulfillment options are confirmed during checkout.</p>
+    {% endif %}
+  </div>
+{% endif %}

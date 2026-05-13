@@ -1,0 +1,13 @@
+{% comment %}Snippet: Price{% endcomment %}
+{%- assign var = product.selected_or_first_available_variant -%}
+{%- assign show_compare_at_price = show_compare_at_price -%}
+{%- if show_compare_at_price == blank -%}
+  {%- assign show_compare_at_price = true -%}
+{%- endif -%}
+<span class="price__current price">
+{%- if show_compare_at_price and var.compare_at_price > var.price -%}
+  <strong class="price__main">{{ var.price | money }}</strong> <del class="price__compare">{{ var.compare_at_price | money }}</del>
+{%- else -%}
+  <strong class="price__main">{{ var.price | money }}</strong>
+{%- endif -%}
+</span>

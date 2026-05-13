@@ -1,0 +1,1029 @@
+{%- liquid
+  assign footer_logo = section.settings.footer_logo
+  if footer_logo == blank and settings.logo_footer != blank
+    assign footer_logo = settings.logo_footer
+  endif
+
+  assign footer_menu_1 = linklists[section.settings.menu_1]
+  assign footer_menu_2 = linklists[section.settings.menu_2]
+  assign current_year = 'now' | date: '%Y'
+  assign copyright_text = section.settings.copyright_text | replace: "{year}", current_year
+-%}
+
+{% comment %}
+  Temporarily hidden - replaced by nv-footer.
+  Remove this wrapper when the old footer is fully decommissioned.
+{% endcomment %}
+{% if false %}
+<footer
+  class="nv-footer"
+  style="
+    --nv-footer-bg: {{ section.settings.background_color }};
+    --nv-footer-heading: {{ section.settings.heading_color }};
+    --nv-footer-text: {{ section.settings.text_color }};
+    --nv-footer-link: {{ section.settings.link_color }};
+    --nv-footer-link-hover: {{ section.settings.link_hover_color }};
+    --nv-footer-border: {{ section.settings.border_color }};
+    --nv-footer-newsletter-bg: {{ section.settings.newsletter_background_color | default: '#FFFFFF' }};
+    --nv-footer-newsletter-border: {{ section.settings.newsletter_border_color | default: section.settings.border_color }};
+    --nv-footer-newsletter-button-bg: {{ section.settings.newsletter_button_background | default: section.settings.link_color }};
+    --nv-footer-newsletter-button-text: {{ section.settings.newsletter_button_text_color | default: '#FFFFFF' }};
+    --nv-footer-newsletter-radius: {{ section.settings.newsletter_border_radius | default: 24 }}px;
+    --nv-footer-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-footer-body-size: {{ section.settings.body_font_size }}px;
+    --nv-footer-link-size: {{ section.settings.link_font_size }}px;
+    --nv-footer-copyright-size: {{ section.settings.copyright_font_size }}px;
+    --nv-footer-newsletter-heading-size: {{ section.settings.newsletter_heading_font_size | default: 34 }}px;
+    --nv-footer-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-footer-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-footer-max-width: {{ section.settings.content_max_width }}px;
+    --nv-footer-logo-width: {{ section.settings.footer_logo_width }}px;
+    --nv-footer-column-gap: {{ section.settings.column_gap }}px;
+    --nv-footer-row-gap: {{ section.settings.row_gap }}px;
+  "
+>
+  <div class="nv-footer__inner">
+    {% if section.settings.show_newsletter %}
+      <div class="nv-footer__newsletter nv-footer__newsletter--{{ section.settings.newsletter_layout }} nv-footer__newsletter--align-{{ section.settings.newsletter_text_alignment }}">
+        <div class="nv-footer__newsletter-copy">
+          {% if section.settings.newsletter_eyebrow != blank %}
+            <p class="nv-footer__newsletter-eyebrow">{{ section.settings.newsletter_eyebrow }}</p>
+          {% endif %}
+          {% if section.settings.newsletter_heading != blank %}
+            <h2 class="nv-footer__newsletter-heading">{{ section.settings.newsletter_heading }}</h2>
+          {% endif %}
+          {% if section.settings.newsletter_text != blank %}
+            <p class="nv-footer__newsletter-text">{{ section.settings.newsletter_text }}</p>
+          {% endif %}
+        </div>
+        {% form 'customer', class: 'nv-footer__newsletter-form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="nv-footer__newsletter-field">
+            <input
+              id="FooterNewsletterEmail-{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              value="{% if customer %}{{ customer.email }}{% endif %}"
+              placeholder="{{ section.settings.newsletter_placeholder }}"
+              aria-label="Email address"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              required
+            >
+            <button type="submit" class="nv-footer__newsletter-button">
+              <span>{{ section.settings.newsletter_button_label }}</span>
+            </button>
+          </div>
+          {% if form.posted_successfully? %}
+            <p class="nv-footer__newsletter-message nv-footer__newsletter-message--success" role="status">Thank you for subscribing.</p>
+          {% elsif form.errors %}
+            <p class="nv-footer__newsletter-message nv-footer__newsletter-message--error" role="alert">{{ form.errors | default_errors }}</p>
+          {% endif %}
+        {% endform %}
+      </div>
+    {% endif %}
+
+    <div class="nv-footer__top">
+      <div class="nv-footer__col nv-footer__col--brand nv-footer__col--{{ section.settings.column_1_alignment }}">
+        {% if footer_logo != blank %}
+          <a class="nv-footer__logo-link" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+            {{ footer_logo | image_url: width: 400 | image_tag: loading: 'lazy', class: 'nv-footer__logo-image', alt: shop.name, widths: '120,180,240,320,400', sizes: '180px' }}
+          </a> 
+        {% endif %}
+
+        {% if section.settings.brand_description != blank %}
+          <p class="nv-footer__brand-copy">{{ section.settings.brand_description | escape | newline_to_br }}</p>
+        {% endif %}
+
+        {% if section.settings.brand_owner_text != blank %}
+          <div class="nv-footer__brand-owner">
+            {% if section.settings.brand_owner_label != blank %}
+              <span class="nv-footer__brand-owner-label">{{ section.settings.brand_owner_label }}</span>
+            {% endif %}
+            <p>{{ section.settings.brand_owner_text | escape | newline_to_br }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="nv-footer__col nv-footer__col--menu nv-footer__col--{{ section.settings.column_2_alignment }}">
+        {% if section.settings.menu_1_heading != blank %}
+          <h3 class="nv-footer__heading">{{ section.settings.menu_1_heading }}</h3>
+        {% endif %}
+        {% if footer_menu_1 != blank and footer_menu_1.links.size > 0 %}
+          <ul class="nv-footer__menu" role="list">
+            {% for link in footer_menu_1.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="nv-footer__col nv-footer__col--menu nv-footer__col--{{ section.settings.column_3_alignment }}">
+        {% if section.settings.menu_2_heading != blank %}
+          <h3 class="nv-footer__heading">{{ section.settings.menu_2_heading }}</h3>
+        {% endif %}
+        {% if footer_menu_2 != blank and footer_menu_2.links.size > 0 %}
+          <ul class="nv-footer__menu" role="list">
+            {% for link in footer_menu_2.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="nv-footer__col nv-footer__col--contact nv-footer__col--{{ section.settings.column_4_alignment }}">
+        {% if section.settings.contact_heading != blank %}
+          <h3 class="nv-footer__heading">{{ section.settings.contact_heading }}</h3>
+        {% endif %}
+
+        <div class="nv-footer__contact-stack">
+          {% if section.settings.support_email != blank %}
+            <a class="nv-footer__support-email" href="mailto:{{ section.settings.support_email }}">{{ section.settings.support_email }}</a>
+          {% endif %}
+
+          {% if section.settings.address_heading != blank or section.settings.address_text != blank %}
+            <div class="nv-footer__address">
+              {% if section.settings.address_heading != blank %}
+                <p class="nv-footer__address-heading">{{ section.settings.address_heading }}</p>
+              {% endif %}
+              {% if section.settings.address_text != blank %}
+                <p class="nv-footer__address-text">{{ section.settings.address_text | escape | newline_to_br }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          {% if section.settings.support_text != blank %}
+            <p class="nv-footer__support-text">{{ section.settings.support_text }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="nv-footer__bottom footer-bottom">
+      <div class="nv-footer__bottom-left nv-footer__legal footer-bottom__left">
+        {% if section.settings.copyright_text != blank %}
+          <p>{{ copyright_text }}</p>
+        {% else %}
+          <p>&copy; {{ current_year }} {{ shop.name }}</p>
+        {% endif %}
+      </div>
+
+      <div class="nv-footer__bottom-right footer-bottom__right">
+        {% if section.settings.show_payment_icons %}
+          <div class="nv-footer__payments" aria-label="Accepted payment methods">
+            {% for type in shop.enabled_payment_types %}
+              {{ type | payment_type_svg_tag: class: 'footer-bottom__icon' }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .nv-footer{
+    background:
+      radial-gradient(circle at 14% 0%, rgba(255,255,255,.96) 0, rgba(255,255,255,0) 32%),
+      radial-gradient(circle at 86% 8%, rgba(200,169,107,.13) 0, rgba(200,169,107,0) 30%),
+      linear-gradient(180deg, rgba(255,255,255,.82) 0%, var(--nv-footer-bg, #F7F4EE) 36%, #ede6da 100%);
+    border-top:1px solid var(--nv-footer-border, #D9DED8);
+    color:var(--nv-footer-text, #181A17);
+    padding:var(--nv-footer-padding-top, 72px) 20px var(--nv-footer-padding-bottom, 36px);
+  }
+  .nv-footer__inner{
+    max-width:var(--nv-footer-max-width, 1240px);
+    margin:0 auto;
+  }
+  .nv-footer__newsletter{
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(0, .96fr) minmax(340px, 520px);
+    gap:clamp(24px, 4vw, 56px);
+    align-items:center;
+    margin-bottom:clamp(38px, 5vw, 56px);
+    padding:clamp(26px, 4vw, 44px) clamp(26px, 4.5vw, 54px);
+    border:1px solid color-mix(in srgb, var(--nv-footer-newsletter-border, rgba(49,92,74,.14)) 78%, #fff 22%);
+    border-radius:var(--nv-footer-newsletter-radius, 24px);
+    background:
+      radial-gradient(circle at 16% 18%, rgba(200,169,107,.12), transparent 34%),
+      linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.74)),
+      var(--nv-footer-newsletter-bg, #fff);
+    box-shadow:0 22px 54px rgba(31,58,47,.07);
+    overflow:hidden;
+  }
+  .nv-footer__newsletter::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .nv-footer__newsletter::after{
+    content:"";
+    position:absolute;
+    left:clamp(26px, 4.5vw, 54px);
+    top:0;
+    width:86px;
+    height:3px;
+    border-radius:0 0 999px 999px;
+    background:linear-gradient(90deg, rgba(200,169,107,.72), rgba(49,92,74,.46));
+  }
+  .nv-footer__newsletter--stacked{
+    grid-template-columns:1fr;
+    justify-items:center;
+    text-align:center;
+  }
+  .nv-footer__newsletter--stacked .nv-footer__newsletter-form{
+    width:min(100%, 560px);
+  }
+  .nv-footer__newsletter--align-left{
+    text-align:left;
+  }
+  .nv-footer__newsletter--align-center{
+    text-align:center;
+  }
+  .nv-footer__newsletter--align-center .nv-footer__newsletter-text{
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .nv-footer__newsletter-copy{
+    display:grid;
+    gap:10px;
+    max-width:640px;
+  }
+  .nv-footer__newsletter-eyebrow{
+    margin:0;
+    color:var(--nv-footer-link, #315C4A);
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+  }
+  .nv-footer__newsletter-heading{
+    margin:0;
+    color:var(--nv-footer-heading, #1F3A2F);
+    max-width:660px;
+    font-size:clamp(26px, 3vw, var(--nv-footer-newsletter-heading-size, 34px));
+    font-weight:800;
+    line-height:1.04;
+    letter-spacing:-.035em;
+  }
+  .nv-footer__newsletter-text{
+    max-width:650px;
+    margin:0;
+    color:rgba(24,26,23,.62);
+    font-size:clamp(13.5px, 1vw, 14.5px);
+    line-height:1.62;
+  }
+  .nv-footer__newsletter-form{
+    display:grid;
+    gap:10px;
+    min-width:0;
+    justify-self:end;
+    width:100%;
+    max-width:520px;
+  }
+  .nv-footer__newsletter-field{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-height:62px;
+    padding:7px;
+    border:1px solid rgba(49,92,74,.15);
+    border-radius:999px;
+    background:rgba(255,255,255,.88);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      0 14px 30px rgba(31,58,47,.055);
+    transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .nv-footer__newsletter-field:focus-within{
+    border-color:rgba(49,92,74,.34);
+    background:rgba(255,255,255,.96);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      0 16px 34px rgba(31,58,47,.08),
+      0 0 0 3px rgba(49,92,74,.08);
+  }
+  .nv-footer__newsletter-field input{
+    flex:1 1 auto;
+    min-width:0;
+    height:46px;
+    padding:0 18px;
+    border:0;
+    background:transparent;
+    color:var(--nv-footer-text, #181A17);
+    font:inherit;
+    font-size:15.5px;
+    outline:none;
+  }
+  .nv-footer__newsletter-field input::placeholder{
+    color:rgba(24,26,23,.42);
+  }
+  .nv-footer__newsletter-button{
+    flex:0 0 auto;
+    min-height:48px;
+    padding:0 24px;
+    border:0;
+    border-radius:999px;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--nv-footer-newsletter-button-bg, #315c4a) 94%, #fff 6%), var(--nv-footer-newsletter-button-bg, #315c4a));
+    color:var(--nv-footer-newsletter-button-text, #fff);
+    cursor:pointer;
+    font-size:11.5px;
+    font-weight:800;
+    letter-spacing:.095em;
+    text-transform:uppercase;
+    box-shadow:0 10px 22px rgba(31,58,47,.16);
+    transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  }
+  .nv-footer__newsletter-button:hover,
+  .nv-footer__newsletter-button:focus-visible{
+    transform:translateY(-1px);
+    filter:saturate(1.05);
+    box-shadow:0 13px 26px rgba(31,58,47,.2);
+  }
+  .nv-footer__newsletter-message{
+    margin:0 4px;
+    font-size:12px;
+    line-height:1.4;
+  }
+  .nv-footer__newsletter-message--success{
+    color:#315c4a;
+  }
+  .nv-footer__newsletter-message--error{
+    color:#9f2e25;
+  }
+  .nv-footer__top{
+    display:grid;
+    grid-template-columns:minmax(0, 1.2fr) minmax(180px, .8fr) minmax(180px, .8fr) minmax(220px, 1fr);
+    gap:var(--nv-footer-row-gap, 34px) var(--nv-footer-column-gap, 28px);
+    align-items:start;
+    padding:4px 0 0;
+  }
+  .nv-footer__col{
+    display:grid;
+    align-content:start;
+    gap:0;
+    min-width:0;
+  }
+  .nv-footer__col--left{
+    text-align:left;
+    justify-items:start;
+  }
+  .nv-footer__col--center{
+    text-align:center;
+    justify-items:center;
+  }
+  .nv-footer__col--right{
+    text-align:right;
+    justify-items:end;
+  }
+  .nv-footer__logo-link{
+    display:inline-flex;
+    align-items:center;
+    line-height:1;
+    margin-bottom:16px;
+  }
+  .nv-footer__logo-image{
+    width:min(var(--nv-footer-logo-width, 150px), 100%);
+    height:auto;
+    object-fit:contain;
+  }
+  .nv-footer__brand-copy,
+  .nv-footer__address-text{
+    color:var(--nv-footer-text, #181A17);
+    font-size:13px;
+    line-height:1.72;
+  }
+  .nv-footer__brand-copy,
+  .nv-footer__address-heading,
+  .nv-footer__address-text{
+    margin:0;
+  }
+  .nv-footer__address-text{
+    margin-top:12px;
+  }
+  .nv-footer__brand-owner{
+    display:grid;
+    gap:5px;
+    margin-top:14px;
+    padding:12px 14px;
+    border:1px solid rgba(49,92,74,.12);
+    border-radius:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,.34));
+    box-shadow:0 10px 24px rgba(31,58,47,.045);
+  }
+  .nv-footer__brand-owner-label{
+    color:var(--nv-footer-link, #315C4A);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.14em;
+    line-height:1.2;
+    text-transform:uppercase;
+  }
+  .nv-footer__brand-owner p{
+    margin:0;
+    color:rgba(24,26,23,.76);
+    font-size:13px;
+    font-weight:500;
+    line-height:1.55;
+  }
+  .nv-footer__address-heading{
+    color:var(--nv-footer-heading, #1F3A2F);
+    font-size:14px;
+    font-weight:800;
+    line-height:1.45;
+  }
+  .nv-footer__support-text{
+    margin:0;
+    color:rgba(24,26,23,.72);
+    font-size:12px;
+    font-style:italic;
+    line-height:1.65;
+  }
+  .nv-footer__heading{
+    margin:0 0 14px;
+    color:var(--nv-footer-heading, #1F3A2F);
+    font-size:var(--nv-footer-heading-size, 13px);
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .nv-footer__contact-stack{
+    display:grid;
+    gap:8px;
+  }
+  .nv-footer__support-email{
+    color:var(--nv-footer-link, #315C4A);
+    font-size:var(--nv-footer-link-size, 14px);
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .nv-footer__support-email:hover,
+  .nv-footer__support-email:focus-visible,
+  .nv-footer__menu a:hover,
+  .nv-footer__menu a:focus-visible,
+  .nv-footer__bottom-link:hover,
+  .nv-footer__bottom-link:focus-visible{
+    color:var(--nv-footer-link-hover, #1F3A2F);
+  }
+  .nv-footer__menu{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:grid;
+    gap:10px;
+  }
+  .nv-footer__menu a,
+  .nv-footer__bottom-link{
+    position:relative;
+    display:inline-block;
+    color:var(--nv-footer-link, #315C4A);
+    font-size:var(--nv-footer-link-size, 14px);
+    line-height:1.5;
+    text-decoration:none;
+    transition:color .2s ease;
+  }
+  .nv-footer__menu a::after,
+  .nv-footer__bottom-link::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-3px;
+    height:1px;
+    background:currentColor;
+    transform:scaleX(0);
+    transform-origin:right;
+    opacity:.72;
+    transition:transform .24s ease;
+  }
+  .nv-footer__menu a:hover::after,
+  .nv-footer__menu a:focus-visible::after,
+  .nv-footer__bottom-link:hover::after,
+  .nv-footer__bottom-link:focus-visible::after{
+    transform:scaleX(1);
+    transform-origin:left;
+  }
+  .nv-footer__bottom{
+    margin-top:34px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px 24px;
+    flex-wrap:wrap;
+  }
+  .footer-bottom{
+    padding-top:20px;
+    border-top:1px solid var(--nv-footer-border, #D9DED8);
+  }
+  .nv-footer__bottom-left{
+    flex:1 1 320px;
+    text-align:left;
+  }
+  .footer-bottom__left{
+    color:var(--nv-footer-text, #181A17);
+    font-size:var(--nv-footer-copyright-size, 13px);
+  }
+  .nv-footer__legal p{
+    margin:0;
+    color:rgba(24,26,23,.66);
+    font-size:var(--nv-footer-copyright-size, 13px);
+    line-height:1.5;
+  }
+  .nv-footer__bottom-right{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex:1 1 320px;
+    gap:16px 18px;
+    flex-wrap:wrap;
+  }
+  .nv-footer__payments{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .footer-bottom__right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .footer-bottom__right svg,
+  .footer-bottom__icon{
+    height:22px;
+    width:auto;
+    opacity:.85;
+  }
+  @media (max-width: 1020px){
+    .nv-footer__newsletter{
+      grid-template-columns:1fr;
+      text-align:center;
+      gap:22px;
+    }
+    .nv-footer__newsletter::after{
+      left:50%;
+      transform:translateX(-50%);
+    }
+    .nv-footer__newsletter-text{
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .nv-footer__newsletter-form{
+      width:min(100%, 620px);
+      justify-self:center;
+    }
+    .nv-footer__top{
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 720px){
+    .nv-footer{
+      padding:56px 16px 28px;
+    }
+    .nv-footer__newsletter{
+      margin-bottom:30px;
+      padding:26px 16px 18px;
+      border-radius:min(var(--nv-footer-newsletter-radius, 24px), 20px);
+      gap:18px;
+    }
+    .nv-footer__newsletter-copy{
+      gap:8px;
+    }
+    .nv-footer__newsletter-heading{
+      font-size:clamp(25px, 7.2vw, 31px);
+      line-height:1.08;
+    }
+    .nv-footer__newsletter-text{
+      font-size:13.5px;
+      line-height:1.55;
+    }
+    .nv-footer__newsletter-field{
+      align-items:stretch;
+      flex-direction:column;
+      border-radius:18px;
+      padding:9px;
+      min-height:0;
+    }
+    .nv-footer__newsletter-field input{
+      height:44px;
+      text-align:center;
+    }
+    .nv-footer__newsletter-button{
+      width:100%;
+      min-height:46px;
+    }
+    .nv-footer__top{
+      grid-template-columns:1fr;
+      gap:26px;
+    }
+    .nv-footer__col--left,
+    .nv-footer__col--center,
+    .nv-footer__col--right{
+      text-align:left;
+      justify-items:start;
+    }
+    .nv-footer__bottom{
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      gap:12px;
+    }
+    .nv-footer__bottom-left{
+      text-align:center;
+      flex-basis:auto;
+    }
+    .nv-footer__bottom-right{
+      justify-content:center;
+      flex-basis:auto;
+    }
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer logo"
+    },
+    {
+      "type": "range",
+      "id": "footer_logo_width",
+      "label": "Footer logo width",
+      "min": 80,
+      "max": 260,
+      "step": 5,
+      "default": 140,
+      "unit": "px"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Brand description",
+      "default": "Premium daily wellness formulas with clear labeling, thoughtful presentation, and trusted support."
+    },
+    {
+      "type": "textarea",
+      "id": "brand_owner_text",
+      "label": "Brand owner text",
+      "default": "NutraVora is a brand owned and operated by ShelfFlare LLC, a registered U.S. company."
+    },
+    {
+      "type": "text",
+      "id": "brand_owner_label",
+      "label": "Brand owner label",
+      "default": "Brand ownership"
+    },
+    {
+      "type": "text",
+      "id": "menu_1_heading",
+      "label": "Menu 1 heading",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menu 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_2_heading",
+      "label": "Menu 2 heading",
+      "default": "Support"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menu 2"
+    },
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Contact heading",
+      "default": "Need help?"
+    },
+    {
+      "type": "text",
+      "id": "support_email",
+      "label": "Support email",
+      "default": "support@nutravora.com"
+    },
+    {
+      "type": "text",
+      "id": "address_heading",
+      "label": "Address heading",
+      "default": "Operations & Fulfillment Address:"
+    },
+    {
+      "type": "textarea",
+      "id": "address_text",
+      "label": "Address text",
+      "default": "3038 SW 42nd St\nFort Lauderdale, FL 33312\nUnited States"
+    },
+    {
+      "type": "textarea",
+      "id": "support_text",
+      "label": "Support text",
+      "default": "We’re available Monday to Friday, 9 AM–8 PM EST for product and order support."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_eyebrow",
+      "label": "Newsletter eyebrow",
+      "default": "NutraVora Journal"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Wellness notes, product updates, and subscriber offers."
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Join the NutraVora list for clear supplement guidance, launch updates, and refined daily wellness content."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Email placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button_label",
+      "label": "Newsletter button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "select",
+      "id": "newsletter_layout",
+      "label": "Newsletter layout",
+      "default": "split",
+      "options": [
+        { "value": "split", "label": "Split text and form" },
+        { "value": "stacked", "label": "Centered stacked" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "newsletter_text_alignment",
+      "label": "Newsletter text alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "newsletter_heading_font_size",
+      "label": "Newsletter heading font size",
+      "min": 24,
+      "max": 46,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "newsletter_border_radius",
+      "label": "Newsletter card radius",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "newsletter_background_color",
+      "label": "Newsletter card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "newsletter_border_color",
+      "label": "Newsletter card border",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "color",
+      "id": "newsletter_button_background",
+      "label": "Newsletter button background",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "newsletter_button_text_color",
+      "label": "Newsletter button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "© {year} NutraVora. All rights reserved."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F7F4EE"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#181A17"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "link_font_size",
+      "label": "Link font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "copyright_font_size",
+      "label": "Copyright font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "default": 1240,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 56,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Row gap",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "column_1_alignment",
+      "label": "Column 1 alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "column_2_alignment",
+      "label": "Column 2 alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "column_3_alignment",
+      "label": "Column 3 alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "column_4_alignment",
+      "label": "Column 4 alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Footer",
+      "category": "Footer"
+    }
+  ]
+}
+{% endschema %}

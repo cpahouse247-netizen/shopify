@@ -1,0 +1,892 @@
+<section
+  class="nv-wholesale-premium section-{{ section.id }}"
+  style="
+    --nv-wholesale-bg: {{ section.settings.background_color }};
+    --nv-wholesale-surface: {{ section.settings.surface_color }};
+    --nv-wholesale-border: {{ section.settings.border_color }};
+    --nv-wholesale-accent: {{ section.settings.accent_color }};
+    --nv-wholesale-text: {{ section.settings.text_color }};
+    --nv-wholesale-muted: {{ section.settings.muted_text_color }};
+    --nv-wholesale-title-size: {{ section.settings.title_font_size }}px;
+    --nv-wholesale-title-mobile-size: {{ section.settings.title_mobile_font_size }}px;
+    --nv-wholesale-intro-size: {{ section.settings.intro_font_size }}px;
+    --nv-wholesale-body-size: {{ section.settings.body_font_size }}px;
+    --nv-wholesale-card-radius: {{ section.settings.card_radius }}px;
+    --nv-wholesale-card-padding: {{ section.settings.card_padding }}px;
+    --nv-wholesale-section-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-wholesale-section-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  "
+>
+  <div class="nv-wholesale-premium__container page-width">
+    <div class="nv-wholesale-premium__hero">
+      {% if section.settings.eyebrow != blank %}
+        <p class="nv-wholesale-premium__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% if section.settings.title != blank %}
+        <h1 class="nv-wholesale-premium__title">{{ section.settings.title }}</h1>
+      {% endif %}
+
+      {% if section.settings.intro != blank %}
+        <div class="nv-wholesale-premium__intro rte">
+          {{ section.settings.intro }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_why_cards %}
+      <div class="nv-wholesale-premium__section">
+        <div class="nv-wholesale-premium__card-grid">
+          <div class="nv-wholesale-premium__info-card">
+            <h2>{{ section.settings.why_1_title }}</h2>
+            <p>{{ section.settings.why_1_text }}</p>
+          </div>
+          <div class="nv-wholesale-premium__info-card">
+            <h2>{{ section.settings.why_2_title }}</h2>
+            <p>{{ section.settings.why_2_text }}</p>
+          </div>
+          <div class="nv-wholesale-premium__info-card">
+            <h2>{{ section.settings.why_3_title }}</h2>
+            <p>{{ section.settings.why_3_text }}</p>
+          </div>
+          <div class="nv-wholesale-premium__info-card">
+            <h2>{{ section.settings.why_4_title }}</h2>
+            <p>{{ section.settings.why_4_text }}</p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_audience_cards %}
+      <div class="nv-wholesale-premium__section">
+        {% if section.settings.audience_title != blank %}
+          <h2 class="nv-wholesale-premium__section-title">{{ section.settings.audience_title }}</h2>
+        {% endif %}
+
+        <div class="nv-wholesale-premium__audience-grid">
+          <div class="nv-wholesale-premium__audience-card">{{ section.settings.audience_1 }}</div>
+          <div class="nv-wholesale-premium__audience-card">{{ section.settings.audience_2 }}</div>
+          <div class="nv-wholesale-premium__audience-card">{{ section.settings.audience_3 }}</div>
+          <div class="nv-wholesale-premium__audience-card">{{ section.settings.audience_4 }}</div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="nv-wholesale-premium__layout">
+      <div class="nv-wholesale-premium__sidebar">
+        <div class="nv-wholesale-premium__panel">
+          <h2 class="nv-wholesale-premium__panel-title">{{ section.settings.contact_heading }}</h2>
+          <p class="nv-wholesale-premium__panel-text">{{ section.settings.contact_text }}</p>
+
+          <div class="nv-wholesale-premium__contact-block">
+            <p class="nv-wholesale-premium__label">Email</p>
+            <a class="nv-wholesale-premium__value nv-wholesale-premium__value--link" href="mailto:{{ section.settings.contact_email | escape }}">
+              {{ section.settings.contact_email }}
+            </a>
+          </div>
+
+          <div class="nv-wholesale-premium__contact-block">
+            <p class="nv-wholesale-premium__label">{{ section.settings.hours_label }}</p>
+            <p class="nv-wholesale-premium__value">{{ section.settings.hours_line_1 }}</p>
+            <p class="nv-wholesale-premium__subvalue">{{ section.settings.hours_line_2 }}</p>
+          </div>
+
+          <div class="nv-wholesale-premium__contact-block">
+            <p class="nv-wholesale-premium__label">{{ section.settings.address_label }}</p>
+            <p class="nv-wholesale-premium__value">{{ section.settings.address }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="nv-wholesale-premium__form-wrap">
+        <div class="nv-wholesale-premium__panel nv-wholesale-premium__panel--form">
+          <h2 class="nv-wholesale-premium__form-title">{{ section.settings.form_title }}</h2>
+
+          {% if section.settings.form_text != blank %}
+            <div class="nv-wholesale-premium__form-text rte">
+              {{ section.settings.form_text }}
+            </div>
+          {% endif %}
+
+          {%- form 'contact', class: 'nv-wholesale-premium__form' -%}
+            <input type="hidden" name="contact[Inquiry type]" value="Wholesale">
+
+            {%- if form.posted_successfully? -%}
+              <div class="nv-wholesale-premium__success" tabindex="-1" autofocus>
+                Thanks for your wholesale inquiry. Our team will review it and get back to you soon.
+              </div>
+            {%- elsif form.errors -%}
+              <div class="nv-wholesale-premium__errors" tabindex="-1" autofocus>
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="nv-wholesale-premium__field-grid">
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleName-{{ section.id }}">Name</label>
+                <input class="nv-wholesale-premium__input" type="text" id="WholesaleName-{{ section.id }}" name="contact[name]" placeholder="Your name">
+              </div>
+
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleEmail-{{ section.id }}">Email</label>
+                <input class="nv-wholesale-premium__input" type="email" id="WholesaleEmail-{{ section.id }}" name="contact[email]" placeholder="you@example.com" required>
+              </div>
+            </div>
+
+            <div class="nv-wholesale-premium__field-grid">
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleBusiness-{{ section.id }}">Business name</label>
+                <input class="nv-wholesale-premium__input" type="text" id="WholesaleBusiness-{{ section.id }}" name="contact[Business name]" placeholder="Business name">
+              </div>
+
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleWebsite-{{ section.id }}">Website / store link</label>
+                <input class="nv-wholesale-premium__input" type="text" id="WholesaleWebsite-{{ section.id }}" name="contact[Website]" placeholder="https://">
+              </div>
+            </div>
+
+            <div class="nv-wholesale-premium__field-grid">
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleCountry-{{ section.id }}">Country</label>
+                <input class="nv-wholesale-premium__input" type="text" id="WholesaleCountry-{{ section.id }}" name="contact[Country]" placeholder="Country">
+              </div>
+
+              <div>
+                <label class="nv-wholesale-premium__field-label" for="WholesaleType-{{ section.id }}">Business type</label>
+                <input class="nv-wholesale-premium__input" type="text" id="WholesaleType-{{ section.id }}" name="contact[Business type]" placeholder="Retailer, distributor, ecommerce, etc.">
+              </div>
+            </div>
+
+            <div>
+              <label class="nv-wholesale-premium__field-label" for="WholesaleVolume-{{ section.id }}">Estimated order volume</label>
+              <input class="nv-wholesale-premium__input" type="text" id="WholesaleVolume-{{ section.id }}" name="contact[Estimated volume]" placeholder="Optional">
+            </div>
+
+            <div>
+              <label class="nv-wholesale-premium__field-label" for="WholesaleMessage-{{ section.id }}">Message</label>
+              <textarea class="nv-wholesale-premium__textarea" id="WholesaleMessage-{{ section.id }}" name="contact[body]" rows="7" placeholder="Tell us about your business, channel, and what you’re looking for.">{{ form.body }}</textarea>
+            </div>
+
+            <button type="submit" class="nv-wholesale-premium__button">Submit inquiry</button>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="nv-wholesale-premium__footer-cta">
+      <div>
+        <h2 class="nv-wholesale-premium__footer-title">{{ section.settings.bottom_cta_heading }}</h2>
+        <p class="nv-wholesale-premium__footer-text">{{ section.settings.bottom_cta_text }}</p>
+      </div>
+
+      {% if section.settings.bottom_cta_button_label != blank and section.settings.bottom_cta_button_link != blank %}
+        <a class="nv-wholesale-premium__footer-button" href="{{ section.settings.bottom_cta_button_link }}">
+          {{ section.settings.bottom_cta_button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-wholesale-premium {
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--nv-wholesale-accent, #C9A24A) 12%, transparent), transparent 30%),
+      radial-gradient(circle at 90% 10%, rgba(49, 92, 74, 0.08), transparent 34%),
+      linear-gradient(180deg, var(--nv-wholesale-bg, #FAF8F3) 0%, #f5f1e8 100%);
+    color: var(--nv-wholesale-text, #1f2a24);
+    padding: var(--nv-wholesale-section-padding-top, 48px) 10px var(--nv-wholesale-section-padding-bottom, 72px);
+  }
+
+  .nv-wholesale-premium .page-width {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 3vw, 28px);
+  }
+
+  .nv-wholesale-premium__hero {
+    max-width: 860px;
+    margin: 0 auto 38px;
+    text-align: center;
+  }
+
+  .nv-wholesale-premium__eyebrow {
+    margin: 0 0 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 78%, transparent);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .nv-wholesale-premium__title {
+    margin: 0;
+    font-size: clamp(36px, 3.8vw, var(--nv-wholesale-title-size, 54px));
+    line-height: 1.05;
+    letter-spacing: -0.032em;
+    color: var(--nv-wholesale-text, #1a231f);
+    text-wrap: balance;
+  }
+
+  .nv-wholesale-premium__intro {
+    margin: 14px auto 0;
+    max-width: 760px;
+    font-size: var(--nv-wholesale-intro-size, 16px);
+    line-height: 1.72;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-wholesale-premium__section {
+    margin-bottom: 28px;
+  }
+
+  .nv-wholesale-premium__card-grid,
+  .nv-wholesale-premium__audience-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 1.5vw, 18px);
+  }
+
+  .nv-wholesale-premium__info-card,
+  .nv-wholesale-premium__audience-card {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--nv-wholesale-surface, #FFFFFF) 88%, transparent), rgba(255,255,255,.66));
+    border: 1px solid color-mix(in srgb, var(--nv-wholesale-border, #D9DED8) 82%, transparent);
+    border-radius: min(var(--nv-wholesale-card-radius, 26px), 26px);
+    box-shadow: 0 16px 38px rgba(31, 42, 36, 0.055);
+  }
+
+  .nv-wholesale-premium__info-card {
+    padding: min(var(--nv-wholesale-card-padding, 24px), 26px);
+  }
+
+  .nv-wholesale-premium__info-card h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--nv-wholesale-text, #1d2722);
+  }
+
+  .nv-wholesale-premium__info-card p {
+    margin: 0;
+    font-size: var(--nv-wholesale-body-size, 15px);
+    line-height: 1.66;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-wholesale-premium__section-title {
+    margin: 0 0 14px;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--nv-wholesale-text, #1d2722);
+  }
+
+  .nv-wholesale-premium__audience-card {
+    padding: 20px;
+    text-align: center;
+    font-size: var(--nv-wholesale-body-size, 15px);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--nv-wholesale-text, #1f2a24);
+  }
+
+  .nv-wholesale-premium__layout {
+    display: grid;
+    grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+    gap: clamp(22px, 2.4vw, 30px);
+    align-items: start;
+    margin-top: 30px;
+  }
+
+  .nv-wholesale-premium__panel {
+    border: 1px solid color-mix(in srgb, var(--nv-wholesale-border, #D9DED8) 82%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--nv-wholesale-surface, #FFFFFF) 88%, transparent), rgba(255,255,255,.64));
+    border-radius: var(--nv-wholesale-card-radius, 28px);
+    box-shadow: 0 18px 48px rgba(31, 42, 36, 0.06);
+    padding: calc(var(--nv-wholesale-card-padding, 28px) + 2px);
+  }
+
+  .nv-wholesale-premium__panel-title,
+  .nv-wholesale-premium__form-title {
+    margin: 0 0 8px;
+    font-size: 28px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--nv-wholesale-text, #1a231f);
+  }
+
+  .nv-wholesale-premium__panel-text,
+  .nv-wholesale-premium__form-text {
+    margin-bottom: 18px;
+    font-size: var(--nv-wholesale-body-size, 15px);
+    line-height: 1.68;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-wholesale-premium__contact-block + .nv-wholesale-premium__contact-block {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid color-mix(in srgb, var(--nv-wholesale-border, #D9DED8) 78%, transparent);
+  }
+
+  .nv-wholesale-premium__label {
+    margin: 0 0 6px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 76%, transparent);
+    font-weight: 600;
+  }
+
+  .nv-wholesale-premium__value,
+  .nv-wholesale-premium__subvalue {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--nv-wholesale-text, #1e2823);
+  }
+
+  .nv-wholesale-premium__value--link {
+    color: #184d3b;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .nv-wholesale-premium__form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .nv-wholesale-premium__field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .nv-wholesale-premium__field-label {
+    display: inline-block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--nv-wholesale-text, #233029);
+  }
+
+  .nv-wholesale-premium__input,
+  .nv-wholesale-premium__textarea {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--nv-wholesale-border, #D9DED8) 88%, #1f2a24);
+    background: color-mix(in srgb, var(--nv-wholesale-surface, #FFFFFF) 92%, transparent);
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--nv-wholesale-text, #1f2a24);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nv-wholesale-premium__input:focus,
+  .nv-wholesale-premium__textarea:focus {
+    border-color: rgba(24, 77, 59, 0.4);
+    box-shadow: 0 0 0 4px rgba(24, 77, 59, 0.08);
+    background: #fff;
+  }
+
+  .nv-wholesale-premium__textarea {
+    min-height: 170px;
+    resize: vertical;
+  }
+
+  .nv-wholesale-premium__button,
+  .nv-wholesale-premium__footer-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: #184d3b;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nv-wholesale-premium__button:hover,
+  .nv-wholesale-premium__footer-button:hover {
+    background: #123d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(24, 77, 59, 0.16);
+  }
+
+  .nv-wholesale-premium__footer-cta {
+    margin-top: 30px;
+    padding: calc(var(--nv-wholesale-card-padding, 28px) + 2px);
+    border-radius: var(--nv-wholesale-card-radius, 28px);
+    border: 1px solid color-mix(in srgb, var(--nv-wholesale-border, #D9DED8) 82%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--nv-wholesale-surface, #FFFFFF) 78%, transparent) 0%, rgba(255,255,255,.55) 100%);
+    box-shadow: 0 18px 46px rgba(31, 42, 36, 0.055);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .nv-wholesale-premium__footer-title {
+    margin: 0 0 6px;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--nv-wholesale-text, #1d2722);
+  }
+
+  .nv-wholesale-premium__footer-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.75;
+    color: color-mix(in srgb, var(--nv-wholesale-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-wholesale-premium__success,
+  .nv-wholesale-premium__errors {
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .nv-wholesale-premium__success {
+    background: rgba(24, 77, 59, 0.08);
+    color: #184d3b;
+  }
+
+  .nv-wholesale-premium__errors {
+    background: rgba(155, 31, 31, 0.08);
+    color: #7f1d1d;
+  }
+
+  @media screen and (max-width: 989px) {
+    .nv-wholesale-premium__card-grid,
+    .nv-wholesale-premium__audience-grid,
+    .nv-wholesale-premium__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .nv-wholesale-premium__hero {
+      max-width: 760px;
+      margin-bottom: 24px;
+    }
+
+    .nv-wholesale-premium__footer-cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .nv-wholesale-premium {
+      padding: 52px 0 52px;
+    }
+
+    .nv-wholesale-premium .page-width {
+      padding-inline: 17px;
+    }
+
+    .nv-wholesale-premium__hero {
+      text-align: left;
+      margin-bottom: 22px;
+    }
+
+    .nv-wholesale-premium__eyebrow {
+      text-align: left;
+      font-size: 10px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .nv-wholesale-premium__panel,
+    .nv-wholesale-premium__footer-cta,
+    .nv-wholesale-premium__info-card,
+    .nv-wholesale-premium__audience-card {
+      padding: min(var(--nv-wholesale-card-padding, 28px), 20px);
+      border-radius: min(var(--nv-wholesale-card-radius, 28px), 22px);
+    }
+
+    .nv-wholesale-premium__field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .nv-wholesale-premium__title {
+      font-size: clamp(30px, 8vw, var(--nv-wholesale-title-mobile-size, 36px));
+      line-height: 1.1;
+      text-align: left;
+    }
+
+    .nv-wholesale-premium__intro {
+      font-size: max(14px, calc(var(--nv-wholesale-intro-size, 16px) - 1px));
+      line-height: 1.65;
+    }
+
+    .nv-wholesale-premium__card-grid,
+    .nv-wholesale-premium__audience-grid {
+      gap: 12px;
+    }
+
+    .nv-wholesale-premium__panel-title,
+    .nv-wholesale-premium__form-title,
+    .nv-wholesale-premium__footer-title,
+    .nv-wholesale-premium__section-title {
+      font-size: 22px;
+    }
+
+    .nv-wholesale-premium__button,
+    .nv-wholesale-premium__footer-button {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Main wholesale premium",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Wholesale"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Partner with NutraVora"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>NutraVora works with select wholesale and business partners interested in premium wellness formulas, clean-label presentation, and long-term brand growth.</p><p>Whether you run a retail store, wellness business, ecommerce operation, or distribution business, we welcome qualified inquiries from partners who align with the NutraVora brand.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_why_cards",
+      "label": "Show why cards",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "why_1_title",
+      "label": "Why 1 title",
+      "default": "Premium formulas"
+    },
+    {
+      "type": "textarea",
+      "id": "why_1_text",
+      "label": "Why 1 text",
+      "default": "Thoughtfully positioned wellness products with a clean, premium brand presentation."
+    },
+    {
+      "type": "text",
+      "id": "why_2_title",
+      "label": "Why 2 title",
+      "default": "Quality-focused brand"
+    },
+    {
+      "type": "textarea",
+      "id": "why_2_text",
+      "label": "Why 2 text",
+      "default": "A modern supplement brand designed for trust, clarity, and long-term customer appeal."
+    },
+    {
+      "type": "text",
+      "id": "why_3_title",
+      "label": "Why 3 title",
+      "default": "Wholesale-ready support"
+    },
+    {
+      "type": "textarea",
+      "id": "why_3_text",
+      "label": "Why 3 text",
+      "default": "Clear communication for product inquiries, partnership discussions, and wholesale onboarding."
+    },
+    {
+      "type": "text",
+      "id": "why_4_title",
+      "label": "Why 4 title",
+      "default": "Business-friendly positioning"
+    },
+    {
+      "type": "textarea",
+      "id": "why_4_text",
+      "label": "Why 4 text",
+      "default": "A brand built to support premium retail, digital, and marketplace growth."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_audience_cards",
+      "label": "Show audience cards",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "audience_title",
+      "label": "Audience title",
+      "default": "Who this is for"
+    },
+    {
+      "type": "text",
+      "id": "audience_1",
+      "label": "Audience 1",
+      "default": "Retail stores"
+    },
+    {
+      "type": "text",
+      "id": "audience_2",
+      "label": "Audience 2",
+      "default": "Wellness shops"
+    },
+    {
+      "type": "text",
+      "id": "audience_3",
+      "label": "Audience 3",
+      "default": "Ecommerce sellers"
+    },
+    {
+      "type": "text",
+      "id": "audience_4",
+      "label": "Audience 4",
+      "default": "Distributors and bulk buyers"
+    },
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Contact heading",
+      "default": "Wholesale inquiries"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email",
+      "default": "support@nutravora.com"
+    },
+    {
+      "type": "textarea",
+      "id": "contact_text",
+      "label": "Contact text",
+      "default": "For wholesale, retail, and partnership inquiries, contact our team or use the form below with your business details."
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Business support hours"
+    },
+    {
+      "type": "text",
+      "id": "hours_line_1",
+      "label": "Hours line 1",
+      "default": "Monday to Friday"
+    },
+    {
+      "type": "text",
+      "id": "hours_line_2",
+      "label": "Hours line 2",
+      "default": "9:00 AM to 5:00 PM EST"
+    },
+    {
+      "type": "text",
+      "id": "address_label",
+      "label": "Address label",
+      "default": "Office address"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address",
+      "default": "7901 4th St N, Ste 300, St. Petersburg, FL 33702"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form title",
+      "default": "Submit a wholesale inquiry"
+    },
+    {
+      "type": "richtext",
+      "id": "form_text",
+      "label": "Form text",
+      "default": "<p>Tell us about your business, sales channel, and estimated requirements. Our team will review your inquiry and respond as soon as possible.</p>"
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_heading",
+      "label": "Bottom CTA heading",
+      "default": "Ready to discuss a wholesale opportunity?"
+    },
+    {
+      "type": "textarea",
+      "id": "bottom_cta_text",
+      "label": "Bottom CTA text",
+      "default": "Connect with the NutraVora team to explore business and partnership inquiries."
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_button_label",
+      "label": "Bottom CTA button label",
+      "default": "Email Wholesale Support"
+    },
+    {
+      "type": "url",
+      "id": "bottom_cta_button_link",
+      "label": "Bottom CTA button link"
+    },
+    {
+      "type": "header",
+      "content": "Premium style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Page background",
+      "default": "#FAF8F3"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Surface color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#C9A24A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1F2A24"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#5F6B64"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Desktop title size",
+      "min": 40,
+      "max": 68,
+      "step": 1,
+      "default": 54,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_mobile_font_size",
+      "label": "Mobile title size",
+      "min": 30,
+      "max": 44,
+      "step": 1,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "intro_font_size",
+      "label": "Intro text size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body text size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top spacing",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom spacing",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main wholesale premium"
+    }
+  ]
+}
+{% endschema %}

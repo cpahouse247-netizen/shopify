@@ -1,0 +1,294 @@
+{%- liquid
+  assign bg_class = ''
+  if section.settings.background_style == 'cream'
+    assign bg_class = 'nv-hiw--cream'
+  elsif section.settings.background_style == 'green'
+    assign bg_class = 'nv-hiw--green'
+  endif
+
+  assign layout_class = ''
+  if section.settings.layout_style == 'steps'
+    assign layout_class = 'nv-hiw--steps'
+  endif
+-%}
+
+<section class="nv-hiw {{ bg_class }} {{ layout_class }}" id="section-{{ section.id }}">
+  <div class="nv-hiw__inner">
+    <div class="nv-hiw__header" data-nv-animate="fade-up">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="nv-eyebrow nv-hiw__eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+
+      <h2 class="nv-section-heading nv-hiw__heading">{{ section.settings.heading }}</h2>
+
+      {%- if section.settings.subheading != blank -%}
+        <p class="nv-section-subheading nv-hiw__subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.layout_style == 'split' -%}
+      <div class="nv-hiw__layout">
+        <div class="nv-hiw__features-left">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.position == 'left' -%}
+              {%- liquid
+                assign animation_delay = forloop.index0 | times: 150 | plus: 200
+                if animation_delay > 800
+                  assign animation_delay = 800
+                endif
+              -%}
+              <div class="nv-hiw__feature" data-nv-animate="fade-right" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+                <div class="nv-hiw__feature-icon">{{ block.settings.icon }}</div>
+                <div class="nv-hiw__feature-content">
+                  <h3 class="nv-hiw__feature-title">{{ block.settings.title }}</h3>
+                  <p class="nv-hiw__feature-body">{{ block.settings.body }}</p>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        <div class="nv-hiw__center-image" data-nv-animate="scale-up" data-nv-delay="200">
+          {%- if section.settings.center_image -%}
+            <div class="nv-hiw__center-image-wrapper">
+              <img
+                src="{{ section.settings.center_image | image_url: width: 480 }}"
+                srcset="
+                  {{ section.settings.center_image | image_url: width: 240 }} 240w,
+                  {{ section.settings.center_image | image_url: width: 360 }} 360w,
+                  {{ section.settings.center_image | image_url: width: 480 }} 480w
+                "
+                sizes="(max-width: 640px) 180px, 240px"
+                alt="{{ section.settings.heading | escape }}"
+                width="240"
+                height="300"
+                loading="lazy">
+            </div>
+            {%- if section.settings.cert_badge_text != blank -%}
+              <span class="nv-hiw__cert-badge">✓ {{ section.settings.cert_badge_text }}</span>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+
+        <div class="nv-hiw__features-right">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.position == 'right' -%}
+              {%- liquid
+                assign animation_delay = forloop.index0 | times: 150 | plus: 200
+                if animation_delay > 800
+                  assign animation_delay = 800
+                endif
+              -%}
+              <div class="nv-hiw__feature" data-nv-animate="fade-left" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+                <div class="nv-hiw__feature-icon">{{ block.settings.icon }}</div>
+                <div class="nv-hiw__feature-content">
+                  <h3 class="nv-hiw__feature-title">{{ block.settings.title }}</h3>
+                  <p class="nv-hiw__feature-body">{{ block.settings.body }}</p>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- else -%}
+      <div class="nv-hiw__layout">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign animation_delay = forloop.index0 | times: 100 | plus: 200
+            if animation_delay > 800
+              assign animation_delay = 800
+            endif
+          -%}
+          <div class="nv-hiw__step" data-nv-animate="fade-up" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+            <div class="nv-hiw__step-number">{{ forloop.index }}</div>
+            <div class="nv-hiw__step-content">
+              <h3 class="nv-hiw__step-title">{{ block.settings.title }}</h3>
+              <p class="nv-hiw__step-body">{{ block.settings.body }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_bottom_cta and section.settings.cta_label != blank -%}
+      <div class="nv-hiw__cta" data-nv-animate="fade-up" data-nv-delay="600">
+        <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="nv-btn nv-btn--outline nv-btn--lg">
+          {{ section.settings.cta_label }}
+          <span class="nv-btn__icon--right">→</span>
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How It Works",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Our Process"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Formulated for Daily Wellness"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Every NutraVora formula follows a rigorous development process - from ingredient sourcing to third-party testing."
+    },
+    {
+      "type": "image_picker",
+      "id": "center_image",
+      "label": "Center product image"
+    },
+    {
+      "type": "text",
+      "id": "cert_badge_text",
+      "label": "Image badge text",
+      "default": "GMP Certified Facility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_cta",
+      "label": "Show bottom CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Shop All Formulas"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL"
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "label": "Background",
+      "default": "white",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "cream", "label": "Warm Cream" },
+        { "value": "green", "label": "Dark Green" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "default": "split",
+      "options": [
+        { "value": "split", "label": "Split (image center)" },
+        { "value": "steps", "label": "Numbered steps" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature_item",
+      "name": "Feature item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji)",
+          "default": "🌿"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Feature title",
+          "default": "Clean Sourcing"
+        },
+        {
+          "type": "text",
+          "id": "body",
+          "label": "Feature description",
+          "default": "Ingredients selected for purity and potency."
+        },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Column position",
+          "default": "left",
+          "options": [
+            { "value": "left", "label": "Left column" },
+            { "value": "right", "label": "Right column" }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How It Works",
+      "blocks": [
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🌿",
+            "title": "Clean Ingredient Sourcing",
+            "body": "We select each ingredient for verified purity, potency, and bioavailability.",
+            "position": "left"
+          }
+        },
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🔬",
+            "title": "Third-Party Lab Testing",
+            "body": "Every batch is independently tested before it reaches you.",
+            "position": "left"
+          }
+        },
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "📋",
+            "title": "Transparent Labeling",
+            "body": "Clear ingredient lists with no hidden fillers or proprietary blends.",
+            "position": "left"
+          }
+        },
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🏭",
+            "title": "GMP Certified Facility",
+            "body": "Manufactured in a facility that meets Good Manufacturing Practice standards.",
+            "position": "right"
+          }
+        },
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "💊",
+            "title": "Large-Supply Format",
+            "body": "300-count pouches designed for consistent long-term daily use.",
+            "position": "right"
+          }
+        },
+        {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🛡️",
+            "title": "Satisfaction Guarantee",
+            "body": "30-day guarantee. Not satisfied? We'll make it right.",
+            "position": "right"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,54 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-contact-premium",
+      "settings": {
+        "eyebrow": "Customer Support",
+        "title": "Contact Us",
+        "intro": "<p>We’re here to help with product questions, order support, and general inquiries. Reach out to the NutraVora team and we’ll guide you as quickly as possible.</p>",
+        "email_label": "Email",
+        "email": "support@nutravora.com",
+        "hours_label": "Support hours",
+        "hours_line_1": "Monday to Friday",
+        "hours_line_2": "9:00 AM to 5:00 PM",
+        "address_label": "Office address",
+        "address": "7901 4th St N, Ste 300, St. Petersburg, FL 33702",
+        "highlight_1_title": "Fast, thoughtful support",
+        "highlight_1_text": "Helpful answers for product questions, orders, and general support.",
+        "highlight_2_title": "Secure, professional service",
+        "highlight_2_text": "A clean and reliable support experience designed for customer confidence.",
+        "highlight_3_title": "A team that knows the formula",
+        "highlight_3_text": "Guidance shaped around the NutraVora product lineup and customer experience.",
+        "form_title": "Send us a message",
+        "form_text": "<p>Use the form below and our team will get back to you as soon as possible.</p>",
+        "show_support_panel": true,
+        "background_color": "#FAF8F3",
+        "surface_color": "#FFFFFF",
+        "border_color": "#D9DED8",
+        "accent_color": "#C9A24A",
+        "text_color": "#1F2A24",
+        "muted_text_color": "#5F6B64",
+        "title_font_size": 52,
+        "title_mobile_font_size": 36,
+        "intro_font_size": 16,
+        "body_font_size": 15,
+        "card_radius": 28,
+        "card_padding": 28,
+        "section_padding_top": 48,
+        "section_padding_bottom": 64
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

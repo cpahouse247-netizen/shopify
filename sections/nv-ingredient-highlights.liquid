@@ -1,0 +1,271 @@
+{% comment %}Section: NutraVora Ingredient Highlights{% endcomment %}
+<section
+  class="section nv-ingredient-highlights nv-ingredient-highlights--{{ section.settings.text_alignment }} nv-ingredient-highlights--{{ section.settings.layout_style }}"
+  style="
+    --nv-ingredients-max: {{ section.settings.content_max_width }}px;
+    --nv-ingredients-pad-top: {{ section.settings.section_padding_top }}px;
+    --nv-ingredients-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-ingredients-bg: {{ section.settings.background_color }};
+    --nv-ingredients-heading: {{ section.settings.heading_color }};
+    --nv-ingredients-text: {{ section.settings.text_color }};
+    --nv-ingredients-title-size: {{ section.settings.ingredient_title_font_size }}px;
+    --nv-ingredients-body-size: {{ section.settings.ingredient_body_font_size }}px;
+    --nv-ingredients-radius: {{ section.settings.card_radius }}px;
+    --nv-ingredients-gap: {{ section.settings.card_gap }}px;
+  "
+>
+  <div class="container nv-ingredient-highlights__container">
+    <div class="nv-ingredient-highlights__inner">
+      {% if section.settings.eyebrow_text != blank or section.settings.section_heading != blank or section.settings.section_subheading != blank %}
+        <header class="nv-ingredient-highlights__head">
+          {% if section.settings.eyebrow_text != blank %}
+            <p class="eyebrow nv-ingredient-highlights__eyebrow">{{ section.settings.eyebrow_text }}</p>
+          {% endif %}
+          {% if section.settings.section_heading != blank %}
+            <h2 class="nv-ingredient-highlights__heading">{{ section.settings.section_heading }}</h2>
+          {% endif %}
+          {% if section.settings.section_subheading != blank %}
+            <p class="nv-ingredient-highlights__subheading">{{ section.settings.section_subheading }}</p>
+          {% endif %}
+        </header>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <div class="nv-ingredient-highlights__grid" role="list">
+          {% for block in section.blocks %}
+            {% assign has_media = false %}
+            {% if section.settings.show_icons_or_images and block.settings.ingredient_image != blank %}
+              {% assign has_media = true %}
+            {% elsif section.settings.show_icons_or_images and block.settings.ingredient_icon != blank %}
+              {% assign has_media = true %}
+            {% endif %}
+            <article class="nv-ingredient-highlights__item" role="listitem" {{ block.shopify_attributes }}>
+              {% if has_media %}
+                <div class="nv-ingredient-highlights__media">
+                  {% if block.settings.ingredient_image != blank %}
+                    {{ block.settings.ingredient_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: block.settings.ingredient_image_alt | default: block.settings.ingredient_title, class: 'nv-ingredient-highlights__image' }}
+                  {% elsif block.settings.ingredient_icon != blank %}
+                    <span class="nv-ingredient-highlights__icon" aria-hidden="true">{{ block.settings.ingredient_icon }}</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+              <div class="nv-ingredient-highlights__copy">
+                {% if block.settings.ingredient_title != blank %}
+                  <h3 class="nv-ingredient-highlights__item-title">{{ block.settings.ingredient_title }}</h3>
+                {% endif %}
+                {% if block.settings.ingredient_description != blank %}
+                  <div class="rte nv-ingredient-highlights__item-body">{{ block.settings.ingredient_description }}</div>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ingredient highlights",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "Formula highlights"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Ingredient Highlights"
+    },
+    {
+      "type": "text",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "A closer look at the ingredients that shape this formula."
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "cards", "label": "Cards" },
+        { "value": "rows", "label": "Rows" }
+      ],
+      "default": "cards"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 840,
+      "max": 1320,
+      "step": 20,
+      "default": 1160,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 52,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4B524C"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_title_font_size",
+      "label": "Ingredient title font size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_body_font_size",
+      "label": "Ingredient body font size",
+      "min": 13,
+      "max": 19,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 14,
+      "max": 30,
+      "step": 2,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icons_or_images",
+      "label": "Show icons or images",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient_item",
+      "name": "Ingredient item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "ingredient_title",
+          "label": "Ingredient title",
+          "default": "Ingredient name"
+        },
+        {
+          "type": "richtext",
+          "id": "ingredient_description",
+          "label": "Ingredient description",
+          "default": "<p>Use this area for a concise, merchant-controlled explanation of the ingredient.</p>"
+        },
+        {
+          "type": "text",
+          "id": "ingredient_icon",
+          "label": "Ingredient icon",
+          "default": "•"
+        },
+        {
+          "type": "image_picker",
+          "id": "ingredient_image",
+          "label": "Ingredient image"
+        },
+        {
+          "type": "text",
+          "id": "ingredient_image_alt",
+          "label": "Ingredient image alt text",
+          "default": "Ingredient image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ingredient highlights",
+      "blocks": [
+        {
+          "type": "ingredient_item",
+          "settings": {
+            "ingredient_title": "Primary ingredient",
+            "ingredient_description": "<p>Describe the primary formula component in a short, premium, product-specific way.</p>"
+          }
+        },
+        {
+          "type": "ingredient_item",
+          "settings": {
+            "ingredient_title": "Supporting ingredient",
+            "ingredient_description": "<p>Use this card for a second featured ingredient or formula component.</p>"
+          }
+        },
+        {
+          "type": "ingredient_item",
+          "settings": {
+            "ingredient_title": "Complementary component",
+            "ingredient_description": "<p>Add a concise supporting note for another featured ingredient in the blend.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

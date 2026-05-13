@@ -1,0 +1,56 @@
+<section class="section nv-home-final-cta">
+  <div class="container">
+    <div class="surface-panel nv-home-final-cta__panel">
+      <div class="nv-home-final-cta__content">
+        {% if section.settings.eyebrow != blank %}
+          <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+        <h2>{{ section.settings.heading }}</h2>
+        {% if section.settings.body != blank %}
+          <div class="rte">{{ section.settings.body }}</div>
+        {% endif %}
+      </div>
+
+      <div class="nv-home-final-cta__actions">
+        {% if section.settings.product != blank %}
+          {% render 'nv-product-cta-stack',
+            product: section.settings.product,
+            template_override: section.settings.conversion_mode_override,
+            class: 'nv-product-cta-stack nv-product-cta-stack--final'
+          %}
+        {% else %}
+          {% render 'nv-amazon-cta', wrapper_class: 'nv-home-final-cta__amazon' %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Home Final CTA",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Ready to choose" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Start with a NutraVora formula built for premium trust and modern fulfillment." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Guide shoppers toward the strongest conversion path for the selected product without repeating homepage sales copy.</p>" },
+    { "type": "product", "id": "product", "label": "Featured product" },
+    {
+      "type": "select",
+      "id": "conversion_mode_override",
+      "label": "CTA mode override",
+      "default": "",
+      "options": [
+        { "value": "", "label": "Use product/theme defaults" },
+        { "value": "amazon_attribution", "label": "Amazon attribution" },
+        { "value": "buy_with_prime", "label": "Buy with Prime" },
+        { "value": "hybrid", "label": "Hybrid" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Home Final CTA"
+    }
+  ]
+}
+{% endschema %}

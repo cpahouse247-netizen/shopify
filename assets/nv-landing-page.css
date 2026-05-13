@@ -1,0 +1,86 @@
+/* ============================================
+   NutraVora Landing Page System
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+body.nv-landing-page .site-header,
+body.nv-landing-page header[role="banner"] {
+  /* Keep header available while landing sections reduce navigation distraction. */
+}
+
+.nv-lp-section {
+  padding: var(--nv-space-16) 0;
+}
+
+.nv-lp-section--compact {
+  padding: var(--nv-space-10) 0;
+}
+
+.nv-lp-inner {
+  max-width: var(--nv-content-width);
+  margin: 0 auto;
+  padding: 0 var(--nv-space-6);
+}
+
+.nv-lp-header {
+  text-align: center;
+  margin-bottom: var(--nv-space-10);
+}
+
+.nv-lp-faq details {
+  border-bottom: 1px solid var(--nv-border-light);
+  padding: var(--nv-space-4) 0;
+}
+
+.nv-lp-faq summary {
+  font-size: 15px;
+  font-weight: var(--nv-weight-semibold);
+  color: var(--nv-text-primary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--nv-space-4);
+}
+
+.nv-lp-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.nv-lp-faq summary::after {
+  content: '+';
+  font-size: 20px;
+  color: var(--nv-green-primary);
+  flex-shrink: 0;
+  transition: transform var(--nv-duration-base) var(--nv-ease-default);
+}
+
+.nv-lp-faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.nv-lp-faq details p {
+  font-size: 14px;
+  line-height: var(--nv-leading-relaxed);
+  color: var(--nv-text-muted);
+  padding-top: var(--nv-space-3);
+}
+
+@media (max-width: 768px) {
+  .nv-lp-section {
+    padding: var(--nv-space-12) 0;
+  }
+
+  .nv-lp-section--compact {
+    padding: var(--nv-space-8) 0;
+  }
+
+  .nv-lp-inner {
+    padding: 0 var(--nv-space-4);
+  }
+
+  .nv-lp-header {
+    margin-bottom: var(--nv-space-8);
+  }
+}

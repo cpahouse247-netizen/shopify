@@ -1,0 +1,14 @@
+{% comment %}
+  Cart line-item Prime tag placeholder.
+
+  Inputs:
+  - item: cart item / line item object
+{% endcomment %}
+{% if item != blank %}
+  {% render 'nv-prime-tag-base',
+    product: item.product,
+    variant: item.variant,
+    context: 'cart',
+    class: 'nv-prime-tag nv-prime-tag--cart'
+  %}
+{% endif %}

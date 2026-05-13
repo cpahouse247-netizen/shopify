@@ -1,0 +1,431 @@
+/* ============================================
+   NutraVora Product Card System
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+/* Card Container */
+.nv-product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--nv-white);
+  border-radius: var(--nv-radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--nv-border-light);
+  transition:
+    transform var(--nv-duration-base) var(--nv-ease-default),
+    box-shadow var(--nv-duration-base) var(--nv-ease-default),
+    border-color var(--nv-duration-base) var(--nv-ease-default);
+  will-change: transform, box-shadow;
+}
+
+.nv-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--nv-shadow-lg);
+  border-color: var(--nv-border-brand);
+}
+
+/* Card Image Wrapper */
+.nv-product-card__image-wrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--nv-cream-warm);
+}
+
+.nv-product-card__image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--nv-duration-slower) var(--nv-ease-default);
+  will-change: transform;
+}
+
+.nv-product-card:hover .nv-product-card__image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* Card Badges (top-left) */
+.nv-product-card__badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: var(--nv-z-raised);
+}
+
+.nv-product-card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--nv-radius-full);
+  font-size: 10px;
+  font-weight: var(--nv-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.nv-product-card__badge--prime {
+  background: #232f3e;
+  color: #ff9900;
+}
+
+.nv-product-card__badge--sale {
+  background: var(--nv-green-primary);
+  color: var(--nv-white);
+}
+
+.nv-product-card__badge--new {
+  background: var(--nv-gold-primary);
+  color: var(--nv-text-primary);
+}
+
+.nv-product-card__badge--sold-out {
+  background: var(--nv-cream-mid);
+  color: var(--nv-text-muted);
+  border: 1px solid var(--nv-border-light);
+}
+
+/* Amazon Hover CTA Overlay */
+.nv-product-card__amazon-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(
+    to top,
+    rgba(15, 17, 19, 0.85) 0%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--nv-duration-base) var(--nv-ease-default),
+    transform var(--nv-duration-base) var(--nv-ease-default);
+  z-index: var(--nv-z-raised);
+}
+
+.nv-product-card:hover .nv-product-card__amazon-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nv-product-card__amazon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--nv-gold-primary);
+  color: var(--nv-text-primary);
+  border-radius: var(--nv-radius-lg);
+  font-size: 13px;
+  font-weight: var(--nv-weight-semibold);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--nv-duration-fast) var(--nv-ease-default);
+}
+
+.nv-product-card__amazon-btn:hover {
+  background: var(--nv-gold-dark);
+}
+
+/* Card Content */
+.nv-product-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px;
+  gap: 8px;
+}
+
+/* Card Rating */
+.nv-product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nv-product-card__stars {
+  display: flex;
+  gap: 2px;
+}
+
+.nv-product-card__stars svg {
+  width: 13px;
+  height: 13px;
+  fill: var(--nv-gold-primary);
+}
+
+.nv-product-card__rating-count {
+  font-size: 11px;
+  color: var(--nv-text-muted);
+  font-weight: var(--nv-weight-medium);
+}
+
+/* Card Title */
+.nv-product-card__title {
+  font-family: var(--nv-font-body);
+  font-size: 14px;
+  font-weight: var(--nv-weight-semibold);
+  line-height: var(--nv-leading-snug);
+  color: var(--nv-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Supply Callout */
+.nv-product-card__supply {
+  font-size: 11px;
+  color: var(--nv-text-muted);
+  font-weight: var(--nv-weight-medium);
+}
+
+/* Card Price Row */
+.nv-product-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--nv-border-light);
+}
+
+.nv-product-card__price {
+  font-size: 18px;
+  font-weight: var(--nv-weight-bold);
+  color: var(--nv-text-primary);
+  letter-spacing: var(--nv-tracking-tight);
+}
+
+.nv-product-card__compare-price {
+  font-size: 13px;
+  color: var(--nv-text-subtle);
+  text-decoration: line-through;
+  font-weight: var(--nv-weight-regular);
+}
+
+.nv-product-card__prime-note {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: var(--nv-weight-semibold);
+  color: #232f3e;
+  background: #fff3cd;
+  padding: 2px 8px;
+  border-radius: var(--nv-radius-full);
+  white-space: nowrap;
+}
+
+.nv-product-card .price__main {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.nv-product-card .price__compare {
+  font-size: 13px;
+  color: var(--nv-text-subtle);
+  text-decoration: line-through;
+  font-weight: var(--nv-weight-regular);
+}
+
+/* Compatibility with the existing theme product-card system. */
+.product-card.nv-product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--nv-white);
+  border-color: var(--nv-border-light);
+  border-radius: var(--nv-radius-xl);
+  box-shadow: var(--nv-shadow-xs);
+}
+
+.product-card.nv-product-card:hover,
+.product-card.nv-product-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--nv-shadow-lg);
+  border-color: var(--nv-border-brand);
+}
+
+.product-card.nv-product-card .product-card__badge-area.nv-product-card__badges {
+  top: 12px;
+  left: 12px;
+  min-height: 0;
+  gap: 6px;
+}
+
+.product-card.nv-product-card .product-card__badge.nv-product-card__badge {
+  min-height: 0;
+  padding: 4px 10px;
+  border-radius: var(--nv-radius-full);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  box-shadow: var(--nv-shadow-xs);
+}
+
+.product-card.nv-product-card .product-card__badge.nv-product-card__badge--sale {
+  border-color: transparent;
+  background: var(--nv-green-primary);
+  color: var(--nv-white);
+}
+
+.product-card.nv-product-card .product-card__badge.nv-product-card__badge--sold-out {
+  background: var(--nv-cream-mid);
+  color: var(--nv-text-muted);
+  border-color: var(--nv-border-light);
+}
+
+.product-card.nv-product-card .product-card__media.nv-product-card__image-wrapper {
+  aspect-ratio: 4 / 5;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  background: var(--nv-cream-warm);
+  border: 0;
+  border-radius: 0;
+}
+
+.product-card.nv-product-card .product-card__media.nv-product-card__image-wrapper img,
+.product-card.nv-product-card .product-card__media.nv-product-card__image-wrapper .product-card__media-image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+.product-card.nv-product-card .product-card__body.nv-product-card__content {
+  flex: 1;
+  padding: 16px;
+  gap: 8px;
+}
+
+.product-card.nv-product-card .product-card__content {
+  min-height: 0;
+  gap: 8px;
+}
+
+.product-card.nv-product-card .product-card__title.nv-product-card__title,
+.product-card.nv-product-card .product-card__title.nv-product-card__title a {
+  min-height: 0;
+  color: var(--nv-text-primary);
+  font-size: 14px;
+  line-height: var(--nv-leading-snug);
+  letter-spacing: 0;
+  -webkit-line-clamp: 2;
+}
+
+.product-card.nv-product-card .product-card__areviews-rating.nv-product-card__rating {
+  min-height: 16px;
+  margin: 0;
+  gap: 6px;
+}
+
+.product-card.nv-product-card .nv-product-card__rating .areviews_rating,
+.product-card.nv-product-card .nv-product-card__rating .reviews_rating_title {
+  font-size: 11px;
+  color: var(--nv-text-muted);
+  font-weight: var(--nv-weight-medium);
+}
+
+.product-card.nv-product-card .product-card__meta {
+  margin-top: auto;
+  gap: 8px;
+}
+
+.product-card.nv-product-card .product-card__commerce {
+  min-height: 0;
+  gap: 8px;
+}
+
+.product-card.nv-product-card .product-card__price-row.nv-product-card__price-row {
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--nv-border-light);
+}
+
+.product-card.nv-product-card .price.nv-product-card__price .price__main {
+  color: var(--nv-text-primary);
+  font-size: 18px;
+  font-weight: var(--nv-weight-bold);
+}
+
+.product-card.nv-product-card .price.nv-product-card__price .price__compare {
+  color: var(--nv-text-subtle);
+  font-size: 13px;
+  font-weight: var(--nv-weight-regular);
+}
+
+.product-card.nv-product-card .product-card__prime-slot.nv-product-card__prime-note {
+  width: max-content;
+  max-width: 100%;
+  min-height: 0;
+  margin-left: 0;
+  padding: 2px 8px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .nv-product-card__image-wrapper {
+    aspect-ratio: 1 / 1;
+  }
+
+  .nv-product-card__amazon-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .nv-product-card__content {
+    padding: 12px;
+  }
+
+  .nv-product-card__title {
+    font-size: 13px;
+  }
+
+  .nv-product-card__price {
+    font-size: 16px;
+  }
+
+  .product-card.nv-product-card .product-card__media.nv-product-card__image-wrapper {
+    aspect-ratio: 1 / 1;
+  }
+
+  .product-card.nv-product-card .product-card__body.nv-product-card__content {
+    padding: 12px;
+  }
+
+  .product-card.nv-product-card .product-card__title.nv-product-card__title,
+  .product-card.nv-product-card .product-card__title.nv-product-card__title a {
+    font-size: 13px;
+  }
+
+  .product-card.nv-product-card .price.nv-product-card__price .price__main {
+    font-size: 16px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .nv-product-card,
+  .nv-product-card__image-wrapper img,
+  .nv-product-card__amazon-overlay {
+    transition: none;
+    animation: none;
+  }
+}

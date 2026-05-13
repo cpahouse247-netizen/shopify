@@ -1,0 +1,13 @@
+{% comment %}
+  PDP Prime tag placeholder.
+
+  Inputs:
+  - product: Product object
+  - variant: optional Variant object
+{% endcomment %}
+{% render 'nv-prime-tag-base',
+  product: product,
+  variant: variant,
+  context: 'pdp',
+  class: 'nv-prime-tag nv-prime-tag--pdp'
+%}

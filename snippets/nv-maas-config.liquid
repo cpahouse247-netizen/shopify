@@ -1,0 +1,25 @@
+{%- comment -%}
+  NutraVora MAAS Configuration
+  Outputs product-level MAAS URLs as JS variables so nv-maas.js can access them per page.
+{%- endcomment -%}
+
+{%- liquid
+  assign nv_maas_product_url = ''
+  if request.page_type == 'product' and product != blank
+    assign nv_maas_product_url = product.metafields.custom.amazon_attribution_link.value | default: product.metafields.custom.amazon_attribution_link
+  endif
+-%}
+
+<script>
+  window.__nv_maas_product_url = {{ nv_maas_product_url | default: '' | json }};
+  window.__nv_maas_store_url = {{ settings.amazon_store_url | default: '' | json }};
+  window.__nv_page_type = {{ request.page_type | json }};
+
+  if (document.body) {
+    document.body.dataset.pageType = window.__nv_page_type;
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.dataset.pageType = window.__nv_page_type;
+    });
+  }
+</script>

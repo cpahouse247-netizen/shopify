@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "section_heading": "",
+        "section_subheading": "<p>Ingredient stories, education, and practical wellness guidance from NutraVora.</p>",
+        "show_decorative_divider": true,
+        "posts_per_page": 6,
+        "columns_desktop": "3",
+        "columns_mobile": "1",
+        "show_date_badge": true,
+        "show_category_tag": true,
+        "show_meta_line": true,
+        "show_excerpt": true,
+        "show_continue_reading": true,
+        "continue_reading_label": "Continue reading",
+        "background_color": "#FFFFFF",
+        "heading_alignment": "center",
+        "content_alignment": "left",
+        "heading_font_size": 34,
+        "subheading_font_size": 15,
+        "card_title_font_size": 20,
+        "card_excerpt_font_size": 14,
+        "section_padding_top": 88,
+        "section_padding_bottom": 88,
+        "content_max_width": 1200,
+        "card_image_ratio": "4 / 3"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

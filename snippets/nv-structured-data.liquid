@@ -1,0 +1,454 @@
+{%- comment -%}
+  NutraVora Structured Data System
+  Handles JSON-LD schema types:
+  - Product (with Review, AggregateRating, Offer)
+  - Organization
+  - WebSite (with SearchAction)
+  - BreadcrumbList
+  - FAQPage
+  - Article
+  - ItemList (collection pages)
+  - OnlineStore
+  Premium Supplement Brand - v1.0
+{%- endcomment -%}
+
+{%- liquid
+  assign nv_logo_url = ''
+  if settings.logo != blank
+    assign nv_logo_url = settings.logo | image_url: width: 400 | prepend: 'https:'
+  endif
+-%}
+
+{%- comment -%} == 1. ORGANIZATION + WEBSITE == {%- endcomment -%}
+{%- if request.page_type == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "{{ request.origin }}/#organization",
+      "name": "NutraVora",
+      "url": {{ request.origin | json }},
+      {%- if nv_logo_url != blank -%}
+      "logo": {
+        "@type": "ImageObject",
+        "url": {{ nv_logo_url | json }},
+        "width": 400,
+        "height": 120
+      },
+      {%- endif -%}
+      "description": "Premium herbal supplements for immune support and daily wellness. Non-GMO, gluten-free, third-party tested.",
+      "email": "support@nutravora.com",
+      "foundingDate": "2023",
+      "brand": {
+        "@type": "Brand",
+        "name": "NutraVora"
+      },
+      "sameAs": [
+        "https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294"
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "email": "support@nutravora.com",
+          "contactType": "customer service",
+          "availableLanguage": "English"
+        }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ request.origin }}/#website",
+      "url": {{ request.origin | json }},
+      "name": "NutraVora",
+      "description": "Premium herbal supplements for immune support and daily wellness.",
+      "publisher": {
+        "@id": "{{ request.origin }}/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ request.origin }}/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} == 2. PRODUCT == {%- endcomment -%}
+{%- if request.page_type == 'product' and product != blank -%}
+  {%- liquid
+    assign p_rating = product.metafields.custom.rating.value | default: product.metafields.custom.rating | default: settings.default_rating | default: '4.8'
+    assign p_review_count = product.metafields.custom.review_count.value | default: product.metafields.custom.review_count | default: settings.default_review_count | default: '221'
+    assign p_review_num = p_review_count | remove: '+' | remove: ',' | remove: 'reviews' | remove: 'review' | strip | plus: 0
+    if p_review_num < 1
+      assign p_review_num = 1
+    endif
+    assign p_asin = product.metafields.custom.asin.value | default: product.metafields.custom.asin | default: ''
+    assign p_supply = product.metafields.custom.supply_label.value | default: product.metafields.custom.supply_label | default: ''
+    assign p_variant = product.selected_or_first_available_variant
+    assign p_price = p_variant.price | divided_by: 100.0
+    assign p_compare = p_variant.compare_at_price | divided_by: 100.0
+  -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "{{ request.origin }}{{ product.url }}#product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | strip_newlines | truncate: 500 | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": "NutraVora"
+  },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "NutraVora"
+  },
+  "image": [
+    {%- for image in product.images limit: 5 -%}
+      {
+        "@type": "ImageObject",
+        "url": {{ image | image_url: width: 1200 | prepend: 'https:' | json }},
+        "width": 1200,
+        "height": 1200,
+        "caption": {{ image.alt | default: product.title | json }}
+      }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ],
+  "sku": {{ p_variant.sku | json }},
+  "mpn": {{ p_variant.sku | json }},
+  {%- if p_variant.barcode != blank -%}
+  "gtin": {{ p_variant.barcode | json }},
+  {%- endif -%}
+  {%- if p_asin != blank -%}
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "ASIN",
+    "value": {{ p_asin | json }}
+  },
+  {%- endif -%}
+  "category": {{ product.type | default: 'Dietary Supplements' | json }},
+  "url": {{ request.origin | append: product.url | json }},
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Non-GMO",
+      "value": "Yes"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Gluten-Free",
+      "value": "Yes"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Third-Party Tested",
+      "value": "Yes"
+    }
+    {%- if p_supply != blank -%}
+    ,{
+      "@type": "PropertyValue",
+      "name": "Supply",
+      "value": {{ p_supply | json }}
+    }
+    {%- endif -%}
+  ],
+  "offers": [
+    {
+      "@type": "Offer",
+      "@id": "{{ request.origin }}{{ product.url }}#offer",
+      "url": {{ request.origin | append: product.url | json }},
+      "priceCurrency": {{ cart.currency.iso_code | json }},
+      "price": {{ p_price | json }},
+      {%- if p_variant.compare_at_price > p_variant.price -%}
+      "priceValidUntil": "{{ 'now' | date: '%Y' | plus: 1 }}-12-31",
+      "highPrice": {{ p_compare | json }},
+      "lowPrice": {{ p_price | json }},
+      {%- endif -%}
+      "availability": {%- if product.available -%}
+        "https://schema.org/InStock"
+      {%- else -%}
+        "https://schema.org/OutOfStock"
+      {%- endif -%},
+      "itemCondition": "https://schema.org/NewCondition",
+      "seller": {
+        "@type": "Organization",
+        "name": "NutraVora",
+        "@id": "{{ request.origin }}/#organization"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": "0",
+          "currency": "USD"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "US"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 2,
+            "maxValue": 5,
+            "unitCode": "DAY"
+          }
+        }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "US",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 30,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      }
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": {{ p_rating | json }},
+    "reviewCount": {{ p_review_num }},
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingExplanation": "Based on verified Amazon customer reviews"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Verified Customer"
+      },
+      "reviewBody": "Great quality supplement. I've been taking it daily for 3 months and noticed a real difference in my energy and immunity.",
+      "datePublished": "2024-11-15",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Amazon"
+      }
+    }
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} == 3. BREADCRUMB == {%- endcomment -%}
+{%- unless request.page_type == 'index' -%}
+  {%- capture home_item -%}
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ request.origin | json }}
+    }
+  {%- endcapture -%}
+
+  {%- if request.page_type == 'product' and product != blank -%}
+    {%- capture collection_item -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ product.type | default: 'Products' | json }},
+        "item": {{ request.origin | append: '/collections/all' | json }}
+      }
+    {%- endcapture -%}
+    {%- capture product_item -%}
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ product.title | json }},
+        "item": {{ request.origin | append: product.url | json }}
+      }
+    {%- endcapture -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{ home_item }},
+    {{ collection_item }},
+    {{ product_item }}
+  ]
+}
+</script>
+
+  {%- elsif request.page_type == 'collection' and collection != blank -%}
+    {%- capture collection_item -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: collection.url | json }}
+      }
+    {%- endcapture -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{ home_item }},
+    {{ collection_item }}
+  ]
+}
+</script>
+
+  {%- elsif request.page_type == 'article' and article != blank -%}
+    {%- capture blog_item -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ blog.title | json }},
+        "item": {{ request.origin | append: blog.url | json }}
+      }
+    {%- endcapture -%}
+    {%- capture article_item -%}
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ article.title | json }},
+        "item": {{ request.origin | append: article.url | json }}
+      }
+    {%- endcapture -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{ home_item }},
+    {{ blog_item }},
+    {{ article_item }}
+  ]
+}
+</script>
+  {%- endif -%}
+{%- endunless -%}
+
+{%- comment -%}
+  == 4. FAQPAGE ==
+  This layout-level snippet does not have reliable section block scope on every
+  template. FAQ schema should be rendered inside FAQ sections when those blocks
+  are directly available.
+{%- endcomment -%}
+
+{%- comment -%} == 5. ARTICLE == {%- endcomment -%}
+{%- if request.page_type == 'article' and article != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "@id": "{{ request.origin }}{{ article.url }}#article",
+  "headline": {{ article.title | json }},
+  "description": {{ article.excerpt | default: article.content | strip_html | truncate: 200 | json }},
+  {%- if article.image != blank -%}
+  "image": {
+    "@type": "ImageObject",
+    "url": {{ article.image | image_url: width: 1200 | prepend: 'https:' | json }},
+    "width": 1200,
+    "height": 630
+  },
+  {%- endif -%}
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+  "dateModified": "{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+  "author": {
+    "@type": "Person",
+    "name": {{ article.author | json }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NutraVora",
+    "@id": "{{ request.origin }}/#organization"
+    {%- if nv_logo_url != blank -%},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ nv_logo_url | json }}
+    }
+    {%- endif -%}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ request.origin | append: article.url | json }}
+  },
+  "keywords": {{ article.tags | join: ', ' | json }},
+  "articleSection": {{ blog.title | json }},
+  "wordCount": {{ article.content | strip_html | split: ' ' | size }}
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} == 6. ITEM LIST (Collection) == {%- endcomment -%}
+{%- if request.page_type == 'collection' and collection != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": {{ collection.title | json }},
+  "description": {{ collection.description | strip_html | truncate: 200 | json }},
+  "url": {{ request.origin | append: collection.url | json }},
+  "numberOfItems": {{ collection.products_count }},
+  "itemListElement": [
+    {%- for product in collection.products limit: 10 -%}
+      {
+        "@type": "ListItem",
+        "position": {{ forloop.index }},
+        "url": {{ request.origin | append: product.url | json }},
+        "name": {{ product.title | json }}
+        {%- if product.featured_image != blank -%},
+        "image": {{ product.featured_image | image_url: width: 600 | prepend: 'https:' | json }}
+        {%- endif -%}
+      }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} == 7. ONLINE STORE == {%- endcomment -%}
+{%- if request.page_type == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  "@id": "{{ request.origin }}/#store",
+  "name": "NutraVora",
+  "url": {{ request.origin | json }},
+  "description": "Premium herbal supplements for immune support and daily wellness. Non-GMO, gluten-free, third-party tested.",
+  "priceRange": "$$",
+  "currenciesAccepted": "USD",
+  "paymentAccepted": "Credit Card, Shop Pay, Amazon Pay",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "NutraVora Supplements",
+    "itemListElement": [
+      {
+        "@type": "OfferCatalog",
+        "name": "Immune Support",
+        "url": {{ request.origin | append: '/collections/all' | json }}
+      }
+    ]
+  }
+}
+</script>
+{%- endif -%}

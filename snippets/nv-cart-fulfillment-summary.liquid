@@ -1,0 +1,52 @@
+{% comment %}
+  Shared cart-level fulfillment summary for cart page and drawer.
+
+  Inputs:
+  - context: cart | drawer
+{% endcomment %}
+{%- liquid
+  assign context = context | default: 'cart'
+  assign show_fulfillment_message = true
+  assign show_delivery_confidence_message = settings.show_delivery_confidence_message
+  assign show_return_trust_microcopy = settings.show_return_trust_microcopy
+
+  if context == 'cart' and settings.show_fulfillment_message_cart != true
+    assign show_fulfillment_message = false
+  elsif context == 'drawer' and settings.show_fulfillment_message_drawer != true
+    assign show_fulfillment_message = false
+  endif
+-%}
+{%- capture cart_state -%}{% render 'nv-cart-fulfillment-state', field: 'state' %}{%- endcapture -%}
+{%- assign cart_state = cart_state | strip -%}
+
+{% if cart.item_count > 0 and show_fulfillment_message %}
+  <div class="nv-cart-fulfillment nv-cart-fulfillment--{{ context }}" data-nv-cart-state="{{ cart_state }}">
+    <div class="nv-cart-fulfillment__head">
+      {% if cart_state == 'amazon_only' %}
+        <strong>Amazon purchase path present</strong>
+        <p>Some or all items in this cart are configured for Amazon-attribution purchase flows. Review the product page CTA before expecting standard Shopify checkout behavior.</p>
+      {% elsif cart_state == 'mixed_modes' %}
+        <strong>Mixed fulfillment options</strong>
+        <p>Your cart includes products with different conversion modes. Prime-enabled or Amazon-powered fulfillment may apply to some items, while others may continue through Amazon links.</p>
+      {% elsif cart_state == 'prime_supported' %}
+        <strong>Prime-aware fulfillment support</strong>
+        <p>Selected items in this cart support Buy with Prime or Amazon-powered fulfillment messaging where enabled.</p>
+      {% else %}
+        <strong>Delivery details shown at checkout</strong>
+        <p>Shipping speed, fulfillment method, and final delivery estimates are confirmed during checkout.</p>
+      {% endif %}
+    </div>
+
+    {% if show_delivery_confidence_message or show_return_trust_microcopy %}
+      <div class="nv-cart-fulfillment__meta">
+        {% if show_delivery_confidence_message %}
+          <span>Premium support messaging only</span>
+          <span>No misleading fulfillment promises</span>
+        {% endif %}
+        {% if show_return_trust_microcopy %}
+          <span>Returns and timing depend on final checkout path</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

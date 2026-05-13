@@ -1,0 +1,56 @@
+<section class="section nv-home-philosophy">
+  <div class="container">
+    <div class="nv-home-philosophy__intro">
+      {% if section.settings.eyebrow != blank %}
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+      <h2>{{ section.settings.heading }}</h2>
+      {% if section.settings.body != blank %}
+        <div class="rte nv-home-philosophy__body">{{ section.settings.body }}</div>
+      {% endif %}
+    </div>
+
+    <div class="nv-home-philosophy__grid">
+      {% for block in section.blocks %}
+        <article class="surface-panel nv-home-philosophy__card" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title }}</h3>
+          {% if block.settings.text != blank %}
+            <p>{{ block.settings.text }}</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Home Philosophy",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why NutraVora" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Formulation discipline built for modern wellness shoppers." },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p>We prioritize clean ingredient stories, transparent positioning, and a premium brand experience that meets customers where they already trust buying online.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Transparent sourcing" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Ingredients selected for clarity, consistency, and customer confidence." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "NV Home Philosophy",
+      "blocks": [
+        { "type": "pillar", "settings": { "title": "Clean formulas", "text": "No generic dropshipping feel. Built for long-term brand trust." } },
+        { "type": "pillar", "settings": { "title": "Premium standards", "text": "Elegant positioning, quality cues, and disciplined claims." } },
+        { "type": "pillar", "settings": { "title": "Customer-first education", "text": "Helpful guidance without overclaiming or fear-based selling." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

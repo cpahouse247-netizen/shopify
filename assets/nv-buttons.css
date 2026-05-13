@@ -1,0 +1,302 @@
+/* ============================================
+   NutraVora Button System
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+/* Base Button Reset */
+.nv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nv-space-2);
+  padding: 13px 28px;
+  border: 2px solid transparent;
+  border-radius: var(--nv-radius-lg);
+  font-family: var(--nv-font-body);
+  font-size: 14px;
+  font-weight: var(--nv-weight-semibold);
+  letter-spacing: var(--nv-tracking-wide);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color var(--nv-duration-base) var(--nv-ease-default),
+    border-color var(--nv-duration-base) var(--nv-ease-default),
+    color var(--nv-duration-base) var(--nv-ease-default),
+    transform var(--nv-duration-base) var(--nv-ease-default),
+    box-shadow var(--nv-duration-base) var(--nv-ease-default);
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.nv-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background var(--nv-duration-fast) var(--nv-ease-default);
+}
+
+.nv-btn:active::after {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nv-btn--sm {
+  padding: 9px 18px;
+  font-size: 12px;
+  border-radius: var(--nv-radius-md);
+}
+
+.nv-btn--md {
+  padding: 13px 28px;
+  font-size: 14px;
+}
+
+.nv-btn--lg {
+  padding: 16px 36px;
+  font-size: 15px;
+  border-radius: var(--nv-radius-xl);
+}
+
+.nv-btn--xl {
+  padding: 18px 44px;
+  font-size: 16px;
+  border-radius: var(--nv-radius-xl);
+}
+
+.nv-btn--full {
+  width: 100%;
+}
+
+.nv-btn--primary {
+  background: var(--nv-green-primary);
+  border-color: var(--nv-green-primary);
+  color: var(--nv-white);
+}
+
+.nv-btn--primary:hover {
+  background: var(--nv-green-dark);
+  border-color: var(--nv-green-dark);
+  color: var(--nv-white);
+  transform: translateY(-2px);
+  box-shadow: var(--nv-shadow-md);
+}
+
+.nv-btn--primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.nv-btn--amazon {
+  background: var(--nv-gold-primary);
+  border-color: var(--nv-gold-primary);
+  color: var(--nv-text-primary);
+}
+
+.nv-btn--amazon:hover {
+  background: var(--nv-gold-dark);
+  border-color: var(--nv-gold-dark);
+  color: var(--nv-text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--nv-shadow-gold);
+}
+
+.nv-btn--amazon:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.nv-btn--outline {
+  background: transparent;
+  border-color: var(--nv-green-primary);
+  color: var(--nv-green-primary);
+}
+
+.nv-btn--outline:hover {
+  background: var(--nv-green-surface);
+  border-color: var(--nv-green-primary);
+  color: var(--nv-green-primary);
+  transform: translateY(-1px);
+}
+
+.nv-btn--outline-white {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.65);
+  color: var(--nv-white);
+}
+
+.nv-btn--outline-white:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--nv-white);
+  color: var(--nv-white);
+  transform: translateY(-1px);
+}
+
+.nv-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--nv-green-primary);
+  padding-left: var(--nv-space-2);
+  padding-right: var(--nv-space-2);
+}
+
+.nv-btn--ghost:hover {
+  background: var(--nv-green-surface);
+  color: var(--nv-green-dark);
+}
+
+.nv-btn--dark {
+  background: var(--nv-text-primary);
+  border-color: var(--nv-text-primary);
+  color: var(--nv-white);
+}
+
+.nv-btn--dark:hover {
+  background: #000000;
+  border-color: #000000;
+  color: var(--nv-white);
+  transform: translateY(-2px);
+  box-shadow: var(--nv-shadow-lg);
+}
+
+.nv-btn--icon {
+  padding: 10px;
+  border-radius: var(--nv-radius-md);
+  aspect-ratio: 1;
+}
+
+.nv-btn__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.nv-btn__icon--right {
+  margin-left: var(--nv-space-1);
+  transition: transform var(--nv-duration-base) var(--nv-ease-default);
+}
+
+.nv-btn:hover .nv-btn__icon--right {
+  transform: translateX(3px);
+}
+
+.nv-btn--loading {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.nv-btn--loading::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: nv-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes nv-spin {
+  to { transform: rotate(360deg); }
+}
+
+.nv-btn:disabled,
+.nv-btn--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.nv-btn-group {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-3);
+  flex-wrap: wrap;
+}
+
+.nv-btn-group--center {
+  justify-content: center;
+}
+
+.nv-btn-group--stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@media (max-width: 480px) {
+  .nv-btn-group--mobile-stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nv-btn-group--mobile-stack .nv-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.nv-btn--amazon .nv-btn__amazon-arrow {
+  display: inline-block;
+  transition: transform var(--nv-duration-base) var(--nv-ease-default);
+}
+
+.nv-btn--amazon:hover .nv-btn__amazon-arrow {
+  transform: translateX(3px);
+}
+
+.nv-btn--pulse {
+  animation: nv-pulse 2.5s var(--nv-ease-default) infinite;
+}
+
+@keyframes nv-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(49, 92, 74, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(49, 92, 74, 0);
+  }
+}
+
+.nv-btn--amazon.nv-btn--pulse {
+  animation: nv-pulse-gold 2.5s var(--nv-ease-default) infinite;
+}
+
+@keyframes nv-pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(200, 169, 107, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(200, 169, 107, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-btn {
+    transition: none;
+  }
+  .nv-btn--pulse,
+  .nv-btn--amazon.nv-btn--pulse {
+    animation: none;
+  }
+  .nv-btn__icon--right {
+    transition: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .nv-btn {
+    min-height: 48px;
+    padding: 13px 22px;
+  }
+
+  .nv-btn--sm {
+    min-height: 40px;
+    padding: 9px 16px;
+  }
+}

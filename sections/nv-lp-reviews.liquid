@@ -1,0 +1,164 @@
+{%- liquid
+  assign names = 'Beverly Morten|Critik|TheWebWalker' | split: '|'
+  assign bodies = 'One for me and one for my daughter. They work fine and I can see the difference in my system. I am glad I found out about this.|Easy to swallow. No bad aftertaste. They even smell good. Great value. Recommended.|My husband takes these daily and is very happy with them. They are tasteless and easy to digest.' | split: '|'
+  assign products = 'Oil of oregano with black seed oil|Omega3 Fish oil|Pumpkin seed oil with saw palmetto' | split: '|'
+-%}
+
+<section class="nv-lp-reviews nv-lp-section">
+  <div class="nv-lp-inner">
+    <div class="nv-lp-header">
+      <h2 class="nv-section-heading">{{ section.settings.heading }}</h2>
+      {%- if section.settings.show_aggregate -%}
+        <div class="nv-lp-reviews__aggregate">
+          <strong>{{ section.settings.aggregate_rating }} ★</strong>
+          <span>from {{ section.settings.aggregate_count }}</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="nv-lp-reviews__grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <article class="nv-lp-reviews__card" {{ block.shopify_attributes }}>
+            {%- if block.settings.show_verified -%}
+              <span class="nv-lp-reviews__verified">Verified Amazon Purchase</span>
+            {%- endif -%}
+            <h3>{{ block.settings.name }}</h3>
+            <div class="nv-lp-reviews__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+              {%- for i in (1..5) -%}<span>★</span>{%- endfor -%}
+            </div>
+            <p>{{ block.settings.body }}</p>
+            <div class="nv-lp-reviews__product">{{ block.settings.product_label }}</div>
+          </article>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for name in names -%}
+          <article class="nv-lp-reviews__card">
+            <span class="nv-lp-reviews__verified">Verified Amazon Purchase</span>
+            <h3>{{ name }}</h3>
+            <div class="nv-lp-reviews__stars" aria-label="5 out of 5 stars">
+              {%- for i in (1..5) -%}<span>★</span>{%- endfor -%}
+            </div>
+            <p>{{ bodies[forloop.index0] }}</p>
+            <div class="nv-lp-reviews__product">{{ products[forloop.index0] }}</div>
+          </article>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-lp-reviews {
+    background: var(--nv-cream-warm);
+  }
+
+  .nv-lp-reviews__aggregate {
+    display: grid;
+    gap: 4px;
+    justify-items: center;
+    margin-top: var(--nv-space-4);
+  }
+
+  .nv-lp-reviews__aggregate strong {
+    font-size: 48px;
+    line-height: 1;
+    color: var(--nv-text-primary);
+  }
+
+  .nv-lp-reviews__aggregate span {
+    font-size: 13px;
+    color: var(--nv-text-muted);
+  }
+
+  .nv-lp-reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--nv-space-5);
+  }
+
+  .nv-lp-reviews__card {
+    position: relative;
+    background: var(--nv-white);
+    border: 1px solid var(--nv-border-light);
+    border-left: 3px solid var(--nv-green-primary);
+    border-radius: var(--nv-radius-xl);
+    box-shadow: var(--nv-shadow-sm);
+    padding: var(--nv-space-6);
+  }
+
+  .nv-lp-reviews__verified {
+    display: inline-flex;
+    padding: 3px 8px;
+    background: var(--nv-green-surface);
+    border: 1px solid var(--nv-border-light);
+    border-radius: var(--nv-radius-full);
+    color: var(--nv-green-primary);
+    font-size: 10px;
+    font-weight: var(--nv-weight-semibold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--nv-space-4);
+  }
+
+  .nv-lp-reviews__card h3 {
+    margin: 0 0 var(--nv-space-2);
+    font-size: var(--nv-text-lg);
+    color: var(--nv-green-dark);
+  }
+
+  .nv-lp-reviews__stars {
+    color: var(--nv-gold-primary);
+    letter-spacing: 2px;
+    margin-bottom: var(--nv-space-4);
+  }
+
+  .nv-lp-reviews__card p {
+    color: var(--nv-text-secondary);
+    line-height: var(--nv-leading-relaxed);
+    margin: 0 0 var(--nv-space-5);
+  }
+
+  .nv-lp-reviews__product {
+    padding-top: var(--nv-space-4);
+    border-top: 1px solid var(--nv-border-light);
+    color: var(--nv-green-primary);
+    font-weight: var(--nv-weight-semibold);
+    font-size: var(--nv-text-sm);
+  }
+
+  @media (max-width: 768px) {
+    .nv-lp-reviews__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP Reviews",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What Customers Are Saying" },
+    { "type": "checkbox", "id": "show_aggregate", "label": "Show aggregate", "default": true },
+    { "type": "text", "id": "aggregate_rating", "label": "Aggregate rating", "default": "4.8" },
+    { "type": "text", "id": "aggregate_count", "label": "Aggregate count", "default": "1,000+ Amazon reviews" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Beverly Morten" },
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "body", "label": "Review", "default": "Easy to swallow. Great value. Recommended." },
+        { "type": "text", "id": "product_label", "label": "Product label", "default": "Oil of oregano with black seed oil" },
+        { "type": "checkbox", "id": "show_verified", "label": "Show verified", "default": true }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    { "name": "LP Reviews" }
+  ]
+}
+{% endschema %}

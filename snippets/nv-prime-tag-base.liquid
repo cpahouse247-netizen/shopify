@@ -1,0 +1,85 @@
+{% comment %}
+  Internal shared renderer for NutraVora Prime checkmark / delivery tags.
+
+  Inputs:
+  - product: Product object
+  - variant: Variant object
+  - context: pdp | card | cart | drawer
+  - class: optional wrapper class
+  - fallback_label: optional fallback label
+{% endcomment %}
+{%- liquid
+  assign wrapper_class = class | default: 'nv-prime-tag'
+  assign context = context | default: 'generic'
+  assign render_tag = true
+  assign prime_enabled = false
+
+  assign variant_id = blank
+  if variant != blank
+    assign variant_id = variant.id
+  elsif product and product.selected_or_first_available_variant
+    assign variant_id = product.selected_or_first_available_variant.id
+  endif
+
+  if product
+    assign product_prime_enabled = product.metafields.custom.buy_with_prime_enabled.value | default: product.metafields.custom.buy_with_prime_enabled
+    if product_prime_enabled == true or product_prime_enabled == 'true'
+      assign prime_enabled = true
+    endif
+  endif
+
+  if variant
+    assign variant_prime_enabled = variant.metafields.custom.buy_with_prime_enabled.value | default: variant.metafields.custom.buy_with_prime_enabled
+    if variant_prime_enabled == true or variant_prime_enabled == 'true'
+      assign prime_enabled = true
+    endif
+  endif
+
+  assign fallback_label = fallback_label
+  if fallback_label == blank
+    if context == 'pdp'
+      assign fallback_label = 'Prime delivery and date shown at checkout'
+    elsif context == 'card'
+      assign fallback_label = 'Prime delivery eligible'
+    elsif context == 'cart'
+      assign fallback_label = 'Prime delivery details update at checkout'
+    elsif context == 'drawer'
+      assign fallback_label = 'Prime delivery shown in drawer when available'
+    else
+      assign fallback_label = 'Prime delivery available'
+    endif
+  endif
+
+  if context == 'pdp' and settings.show_prime_badge_pdp != true
+    assign render_tag = false
+  elsif context == 'card' and settings.show_prime_badge_cards != true
+    assign render_tag = false
+  elsif context == 'cart' and settings.show_prime_badge_cart != true
+    assign render_tag = false
+  elsif context == 'drawer' and settings.show_prime_badge_drawer != true
+    assign render_tag = false
+  endif
+
+  unless prime_enabled
+    assign render_tag = false
+  endunless
+-%}
+
+{%- if render_tag -%}
+<div
+  class="{{ wrapper_class }}"
+  data-nv-prime-tag
+  data-nv-prime-context="{{ context }}"
+  data-product-id="{% if product %}{{ product.id }}{% endif %}"
+  data-variant-id="{{ variant_id }}"
+>
+  {% comment %}
+    Paste the Amazon merchant-console Prime checkmark / delivery date snippet
+    inside this container.
+
+    Keep the pasted merchant snippet scoped to this wrapper so future updates
+    can happen in one dedicated file per context instead of many sections.
+  {% endcomment %}
+  <span class="nv-prime-tag__fallback">{{ fallback_label }}</span>
+</div>
+{%- endif -%}

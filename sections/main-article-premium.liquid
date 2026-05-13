@@ -1,0 +1,1106 @@
+{%- liquid
+  assign article_image = article.image
+  assign read_time_words = article.content | strip_html | split: ' ' | size
+  assign read_time_minutes = read_time_words | divided_by: 180
+  if read_time_minutes < 1
+    assign read_time_minutes = 1
+  endif
+-%}
+
+<section
+  class="nv-article-premium section-{{ section.id }}"
+  style="
+    --nv-article-bg: {{ section.settings.background_color }};
+    --nv-article-surface: {{ section.settings.surface_color }};
+    --nv-article-border: {{ section.settings.border_color }};
+    --nv-article-accent: {{ section.settings.accent_color }};
+    --nv-article-text: {{ section.settings.text_color }};
+    --nv-article-muted: {{ section.settings.muted_text_color }};
+    --nv-article-hero-padding-top: {{ section.settings.hero_padding_top }}px;
+    --nv-article-hero-padding-bottom: {{ section.settings.hero_padding_bottom }}px;
+    --nv-article-title-size: {{ section.settings.title_font_size }}px;
+    --nv-article-title-mobile-size: {{ section.settings.title_mobile_font_size }}px;
+    --nv-article-meta-size: {{ section.settings.meta_font_size }}px;
+    --nv-article-body-size: {{ section.settings.body_font_size }}px;
+    --nv-article-body-mobile-size: {{ section.settings.body_mobile_font_size }}px;
+    --nv-article-heading-size: {{ section.settings.content_heading_font_size }}px;
+    --nv-article-image-radius: {{ section.settings.featured_image_radius }}px;
+    --nv-article-image-max-width: {{ section.settings.featured_image_max_width }}px;
+    --nv-article-content-width: {{ section.settings.content_max_width }}px;
+  "
+>
+  <div class="nv-article-premium__container page-width">
+    {% if section.settings.show_breadcrumbs %}
+      <nav class="nv-article-premium__breadcrumbs" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ blog.url }}">{{ blog.title }}</a>
+        <span aria-hidden="true">/</span>
+        <span>{{ article.title }}</span>
+      </nav>
+    {% endif %}
+
+    <div class="nv-article-premium__hero">
+      <div class="nv-article-premium__hero-inner">
+        {% if section.settings.eyebrow != blank or section.settings.show_blog_name %}
+          <div class="nv-article-premium__eyebrow-row">
+            {% if section.settings.eyebrow != blank %}
+              <p class="nv-article-premium__eyebrow">{{ section.settings.eyebrow }}</p>
+            {% endif %}
+
+            {% if section.settings.show_blog_name and blog.title != blank %}
+              <p class="nv-article-premium__blog">{{ blog.title }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <h1 class="nv-article-premium__title">{{ article.title }}</h1>
+
+        <div class="nv-article-premium__meta">
+          {% if section.settings.show_author and article.author != blank %}
+            <span class="nv-article-premium__meta-item">{{ article.author }}</span>
+          {% endif %}
+
+          {% if section.settings.show_date %}
+            <span class="nv-article-premium__meta-item">{{ article.published_at | date: "%b %d, %Y" }}</span>
+          {% endif %}
+
+          <span class="nv-article-premium__meta-item">{{ read_time_minutes }} min read</span>
+        </div>
+
+        {% if section.settings.show_tags and article.tags.size > 0 %}
+          <div class="nv-article-premium__tags">
+            {% for tag in article.tags limit: 4 %}
+              <span class="nv-article-premium__tag">{{ tag }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_featured_image and article_image != blank %}
+        <div class="nv-article-premium__featured-media">
+          {{ article_image | image_url: width: 1800 | image_tag:
+            class: 'nv-article-premium__featured-image',
+            loading: 'eager',
+            widths: '550, 750, 1100, 1500, 1800',
+            sizes: '(min-width: 1200px) 1100px, 100vw',
+            alt: article.title
+          }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="nv-article-premium__content-wrap">
+      <article class="nv-article-premium__article rte" itemscope itemtype="http://schema.org/BlogPosting">
+        <div itemprop="articleBody">
+          {{ article.content }}
+        </div>
+      </article>
+
+      {% if section.settings.show_share %}
+        <aside class="nv-article-premium__sidebar">
+          <div class="nv-article-premium__share-card">
+            <p class="nv-article-premium__share-label">Share this article</p>
+
+            <div class="nv-article-premium__share-links">
+              <a
+                class="nv-article-premium__share-link"
+                href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ article.url }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="Share on Facebook"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 4V10H8.5v3h2.4v8h2.6Z"/></svg>
+              </a>
+
+              <a
+                class="nv-article-premium__share-link"
+                href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ article.url }}&text={{ article.title | url_encode }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="Share on X"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-6.8 7.8L23 22h-6.1l-4.8-6.3L6.6 22H3.5l7.3-8.3L1 2h6.3l4.4 5.8L18.9 2Zm-1.1 18h1.7L6.4 3.9H4.6L17.8 20Z"/></svg>
+              </a>
+
+              <a
+                class="nv-article-premium__share-link"
+                href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ article.url }}&description={{ article.title | url_encode }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="Share on Pinterest"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.6 19.3c0-.8 0-2 .2-2.9l1.4-5.8s-.3-.7-.3-1.8c0-1.7 1-2.9 2.2-2.9 1 0 1.5.8 1.5 1.7 0 1-.7 2.6-1.1 4-.3 1.2.6 2.2 1.8 2.2 2.2 0 3.7-2.9 3.7-6.3 0-2.6-1.8-4.6-5.1-4.6-3.7 0-6.1 2.7-6.1 5.7 0 1 .3 1.8.8 2.4.2.2.2.3.1.6l-.3 1.2c-.1.4-.3.5-.7.4-1.9-.8-2.8-2.8-2.8-5 0-3.7 3.1-8.2 9.4-8.2 5 0 8.3 3.6 8.3 7.4 0 5.1-2.8 8.9-6.8 8.9-1.4 0-2.7-.8-3.1-1.7l-.8 3.1c-.3 1.1-.8 2.1-1.3 2.9.9.3 1.8.4 2.8.4A10 10 0 0 0 12 2Z"/></svg>
+              </a>
+
+              <a
+                class="nv-article-premium__share-link"
+                href="mailto:?subject={{ article.title | escape }}&body={{ shop.url }}{{ article.url }}"
+                aria-label="Share by email"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm-.4 2L12 12.3 4.4 7h15.2ZM4 17V9.2l7.4 5.1a1 1 0 0 0 1.2 0L20 9.2V17H4Z"/></svg>
+              </a>
+            </div>
+          </div>
+        </aside>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_bottom_cta %}
+      <div class="nv-article-premium__bottom-cta">
+        <div class="nv-article-premium__bottom-cta-content">
+          <h2 class="nv-article-premium__bottom-cta-title">{{ section.settings.bottom_cta_heading }}</h2>
+          {% if section.settings.bottom_cta_text != blank %}
+            <p class="nv-article-premium__bottom-cta-text">{{ section.settings.bottom_cta_text }}</p>
+          {% endif %}
+        </div>
+
+        {% if section.settings.bottom_cta_button_label != blank and section.settings.bottom_cta_button_link != blank %}
+          <a class="nv-article-premium__bottom-cta-button" href="{{ section.settings.bottom_cta_button_link }}">
+            {{ section.settings.bottom_cta_button_label }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_related_articles and blog.articles_count > 1 %}
+      <div class="nv-article-premium__related">
+        <div class="nv-article-premium__related-head">
+          <h2 class="nv-article-premium__related-title">{{ section.settings.related_heading }}</h2>
+        </div>
+
+        <div class="nv-article-premium__related-grid">
+          {% assign shown = 0 %}
+          {% for related_article in blog.articles %}
+            {% if related_article.id != article.id and shown < 3 %}
+              <article class="nv-article-premium__related-card">
+                <a class="nv-article-premium__related-image-link" href="{{ related_article.url }}">
+                  {% if related_article.image != blank %}
+                    {{ related_article.image | image_url: width: 900 | image_tag:
+                      class: 'nv-article-premium__related-image',
+                      loading: 'lazy',
+                      widths: '320, 550, 750, 900',
+                      sizes: '(min-width: 990px) 30vw, 100vw',
+                      alt: related_article.title
+                    }}
+                  {% endif %}
+                </a>
+
+                <div class="nv-article-premium__related-body">
+                  <p class="nv-article-premium__related-meta">{{ related_article.published_at | date: "%b %d, %Y" }}</p>
+                  <h3 class="nv-article-premium__related-card-title">
+                    <a href="{{ related_article.url }}">{{ related_article.title }}</a>
+                  </h3>
+                  <p class="nv-article-premium__related-excerpt">
+                    {{ related_article.excerpt_or_content | strip_html | truncate: 120 }}
+                  </p>
+                  <a class="nv-article-premium__related-link" href="{{ related_article.url }}">Continue reading</a>
+                </div>
+              </article>
+              {% assign shown = shown | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .nv-article-premium {
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--nv-article-accent, #C9A24A) 12%, transparent), transparent 28%),
+      radial-gradient(circle at 88% 10%, rgba(49, 92, 74, 0.08), transparent 30%),
+      linear-gradient(180deg, var(--nv-article-bg, #FAF8F3) 0%, #f6f2ea 100%);
+    color: var(--nv-article-text, #1f2a24);
+    padding: var(--nv-article-hero-padding-top, 44px) 0 72px;
+  }
+
+  .nv-article-premium .page-width {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 4vw, 28px);
+  }
+
+  .nv-article-premium__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 1120px;
+    margin: 0 auto 22px;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 78%, transparent);
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nv-article-premium__breadcrumbs a {
+    color: #315c4a;
+    text-decoration: none;
+  }
+
+  .nv-article-premium__breadcrumbs span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nv-article-premium__hero {
+    margin-bottom: var(--nv-article-hero-padding-bottom, 40px);
+    padding: clamp(28px, 4vw, 54px) 18px clamp(22px, 3vw, 38px);
+    border-bottom: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 76%, transparent);
+  }
+
+  .nv-article-premium__hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 18px;
+  }
+
+  .nv-article-premium__eyebrow-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .nv-article-premium__eyebrow,
+  .nv-article-premium__blog {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 82%, transparent);
+    font-weight: 600;
+  }
+
+  .nv-article-premium__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 13px;
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 84%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 74%, transparent);
+    color: #315c4a;
+  }
+
+  .nv-article-premium__title {
+    margin: 0;
+    font-size: clamp(34px, 3.8vw, var(--nv-article-title-size, 50px));
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    color: var(--nv-article-text, #1a231f);
+    text-wrap: balance;
+  }
+
+  .nv-article-premium__meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-top: 14px;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 86%, transparent);
+    font-size: var(--nv-article-meta-size, 14px);
+    line-height: 1.6;
+  }
+
+  .nv-article-premium__meta-item {
+    position: relative;
+  }
+
+  .nv-article-premium__meta-item:not(:last-child)::after {
+    content: "•";
+    position: absolute;
+    right: -11px;
+    color: rgba(31, 42, 36, 0.35);
+  }
+
+  .nv-article-premium__tags {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .nv-article-premium__tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 82%, transparent);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 78%, transparent);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--nv-article-text, #233029);
+  }
+
+  .nv-article-premium__featured-media {
+    max-width: min(var(--nv-article-image-max-width, 960px), 100%);
+    margin: 32px auto 0;
+    border-radius: var(--nv-article-image-radius, 30px);
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 78%, transparent);
+    box-shadow: 0 18px 46px rgba(31, 42, 36, 0.07);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 76%, transparent);
+  }
+
+  .nv-article-premium__featured-image {
+    width: 100%;
+    height: auto;
+    max-height: 460px;
+    display: block;
+    object-fit: cover;
+  }
+
+  .nv-article-premium__content-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 80px;
+    gap: 30px;
+    align-items: start;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .nv-article-premium__article {
+    max-width: var(--nv-article-content-width, 780px);
+    width: 100%;
+    margin: 0 auto;
+    font-size: var(--nv-article-body-size, 16px);
+    line-height: 1.86;
+    color: var(--nv-article-text, #26312b);
+  }
+
+  .nv-article-premium__article > *:first-child,
+  .nv-article-premium__article div[itemprop="articleBody"] > *:first-child {
+    margin-top: 0;
+  }
+
+  .nv-article-premium__article h1,
+  .nv-article-premium__article h2,
+  .nv-article-premium__article h3,
+  .nv-article-premium__article h4 {
+    color: var(--nv-article-text, #1b241f);
+    letter-spacing: -0.03em;
+    line-height: 1.18;
+    font-weight: 600;
+  }
+
+  .nv-article-premium__article h2 {
+    margin-top: 38px;
+    margin-bottom: 14px;
+    font-size: var(--nv-article-heading-size, 30px);
+  }
+
+  .nv-article-premium__article h3 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: max(20px, calc(var(--nv-article-heading-size, 30px) - 8px));
+  }
+
+  .nv-article-premium__article p {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .nv-article-premium__article ul,
+  .nv-article-premium__article ol {
+    margin: 0 0 22px;
+    padding-left: 24px;
+  }
+
+  .nv-article-premium__article li {
+    margin-bottom: 8px;
+  }
+
+  .nv-article-premium__article a {
+    color: #184d3b;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(24, 77, 59, 0.25);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .nv-article-premium__article a:hover {
+    color: #123d2e;
+    border-bottom-color: rgba(18, 61, 46, 0.5);
+  }
+
+  .nv-article-premium__article blockquote {
+    margin: 28px 0;
+    padding: 18px 22px;
+    border-left: 3px solid var(--nv-article-accent, #c9a24a);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 68%, transparent);
+    border-radius: 0 18px 18px 0;
+    color: #203029;
+  }
+
+  .nv-article-premium__article img {
+    margin: 20px 0 26px;
+    border-radius: 22px;
+    overflow: hidden;
+    width: 100%;
+    height: auto;
+    box-shadow: 0 10px 26px rgba(31, 42, 36, 0.05);
+  }
+
+  .nv-article-premium__sidebar {
+    position: sticky;
+    top: 110px;
+  }
+
+  .nv-article-premium__share-card {
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 82%, transparent);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 78%, transparent);
+    border-radius: 22px;
+    box-shadow: 0 10px 28px rgba(31, 42, 36, 0.04);
+    padding: 18px 14px;
+    text-align: center;
+  }
+
+  .nv-article-premium__share-label {
+    margin: 0 0 12px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 78%, transparent);
+    font-weight: 600;
+  }
+
+  .nv-article-premium__share-links {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+  }
+
+  .nv-article-premium__share-link {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 86%, transparent);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 88%, transparent);
+    color: var(--nv-article-text, #1f2a24);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+
+  .nv-article-premium__share-link:hover {
+    transform: translateY(-1px);
+    background: #184d3b;
+    color: #fff;
+  }
+
+  .nv-article-premium__share-link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .nv-article-premium__bottom-cta {
+    max-width: 980px;
+    margin: 40px auto 0;
+    padding: 26px 28px;
+    border-radius: 28px;
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 82%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 78%, transparent) 0%, rgba(255,255,255,0.55) 100%);
+    box-shadow: 0 10px 30px rgba(31, 42, 36, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .nv-article-premium__bottom-cta-title {
+    margin: 0 0 6px;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--nv-article-text, #1d2722);
+  }
+
+  .nv-article-premium__bottom-cta-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.75;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-article-premium__bottom-cta-button,
+  .nv-article-premium__related-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: #184d3b;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nv-article-premium__bottom-cta-button:hover,
+  .nv-article-premium__related-link:hover {
+    background: #123d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(24, 77, 59, 0.16);
+  }
+
+  .nv-article-premium__related {
+    max-width: 1120px;
+    margin: 58px auto 0;
+  }
+
+  .nv-article-premium__related-head {
+    margin-bottom: 22px;
+    text-align: center;
+  }
+
+  .nv-article-premium__related-title {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--nv-article-text, #1d2722);
+  }
+
+  .nv-article-premium__related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .nv-article-premium__related-card {
+    border: 1px solid color-mix(in srgb, var(--nv-article-border, #D9DED8) 82%, transparent);
+    background: color-mix(in srgb, var(--nv-article-surface, #FFFFFF) 82%, transparent);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(31, 42, 36, 0.04);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nv-article-premium__related-image-link {
+    display: block;
+    aspect-ratio: 1.4 / 1;
+    overflow: hidden;
+    background: rgba(31, 42, 36, 0.03);
+  }
+
+  .nv-article-premium__related-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .nv-article-premium__related-body {
+    padding: 18px;
+  }
+
+  .nv-article-premium__related-meta {
+    margin: 0 0 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 78%, transparent);
+  }
+
+  .nv-article-premium__related-card-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    line-height: 1.24;
+    letter-spacing: -0.02em;
+    color: var(--nv-article-text, #1d2722);
+  }
+
+  .nv-article-premium__related-card-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .nv-article-premium__related-excerpt {
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: color-mix(in srgb, var(--nv-article-muted, #5F6B64) 86%, transparent);
+  }
+
+  @media screen and (max-width: 1100px) {
+    .nv-article-premium {
+      padding-top: clamp(28px, 4vw, var(--nv-article-hero-padding-top, 44px));
+    }
+
+    .nv-article-premium .page-width {
+      padding-inline: clamp(20px, 3vw, 28px);
+    }
+
+    .nv-article-premium__breadcrumbs {
+      max-width: 880px;
+      margin-bottom: 18px;
+    }
+
+    .nv-article-premium__hero {
+      padding: clamp(28px, 4vw, 40px) 0 30px;
+      margin-bottom: 34px;
+    }
+
+    .nv-article-premium__hero-inner {
+      max-width: 780px;
+      padding-inline: 0;
+    }
+
+    .nv-article-premium__title {
+      font-size: clamp(38px, 4.2vw, 46px);
+      line-height: 1.08;
+    }
+
+    .nv-article-premium__tags {
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .nv-article-premium__tag {
+      min-height: 30px;
+      padding-inline: 12px;
+      font-size: 11px;
+    }
+
+    .nv-article-premium__content-wrap {
+      grid-template-columns: 1fr;
+      max-width: 820px;
+      gap: 26px;
+    }
+
+    .nv-article-premium__article {
+      max-width: min(var(--nv-article-content-width, 780px), 100%);
+      font-size: max(15px, calc(var(--nv-article-body-size, 16px) - 1px));
+      line-height: 1.82;
+    }
+
+    .nv-article-premium__sidebar {
+      position: static;
+      width: 100%;
+      max-width: min(var(--nv-article-content-width, 780px), 100%);
+      margin: 0 auto;
+    }
+
+    .nv-article-premium__share-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    .nv-article-premium__share-label {
+      margin: 0;
+    }
+
+    .nv-article-premium__share-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nv-article-premium__share-link {
+      width: 38px;
+      height: 38px;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .nv-article-premium__content-wrap {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+
+    .nv-article-premium__sidebar {
+      position: static;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .nv-article-premium__share-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      text-align: left;
+      padding: 16px 18px;
+    }
+
+    .nv-article-premium__share-label {
+      margin: 0;
+    }
+
+    .nv-article-premium__share-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nv-article-premium__bottom-cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .nv-article-premium__related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .nv-article-premium {
+      padding: 18px 0 52px;
+    }
+
+    .nv-article-premium .page-width {
+      padding-inline: 17px;
+    }
+
+    .nv-article-premium__breadcrumbs {
+      margin-bottom: 14px;
+      font-size: 11px;
+      gap: 8px;
+    }
+
+    .nv-article-premium__hero {
+      padding: 18px 0 24px;
+      margin-bottom: 28px;
+    }
+
+    .nv-article-premium__hero-inner {
+      text-align: left;
+      padding: 0;
+    }
+
+    .nv-article-premium__eyebrow-row,
+    .nv-article-premium__meta,
+    .nv-article-premium__tags {
+      justify-content: flex-start;
+    }
+
+    .nv-article-premium__tags {
+      gap: 8px;
+    }
+
+    .nv-article-premium__tag {
+      min-height: 30px;
+      padding: 0 11px;
+      font-size: 11px;
+    }
+
+    .nv-article-premium__featured-media,
+    .nv-article-premium__bottom-cta,
+    .nv-article-premium__related-card {
+      border-radius: 22px;
+    }
+
+    .nv-article-premium__article {
+      font-size: var(--nv-article-body-mobile-size, 15px);
+      line-height: 1.82;
+    }
+
+    .nv-article-premium__title {
+      width: 100%;
+      max-width: none;
+      font-size: clamp(27px, 7vw, var(--nv-article-title-mobile-size, 32px));
+      line-height: 1.12;
+      letter-spacing: -0.018em;
+    }
+
+    .nv-article-premium__article h2 {
+      font-size: 24px;
+      margin-top: 34px;
+    }
+
+    .nv-article-premium__article h3 {
+      font-size: 20px;
+    }
+
+    .nv-article-premium__bottom-cta-title,
+    .nv-article-premium__related-title {
+      font-size: 24px;
+    }
+
+    .nv-article-premium__bottom-cta-button,
+    .nv-article-premium__related-link {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Main article premium",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Wellness Guide"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_name",
+      "label": "Show blog name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show featured image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "Show share card",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Premium style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Page background",
+      "default": "#FAF8F3"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Surface color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#C9A24A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1F2A24"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#5F6B64"
+    },
+    {
+      "type": "header",
+      "content": "Responsive typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Desktop title size",
+      "min": 40,
+      "max": 68,
+      "step": 1,
+      "default": 52,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_mobile_font_size",
+      "label": "Mobile title size",
+      "min": 30,
+      "max": 46,
+      "step": 1,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "meta_font_size",
+      "label": "Meta text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Article body size",
+      "min": 15,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_mobile_font_size",
+      "label": "Mobile body size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_heading_font_size",
+      "label": "Content heading size",
+      "min": 24,
+      "max": 40,
+      "step": 1,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Layout controls"
+    },
+    {
+      "type": "range",
+      "id": "hero_padding_top",
+      "label": "Hero top spacing",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_padding_bottom",
+      "label": "Hero bottom spacing",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "featured_image_radius",
+      "label": "Featured image corner radius",
+      "min": 14,
+      "max": 42,
+      "step": 2,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "featured_image_max_width",
+      "label": "Featured image max width",
+      "min": 900,
+      "max": 1320,
+      "step": 20,
+      "default": 1120,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Article content max width",
+      "min": 640,
+      "max": 900,
+      "step": 20,
+      "default": 760,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_articles",
+      "label": "Show related articles",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Related articles heading",
+      "default": "More from NutraVora"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_cta",
+      "label": "Show bottom CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_heading",
+      "label": "Bottom CTA heading",
+      "default": "Explore NutraVora formulas"
+    },
+    {
+      "type": "textarea",
+      "id": "bottom_cta_text",
+      "label": "Bottom CTA text",
+      "default": "Pair education with premium daily wellness support from the NutraVora collection."
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_button_label",
+      "label": "Bottom CTA button label",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "bottom_cta_button_link",
+      "label": "Bottom CTA button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main article premium"
+    }
+  ]
+}
+{% endschema %}

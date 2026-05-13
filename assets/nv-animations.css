@@ -1,0 +1,86 @@
+/* ============================================
+   NutraVora Scroll Animations
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+@keyframes nv-fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nv-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nv-fade-left {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nv-fade-right {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nv-scale-up {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes nv-slide-up {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+[data-nv-animate] {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+[data-nv-animate].nv-animated {
+  animation-fill-mode: both;
+  animation-timing-function: var(--nv-ease-default);
+  animation-duration: var(--nv-duration-slower);
+}
+
+[data-nv-animate="fade-up"].nv-animated {
+  animation-name: nv-fade-up;
+}
+
+[data-nv-animate="fade-in"].nv-animated {
+  animation-name: nv-fade-in;
+}
+
+[data-nv-animate="fade-left"].nv-animated {
+  animation-name: nv-fade-left;
+}
+
+[data-nv-animate="fade-right"].nv-animated {
+  animation-name: nv-fade-right;
+}
+
+[data-nv-animate="scale-up"].nv-animated {
+  animation-name: nv-scale-up;
+}
+
+[data-nv-animate="slide-up"].nv-animated {
+  animation-name: nv-slide-up;
+}
+
+[data-nv-delay="100"].nv-animated { animation-delay: 0.10s; }
+[data-nv-delay="200"].nv-animated { animation-delay: 0.20s; }
+[data-nv-delay="300"].nv-animated { animation-delay: 0.30s; }
+[data-nv-delay="400"].nv-animated { animation-delay: 0.40s; }
+[data-nv-delay="500"].nv-animated { animation-delay: 0.50s; }
+[data-nv-delay="600"].nv-animated { animation-delay: 0.60s; }
+[data-nv-delay="700"].nv-animated { animation-delay: 0.70s; }
+[data-nv-delay="800"].nv-animated { animation-delay: 0.80s; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-nv-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

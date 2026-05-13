@@ -1,0 +1,17 @@
+{% comment %}
+  Reusable disclosure for Amazon / external checkout contexts.
+
+  Inputs:
+  - text: optional disclosure text override
+  - class: optional wrapper class
+{% endcomment %}
+{%- liquid
+  assign disclosure_text = text | default: settings.amazon_disclosure_text
+  assign wrapper_class = class | default: 'nv-external-disclosure'
+-%}
+
+{%- if disclosure_text != blank -%}
+  <p class="{{ wrapper_class }}" data-nv-external-disclosure>
+    {{ disclosure_text }}
+  </p>
+{%- endif -%}

@@ -1,0 +1,165 @@
+{% comment %}
+Layout: Theme
+Description: NutraVora premium scaffold with brand variables and performance-friendly includes.
+{% endcomment %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" class="nv-fonts-loading">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <style>
+      /* NutraVora Critical Inline CSS */
+      :root {
+        --nv-green-dark: #1f3a2f;
+        --nv-cream-warm: #faf8f2;
+        --nv-white: #ffffff;
+      }
+      body {
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+      }
+      img { max-width: 100%; height: auto; }
+      *, *::before, *::after { box-sizing: border-box; }
+    </style>
+    {{ 'nv-critical.css' | asset_url | stylesheet_tag }}
+    <!-- NutraVora Meta System -->
+    {% render 'nv-meta-tags' %}
+    {%- if request.page_type == 'product' -%}
+      {% render 'nv-meta-product' %}
+    {%- endif -%}
+    <meta name="application-name" content="NutraVora">
+    <meta name="apple-mobile-web-app-title" content="NutraVora">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    {% render 'nv-gtag' %}
+    {% render 'nv-search-console' %}
+    {%- if settings.google_tag_manager_id != blank -%}
+      <!-- Google Tag Manager -->
+      <script>
+        (function(w,d,s,l,i){
+          w[l]=w[l]||[];
+          w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+          var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),
+              dl=l!='dataLayer'?'&l='+l:'';
+          j.async=true;
+          j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+          f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','{{ settings.google_tag_manager_id }}');
+      </script>
+      <!-- End Google Tag Manager -->
+    {%- endif -%}
+    {% render 'nv-maas-config' %}
+    {%- if request.page_type == 'index' -%}
+      {%- assign hero_img = settings.hero_image | default: '' -%}
+      {%- if hero_img != '' -%}
+        <link rel="preload" as="image" href="{{ hero_img | image_url: width: 1440 }}" fetchpriority="high">
+      {%- endif -%}
+    {%- endif -%}
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdn.shopify.com">
+    <link rel="dns-prefetch" href="//www.amazon.com">
+
+    <!-- Preconnect for critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://www.amazon.com">
+    {{ 'nv-tokens.css' | asset_url | stylesheet_tag }}
+    <!-- NutraVora Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    {{ 'nv-typography.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-global-overrides.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-buttons.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-how-it-works.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-quality-timeline.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-footer.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-mobile.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-animations.css' | asset_url | stylesheet_tag }}
+    {{ 'nv-product-card.css' | asset_url | stylesheet_tag }}
+    {%- if request.page_type == 'product' -%}
+      {{ 'nv-bundle.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    {%- if request.page_type == 'page' and page.template_suffix == 'landing' -%}
+      {{ 'nv-landing-page.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {%- if request.page_type == 'index' -%}
+      {{ 'nv-home-polish.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    {{ content_for_header }}
+    <style>
+      :root{
+        --color-primary: {{ settings.colors_primary | default: '#315C4A' }};
+        --color-accent: {{ settings.colors_accent | default: '#1F3A2F' }};
+        --color-bg: {{ settings.colors_bg | default: '#FFFFFF' }};
+        --color-surface: {{ settings.colors_surface | default: '#F7F4EE' }};
+        --color-text: {{ settings.colors_text | default: '#181A17' }};
+        --radius-base: {{ settings.radius_base | default: '16px' }};
+        --container: {{ settings.container_width | default: '1200px' }};
+        --font-body-family: var(--nv-font-body);
+        --font-heading-family: var(--nv-font-heading);
+      }
+      .brand-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--color-surface)}
+    </style>
+    {% render 'nv-structured-data' %}
+    {%- if request.page_type == 'product' -%}
+      {% render 'nv-schema-product-reviews', product: product %}
+    {%- endif -%}
+
+  </head>
+  <body class="template-{{ template.name | handle }}{% if request.page_type == 'page' and page.template_suffix == 'landing' %} nv-landing-page{% endif %}">
+    {%- if settings.google_tag_manager_id != blank -%}
+      <!-- Google Tag Manager (noscript) -->
+      <noscript>
+        <iframe
+          src="https://www.googletagmanager.com/ns.html?id={{ settings.google_tag_manager_id }}"
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    {%- endif -%}
+    <script>
+      document.documentElement.classList.add('nv-fonts-loading');
+      if (document.fonts) {
+        document.fonts.ready.then(function() {
+          document.documentElement.classList.remove('nv-fonts-loading');
+          document.documentElement.classList.add('nv-fonts-loaded');
+        });
+      }
+    </script>
+    {% if settings.announcement_enabled %}
+      {% section 'custom-announcement-bar' %}
+    {% endif %}
+
+    {% section 'header' %}
+    <main id="MainContent" role="main" tabindex="-1">{{ content_for_layout }}</main>
+    {% section 'custom-footer' %}
+    {% section 'nv-footer' %}
+    {% render 'nv-cart-drawer' %}
+    <script src="{{ 'nv-performance.js' | asset_url }}" defer></script>
+    <script src="{{ 'nv-mobile.js' | asset_url }}" defer></script>
+    <script src="{{ 'nv-analytics.js' | asset_url }}" defer></script>
+    <script src="{{ 'nv-maas.js' | asset_url }}" defer></script>
+    {% if template.name == 'product' %}
+      <link rel="stylesheet" href="https://areviewsapp.com/css/reviews_online.css">
+      <script src="https://areviewsapp.com/js/jquery_2.2.4.min.js" defer></script>
+      <script src="https://areviewsapp.com/js_codes/areviews_main_jscodes.js" defer></script>
+      <script src="https://areviewsapp.com/js_codes/areviews_app.js" defer></script>
+    {% endif %}
+    {% if template.name == 'product' or template.name == 'collection' or template.name == 'search' or template.name == 'index' %}
+      <script src="https://areviewsapp.com/js_codes/collection_rating.js" defer></script>
+    {% endif %}
+    <script src="{{ 'nv-animations.js' | asset_url }}" defer></script>
+    {%- if request.page_type == 'product' -%}
+      <script src="{{ 'nv-metafields.js' | asset_url }}" defer></script>
+    {%- endif -%}
+
+  </body>
+</html>

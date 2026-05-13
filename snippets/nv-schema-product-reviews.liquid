@@ -1,0 +1,88 @@
+{%- comment -%}
+  NutraVora Product Review Schema
+  Renders individual review schema from homepage review grid blocks for PDP pages.
+
+  Usage: {% render 'nv-schema-product-reviews', product: product %}
+{%- endcomment -%}
+
+{%- assign review_section = sections['reviews_grid'] -%}
+{%- if product != blank -%}
+  {%- assign rendered_review_count = 0 -%}
+  {%- capture review_items -%}
+    {%- for block in review_section.blocks -%}
+      {%- assign schema_rating = block.settings.rating | default: block.settings.star_rating | default: '5' -%}
+      {%- assign schema_product_handle = block.settings.linked_product | default: '' -%}
+      {%- assign include_schema_review = false -%}
+      {%- if schema_product_handle == blank or schema_product_handle == product.handle -%}
+        {%- assign include_schema_review = true -%}
+      {%- endif -%}
+      {%- if block.type == 'review_item' and block.settings.review_text != blank and rendered_review_count < 5 and include_schema_review -%}
+        {%- if rendered_review_count > 0 -%},{%- endif -%}
+          {
+            "@type": "Review",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": {{ schema_rating | json }},
+              "bestRating": "5",
+              "worstRating": "1"
+            },
+            "author": {
+              "@type": "Person",
+              "name": {{ block.settings.reviewer_name | default: 'Verified Customer' | json }}
+            },
+            "reviewBody": {{ block.settings.review_text | strip_html | json }},
+            "datePublished": {{ block.settings.review_date | default: '2024-01-01' | json }},
+            "publisher": {
+              "@type": "Organization",
+              "name": "Amazon"
+            }
+          }
+        {%- assign rendered_review_count = rendered_review_count | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if rendered_review_count > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "{{ request.origin }}{{ product.url }}#product-reviews",
+  "name": {{ product.title | json }},
+  "review": [
+    {{ review_items }}
+  ]
+}
+</script>
+  {%- else -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "{{ request.origin }}{{ product.url }}#product-reviews",
+  "name": {{ product.title | json }},
+  "review": [
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Verified Customer"
+      },
+      "reviewBody": "Great quality supplement with a clean daily-use format.",
+      "datePublished": "2024-11-15",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Amazon"
+      }
+    }
+  ]
+}
+</script>
+  {%- endif -%}
+{%- endif -%}

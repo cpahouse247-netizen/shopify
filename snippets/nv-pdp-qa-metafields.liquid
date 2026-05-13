@@ -1,0 +1,91 @@
+{%- liquid
+  assign section_heading = product.metafields.custom.qa_heading.value | default: product.metafields.custom.qa_heading | strip
+  assign qa_raw = product.metafields.custom.qa_list.value | default: product.metafields.custom.qa_list | strip
+
+  assign has_content = false
+  if section_heading != blank and qa_raw != blank
+    assign has_content = true
+  endif
+
+  assign qa_count = 0
+  capture qa_items
+    if qa_raw != blank
+      assign source_lines = qa_raw | replace: '},{', '}|~|{' | newline_to_br | replace: '<br/>', '<br />' | replace: '<br />', '|~|' | split: '|~|'
+      for line in source_lines
+        assign clean_line = line | strip | strip_html | replace: '&nbsp;', ' ' | strip
+        if clean_line == blank
+          continue
+        endif
+
+        assign question = blank
+        assign answer = blank
+
+        if clean_line contains '|'
+          assign pair = clean_line | split: '|'
+          assign question = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', '' | remove: 'Question:' | remove: 'question:' | strip
+          capture answer
+            for piece in pair offset: 1
+              assign answer_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', '' | remove: 'Answer:' | remove: 'answer:' | strip
+              if answer_piece != blank
+                unless forloop.first
+                  echo ' | '
+                endunless
+                echo answer_piece
+              endif
+            endfor
+          endcapture
+        elsif clean_line contains ':'
+          assign pair = clean_line | split: ':'
+          assign question = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', '' | remove: 'Question' | remove: 'question' | strip
+          capture answer
+            for piece in pair offset: 1
+              assign answer_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', '' | remove: 'Answer:' | remove: 'answer:' | strip
+              if answer_piece != blank
+                unless forloop.first
+                  echo ': '
+                endunless
+                echo answer_piece
+              endif
+            endfor
+          endcapture
+        endif
+
+        assign question = question | strip
+        assign answer = answer | strip
+
+        if question != blank and answer != blank
+          assign qa_count = qa_count | plus: 1
+          echo '<article class="nv-qa__item">'
+          echo '<h3 class="nv-qa__question"><span class="nv-qa__label">Question:</span> '
+          echo question
+          echo '</h3>'
+          echo '<p class="nv-qa__answer"><span class="nv-qa__label">Answer:</span> '
+          echo answer
+          echo '</p>'
+          echo '</article>'
+        endif
+      endfor
+    endif
+  endcapture
+-%}
+
+{%- if has_content -%}
+  <section class="nv-qa" aria-labelledby="nvQaHeading-{{ product.id }}">
+    <div class="nv-qa__header">
+      <h2 id="nvQaHeading-{{ product.id }}" class="nv-qa__title">{{ section_heading }}</h2>
+      <div class="nv-qa__rule">
+        <span class="nv-qa__accent"></span>
+      </div>
+    </div>
+
+    {%- if qa_count > 0 -%}
+      <div class="nv-qa__list">
+        {{ qa_items }}
+      </div>
+    {%- else -%}
+      <div class="nv-qa__fallback rte">
+        {{ qa_raw | newline_to_br }}
+      </div>
+    {%- endif -%}
+  </section>
+{%- endif -%}

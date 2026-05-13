@@ -1,0 +1,354 @@
+<section
+  class="section nv-section nv-trust-icons"
+  style="
+    --nv-trust-icons-bg: {{ section.settings.background_color }};
+    --nv-trust-icons-card-bg: {{ section.settings.card_background_color | default: '#FFFFFF' }};
+    --nv-trust-icons-card-border: {{ section.settings.card_border_color | default: 'var(--nv-border-light)' }};
+    --nv-trust-icons-card-radius: {{ section.settings.card_border_radius | default: 26 }}px;
+    --nv-trust-icons-card-padding: {{ section.settings.card_padding | default: 28 }}px;
+    --nv-trust-icons-card-shadow-opacity: {{ section.settings.card_shadow_opacity | default: 8 | divided_by: 100.0 }};
+    --nv-trust-icons-icon-bg: {{ section.settings.icon_circle_background_color }};
+    --nv-trust-icons-icon-border: {{ section.settings.icon_circle_border_color }};
+    --nv-trust-icons-title-color: {{ section.settings.title_color }};
+    --nv-trust-icons-body-color: {{ section.settings.body_color }};
+    --nv-trust-icons-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-trust-icons-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-trust-icons-max-width: {{ section.settings.content_max_width }}px;
+    --nv-trust-icons-columns: {{ section.settings.columns_desktop }};
+    --nv-trust-icons-columns-mobile: {{ section.settings.columns_mobile }};
+    --nv-trust-icons-icon-size: {{ section.settings.icon_circle_size }}px;
+    --nv-trust-icons-icon-image-width: {{ section.settings.icon_image_max_width }}px;
+    --nv-trust-icons-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-trust-icons-title-size: {{ section.settings.title_font_size }}px;
+    --nv-trust-icons-body-size: {{ section.settings.body_font_size }}px;
+  "
+>
+  <div class="container nv-trust-icons__inner">
+    {% if section.settings.show_heading %}
+      <div class="nv-trust-icons__intro nv-trust-icons__intro--{{ section.settings.heading_alignment }}" data-nv-animate="fade-up">
+        {% if section.settings.section_heading != blank %}
+          <h2 class="nv-trust-icons__heading nv-section-heading">{{ section.settings.section_heading }}</h2>
+        {% endif %}
+        {% if section.settings.section_subheading != blank %}
+          <p class="nv-trust-icons__subheading nv-section-subheading" data-nv-animate="fade-up" data-nv-delay="100">{{ section.settings.section_subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="nv-trust-icons__grid">
+      {% for block in section.blocks %}
+        {%- liquid
+          assign icon_alt = block.settings.icon_alt
+          if icon_alt == blank
+            assign icon_alt = block.settings.title
+          endif
+          assign animation_delay = forloop.index0 | times: 100 | plus: 200
+          if animation_delay > 800
+            assign animation_delay = 800
+          endif
+        -%}
+        <article class="nv-trust-icons__item" data-nv-animate="fade-up" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+          <div class="nv-trust-icons__icon-wrap">
+            {% if block.settings.icon_image != blank %}
+              {{ block.settings.icon_image | image_url: width: 220 | image_tag: loading: 'lazy', class: 'nv-trust-icons__icon-image', alt: icon_alt, sizes: '72px' }}
+            {% else %}
+              <span class="nv-trust-icons__icon-fallback" aria-hidden="true"></span>
+            {% endif %}
+          </div>
+
+          <div class="nv-trust-icons__content">
+            {% if block.settings.title != blank %}
+              <h3 class="nv-trust-icons__title">{{ block.settings.title }}</h3>
+            {% endif %}
+            {% if block.settings.body != blank %}
+              <p class="nv-trust-icons__body">{{ block.settings.body }}</p>
+            {% endif %}
+            {% if block.settings.link != blank and block.settings.link_label != blank %}
+              <a class="nv-trust-icons__link" href="{{ block.settings.link }}">{{ block.settings.link_label }}</a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Trust Icons",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Trusted standards"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "Use this band to reinforce the premium qualities that help shoppers trust NutraVora at a glance."
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#CFE2B6"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card radius",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 16,
+      "max": 42,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Card shadow",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "icon_circle_background_color",
+      "label": "Icon circle background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "icon_circle_border_color",
+      "label": "Icon circle border",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 900,
+      "max": 1360,
+      "step": 20,
+      "default": 1180,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_circle_size",
+      "label": "Icon circle size",
+      "min": 64,
+      "max": 130,
+      "step": 2,
+      "default": 96,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_image_max_width",
+      "label": "Icon image max width",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 22,
+      "max": 44,
+      "step": 1,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image"
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Icon alt text",
+          "default": "Trust icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Direct sourcing"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body",
+          "default": "Short supporting copy that reinforces a premium NutraVora quality signal."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional link"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Optional link label",
+          "default": "Learn more"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Trust Icons",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Direct sourcing",
+            "body": "Use a concise trust statement to reinforce ingredient and sourcing confidence."
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Clean formulation",
+            "body": "Support the premium brand position with a short, easy-to-scan product quality message."
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "title": "Trusted standards",
+            "body": "Help the shopper understand why NutraVora feels reliable and professionally presented."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

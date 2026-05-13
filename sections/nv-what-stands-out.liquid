@@ -1,0 +1,398 @@
+{% liquid
+  assign source_product = section.settings.featured_product
+  if source_product == blank and product
+    assign source_product = product
+  endif
+%}
+
+<section
+  id="nv-what-stands-out-{{ section.id }}"
+  class="nv-what-stands-out color-{{ section.settings.color_scheme }} gradient"
+  style="
+    --nv-wso-pt: {{ section.settings.padding_top }}px;
+    --nv-wso-pb: {{ section.settings.padding_bottom }}px;
+    --nv-wso-max: {{ section.settings.content_max_width }}px;
+    --nv-wso-heading-size: {{ section.settings.heading_size }}px;
+    --nv-wso-subheading-size: {{ section.settings.subheading_size }}px;
+    --nv-wso-title-size: {{ section.settings.card_title_size }}px;
+    --nv-wso-body-size: {{ section.settings.card_body_size }}px;
+    --nv-wso-radius: {{ section.settings.card_radius }}px;
+    --nv-wso-gap: {{ section.settings.card_gap }}px;
+    --nv-wso-bg: {{ section.settings.card_background }};
+    --nv-wso-border: {{ section.settings.border_color }};
+    --nv-wso-title-color: {{ section.settings.card_title_color }};
+    --nv-wso-body-color: {{ section.settings.card_body_color }};
+  "
+>
+  <div class="page-width">
+    <div class="nv-wso__inner">
+      <div class="nv-wso__header text-{{ section.settings.text_alignment }}">
+        {% if section.settings.eyebrow != blank %}
+          <p class="nv-wso__eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="nv-wso__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if section.settings.subheading != blank %}
+          <div class="nv-wso__subheading rte">{{ section.settings.subheading }}</div>
+        {% endif %}
+      </div>
+
+      {% if source_product != blank %}
+        {% assign title_1 = product.metafields.custom.standout_card_2_title.value %}
+        {% assign text_1  = source_product.metafields.custom.what_stands_out_text_1.value %}
+        {% assign title_2 = source_product.metafields.custom.what_stands_out_title_2.value %}
+        {% assign text_2  = source_product.metafields.custom.what_stands_out_text_2.value %}
+        {% assign title_3 = source_product.metafields.custom.what_stands_out_title_3.value %}
+        {% assign text_3  = source_product.metafields.custom.what_stands_out_text_3.value %}
+
+        {% assign has_cards = false %}
+        {% if title_1 != blank or text_1 != blank or title_2 != blank or text_2 != blank or title_3 != blank or text_3 != blank %}
+          {% assign has_cards = true %}
+        {% endif %}
+
+        {% if has_cards %}
+          <div class="nv-wso__grid grid-{{ section.settings.columns_desktop }}">
+            {% if title_1 != blank or text_1 != blank %}
+              <article class="nv-wso__card">
+                {% if title_1 != blank %}
+                  <h3 class="nv-wso__card-title">{{ title_1 }}</h3>
+                {% endif %}
+                {% if text_1 != blank %}
+                  <div class="nv-wso__card-text rte">{{ text_1 }}</div>
+                {% endif %}
+              </article>
+            {% endif %}
+
+            {% if title_2 != blank or text_2 != blank %}
+              <article class="nv-wso__card">
+                {% if title_2 != blank %}
+                  <h3 class="nv-wso__card-title">{{ title_2 }}</h3>
+                {% endif %}
+                {% if text_2 != blank %}
+                  <div class="nv-wso__card-text rte">{{ text_2 }}</div>
+                {% endif %}
+              </article>
+            {% endif %}
+
+            {% if title_3 != blank or text_3 != blank %}
+              <article class="nv-wso__card">
+                {% if title_3 != blank %}
+                  <h3 class="nv-wso__card-title">{{ title_3 }}</h3>
+                {% endif %}
+                {% if text_3 != blank %}
+                  <div class="nv-wso__card-text rte">{{ text_3 }}</div>
+                {% endif %}
+              </article>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="nv-wso__empty">
+            Add product metafields for What Stands Out content on the selected product.
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="nv-wso__empty">
+          Select a product in the section settings to pull What Stands Out content from product metafields.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #nv-what-stands-out-{{ section.id }} {
+    padding-top: var(--nv-wso-pt);
+    padding-bottom: var(--nv-wso-pb);
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__inner {
+    max-width: var(--nv-wso-max);
+    margin: 0 auto;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__header {
+    margin-bottom: 28px;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__eyebrow {
+    margin: 0 0 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__heading {
+    margin: 0;
+    font-size: var(--nv-wso-heading-size);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__subheading {
+    margin-top: 12px;
+    font-size: var(--nv-wso-subheading-size);
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__grid {
+    display: grid;
+    gap: var(--nv-wso-gap);
+  }
+
+  #nv-what-stands-out-{{ section.id }} .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #nv-what-stands-out-{{ section.id }} .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #nv-what-stands-out-{{ section.id }} .grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__card {
+    background: var(--nv-wso-bg);
+    border: 1px solid var(--nv-wso-border);
+    border-radius: var(--nv-wso-radius);
+    padding: 24px 22px;
+    height: 100%;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__card-title {
+    margin: 0 0 12px;
+    color: var(--nv-wso-title-color);
+    font-size: var(--nv-wso-title-size);
+    line-height: 1.25;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__card-text {
+    color: var(--nv-wso-body-color);
+    font-size: var(--nv-wso-body-size);
+    line-height: 1.75;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .nv-wso__empty {
+    padding: 24px;
+    border: 1px dashed var(--nv-wso-border);
+    border-radius: var(--nv-wso-radius);
+    opacity: 0.75;
+  }
+
+  #nv-what-stands-out-{{ section.id }} .text-left { text-align: left; }
+  #nv-what-stands-out-{{ section.id }} .text-center { text-align: center; }
+  #nv-what-stands-out-{{ section.id }} .text-right { text-align: right; }
+
+  @media screen and (max-width: 989px) {
+    #nv-what-stands-out-{{ section.id }} .grid-4,
+    #nv-what-stands-out-{{ section.id }} .grid-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #nv-what-stands-out-{{ section.id }} .nv-wso__heading {
+      font-size: calc(var(--nv-wso-heading-size) * 0.82);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #nv-what-stands-out-{{ section.id }} .grid-4,
+    #nv-what-stands-out-{{ section.id }} .grid-3,
+    #nv-what-stands-out-{{ section.id }} .grid-2 {
+      grid-template-columns: 1fr;
+    }
+
+    #nv-what-stands-out-{{ section.id }} .nv-wso__card {
+      padding: 20px 18px;
+    }
+
+    #nv-what-stands-out-{{ section.id }} .nv-wso__heading {
+      font-size: calc(var(--nv-wso-heading-size) * 0.72);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "NV What Stands Out",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Featured product"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "What Stands Out"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why this formula stands out"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Product-based highlight cards pulled automatically from the selected product metafields.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Header alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Card title size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "card_body_size",
+      "label": "Card body size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 0,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#F8F7F2"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card border color",
+      "default": "#E2E0D8"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "card_body_color",
+      "label": "Card body color",
+      "default": "#4E5A52"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV What Stands Out"
+    }
+  ]
+}
+{% endschema %}

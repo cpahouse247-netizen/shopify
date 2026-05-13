@@ -1,0 +1,458 @@
+[
+  {
+    "name": "Theme Settings",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "announcement_enabled",
+        "label": "Show announcement bar",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "announcement_text",
+        "label": "Announcement text",
+        "default": "Free shipping over $50 \u2022 Subscribe & save 15%"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Header logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_footer",
+        "label": "Footer logo"
+      },
+      {
+        "type": "font_picker",
+        "id": "typography_headings",
+        "label": "Headings font",
+        "default": "rubik_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "typography_headings_system",
+        "label": "Use system font for headings",
+        "default": false
+      },
+      {
+        "type": "font_picker",
+        "id": "typography_body",
+        "label": "Body font",
+        "default": "inter_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "typography_body_system",
+        "label": "Use system font for body",
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "colors_primary",
+        "label": "Primary color",
+        "default": "#0E5A3A"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent",
+        "label": "Accent color",
+        "default": "#1E3A34"
+      },
+      {
+        "type": "color",
+        "id": "colors_bg",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "colors_surface",
+        "label": "Surface",
+        "default": "#F5F7F5"
+      },
+      {
+        "type": "color",
+        "id": "colors_text",
+        "label": "Text",
+        "default": "#0B0F0E"
+      },
+      {
+        "type": "select",
+        "id": "container_width",
+        "label": "Container width",
+        "default": "1200px",
+        "options": [
+          {
+            "value": "1080px",
+            "label": "1080px"
+          },
+          {
+            "value": "1200px",
+            "label": "1200px"
+          },
+          {
+            "value": "1320px",
+            "label": "1320px"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "radius_base",
+        "label": "Base radius",
+        "default": "14px"
+      },
+      {
+        "type": "textarea",
+        "id": "footer_blurb",
+        "label": "Footer blurb",
+        "default": "Premium, science-backed wellness."
+      },
+      {
+        "type": "text",
+        "id": "footer_legal",
+        "label": "Legal line",
+        "default": "All rights reserved."
+      },
+      {
+        "type": "header",
+        "content": "Conversion architecture"
+      },
+      {
+        "type": "paragraph",
+        "content": "Priority order: 1) product metafield custom.conversion_mode 2) template override passed by the section/snippet 3) theme default conversion mode."
+      },
+      {
+        "type": "select",
+        "id": "default_conversion_mode",
+        "label": "Default conversion mode",
+        "default": "amazon_attribution",
+        "options": [
+          {
+            "value": "amazon_attribution",
+            "label": "Amazon attribution"
+          },
+          {
+            "value": "buy_with_prime",
+            "label": "Buy with Prime"
+          },
+          {
+            "value": "hybrid",
+            "label": "Hybrid"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "hybrid_primary_action",
+        "label": "Hybrid primary CTA",
+        "default": "buy_with_prime",
+        "options": [
+          {
+            "value": "buy_with_prime",
+            "label": "Buy with Prime"
+          },
+          {
+            "value": "add_to_cart",
+            "label": "Add to cart"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_buy_with_prime_zone",
+        "label": "Show Buy with Prime widget zone",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "hybrid_show_secondary_amazon",
+        "label": "Show Amazon as hybrid secondary CTA",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_secondary_amazon_cta",
+        "label": "Allow secondary Amazon CTA globally",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_cta",
+        "label": "Enable sticky mobile CTA",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "cta_stack_order",
+        "label": "CTA order",
+        "default": "primary_first",
+        "options": [
+          {
+            "value": "primary_first",
+            "label": "Primary then secondary"
+          },
+          {
+            "value": "secondary_first",
+            "label": "Secondary then primary"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "shopify_cta_label",
+        "label": "Shopify CTA label",
+        "default": "Add to cart"
+      },
+      {
+        "type": "text",
+        "id": "buy_with_prime_label",
+        "label": "Buy with Prime label",
+        "default": "Buy with Prime"
+      },
+      {
+        "type": "text",
+        "id": "buy_with_prime_loading_label",
+        "label": "Buy with Prime loading label",
+        "default": "Loading Buy with Prime"
+      },
+      {
+        "type": "paragraph",
+        "content": "Amazon link priority: 1) product metafield custom.amazon_attribution_link 2) legacy product metafield custom.amazon_link 3) theme setting amazon_default_link."
+      },
+      {
+        "type": "checkbox",
+        "id": "use_product_amazon_attribution_links",
+        "label": "Use product Amazon Attribution links",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "amazon_cta_label",
+        "label": "Amazon CTA label",
+        "default": "Buy on Amazon"
+      },
+      {
+        "type": "text",
+        "id": "amazon_cta_sub",
+        "label": "Amazon CTA subtext",
+        "default": "Prime shipping eligible"
+      },
+      {
+        "type": "textarea",
+        "id": "amazon_disclosure_text",
+        "label": "Amazon checkout disclosure",
+        "default": "Opens Amazon for external checkout. Delivery timing, returns, and final purchase terms are shown on Amazon."
+      },
+      {
+        "type": "text",
+        "id": "amazon_missing_link_text",
+        "label": "Missing attribution fallback text",
+        "default": "Amazon purchase link unavailable"
+      },
+      {
+        "type": "url",
+        "id": "amazon_default_link",
+        "label": "Official Amazon store fallback link"
+      },
+      {
+        "type": "checkbox",
+        "id": "amazon_open_new_tab",
+        "label": "Open Amazon links in new tab",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "amazon_show_prime",
+        "label": "Show Prime subtext on CTA",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Trust and fulfillment display"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_fulfillment_message_cart",
+        "label": "Show fulfillment messaging on cart page",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_fulfillment_message_drawer",
+        "label": "Show fulfillment messaging on cart drawer",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_delivery_confidence_message",
+        "label": "Show delivery confidence messaging",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_return_trust_microcopy",
+        "label": "Show return and trust microcopy",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Prime badge display"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_prime_badge_pdp",
+        "label": "Show Prime badge on product page",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_prime_badge_cards",
+        "label": "Show Prime badge on product cards",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_prime_badge_cart",
+        "label": "Show Prime badge on cart page",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_prime_badge_drawer",
+        "label": "Show Prime badge on cart drawer",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Cart drawer"
+      },
+      {
+        "type": "number",
+        "id": "cart_drawer_free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "info": "Set to 0 to hide the cart drawer free-shipping progress block.",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_drawer_upsells",
+        "label": "Show cart drawer upsells",
+        "default": true
+      },
+      {
+        "type": "collection",
+        "id": "cart_drawer_upsell_collection",
+        "label": "Cart drawer upsell collection"
+      },
+      {
+        "type": "checkbox",
+        "id": "amazon_hide_cart",
+        "label": "Hide cart and Shopify checkout",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "NutraVora — Metafields",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure default values used when product metafields are not set. See assets/nv-metafields-reference.md for full setup guide."
+      },
+      {
+        "type": "text",
+        "id": "default_rating",
+        "label": "Default product rating",
+        "default": "4.8",
+        "info": "Used when custom.rating metafield is not set"
+      },
+      {
+        "type": "text",
+        "id": "default_review_count",
+        "label": "Default review count label",
+        "default": "221+ reviews",
+        "info": "Used when custom.review_count metafield is not set"
+      },
+      {
+        "type": "text",
+        "id": "default_supply_label",
+        "label": "Default supply label",
+        "default": "300 Softgels — ~10 Month Supply",
+        "info": "Used when custom.supply_label metafield is not set"
+      },
+      {
+        "type": "url",
+        "id": "amazon_store_url",
+        "label": "Amazon store URL (fallback)",
+        "info": "Used when product amazon_attribution_link metafield is not set"
+      },
+      {
+        "type": "text",
+        "id": "default_shipping_note",
+        "label": "Default shipping note",
+        "default": "Fast Prime delivery available on Amazon"
+      },
+      {
+        "type": "text",
+        "id": "default_meta_description",
+        "label": "Default meta description",
+        "default": "NutraVora offers premium herbal supplements for immune support and daily wellness. Non-GMO, gluten-free, third-party tested. Shop on Amazon with Prime shipping.",
+        "info": "Used as fallback when page has no description"
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default OG share image",
+        "info": "1200x630px recommended. Used when page has no featured image."
+      },
+      {
+        "type": "text",
+        "id": "twitter_handle",
+        "label": "Twitter/X handle",
+        "default": "@NutraVora",
+        "info": "Used in Twitter Card meta tags"
+      }
+    ]
+  },
+  {
+    "name": "NutraVora — SEO & Verification",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Add verification codes from Google Search Console, Bing Webmaster Tools, and Pinterest."
+      },
+      {
+        "type": "text",
+        "id": "google_search_console_code",
+        "label": "Google Search Console verification code",
+        "info": "Paste only the content value from the meta tag, not the full tag."
+      },
+      {
+        "type": "text",
+        "id": "bing_webmaster_code",
+        "label": "Bing Webmaster Tools verification code"
+      },
+      {
+        "type": "text",
+        "id": "pinterest_verify_code",
+        "label": "Pinterest domain verification code"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_canonical_tags",
+        "label": "Enable canonical tags",
+        "default": true,
+        "info": "Prevents duplicate content issues"
+      },
+      {
+        "type": "text",
+        "id": "google_tag_manager_id",
+        "label": "Google Tag Manager ID",
+        "info": "Format: GTM-XXXXXXX. Leave blank if using GA4 directly."
+      }
+    ]
+  }
+]

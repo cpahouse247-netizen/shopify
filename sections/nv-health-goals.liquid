@@ -1,0 +1,706 @@
+{% liquid
+  assign display_heading = section.settings.heading
+  if display_heading == blank or display_heading == 'Shop by Your Health Goal'
+    assign display_heading = 'Build Your Daily Wellness Routine'
+  endif
+
+  assign display_subheading = section.settings.subheading
+  if display_subheading == blank or display_subheading == 'Find the right supplement for your needs'
+    assign display_subheading = 'Choose a simple daily routine designed to work together as part of balanced wellness habits.'
+  endif
+
+  assign display_heading_size = section.settings.heading_font_size | default: 30
+  assign display_subheading_size = section.settings.subheading_font_size | default: 20
+  assign display_tile_title_size = section.settings.tile_title_font_size | default: 28
+  assign display_tile_description_size = section.settings.tile_description_font_size | default: 14
+
+  if display_subheading_size < 17
+    assign display_subheading_size = 20
+  endif
+  if display_tile_title_size < 22
+    assign display_tile_title_size = 28
+  endif
+  if display_tile_description_size < 13
+    assign display_tile_description_size = 14
+  endif
+%}
+
+<section
+  class="section nv-health-goals"
+  style="
+    --nv-health-goals-bg: {{ section.settings.background_color }};
+    --nv-health-goals-text: {{ section.settings.text_color }};
+    --nv-health-goals-muted: {{ section.settings.muted_text_color }};
+    --nv-health-goals-accent: {{ section.settings.accent_color }};
+    --nv-health-goals-card-bg: {{ section.settings.card_background_color | default: '#FFFFFF' }};
+    --nv-health-goals-card-border: {{ section.settings.card_border_color | default: 'var(--nv-border-light)' }};
+    --nv-health-goals-card-radius: {{ section.settings.card_border_radius | default: 24 }}px;
+    --nv-health-goals-card-padding: {{ section.settings.card_padding | default: 18 }}px;
+    --nv-health-goals-card-shadow-opacity: {{ section.settings.card_shadow_opacity | default: 8 | divided_by: 100.0 }};
+    --nv-health-goals-max-width: {{ section.settings.content_max_width }}px;
+    --nv-health-goals-heading-size: {{ display_heading_size }}px;
+    --nv-health-goals-subheading-size: {{ display_subheading_size }}px;
+    --nv-health-goals-title-size: {{ display_tile_title_size }}px;
+    --nv-health-goals-description-size: {{ display_tile_description_size }}px;
+    --nv-health-goals-icon-size: {{ section.settings.icon_font_size | default: 25 }}px;
+    --nv-health-goals-icon-box-size: {{ section.settings.icon_box_size | default: 48 }}px;
+    --nv-health-goals-padding-top: {{ section.settings.padding_top }}px;
+    --nv-health-goals-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="container nv-health-goals__inner">
+    <div class="nv-health-goals__header">
+      {% if display_heading != blank %}
+        <h2 class="nv-health-goals__heading nv-section-heading" data-nv-animate="fade-up">{{ display_heading }}</h2>
+      {% endif %}
+      {% if display_subheading != blank %}
+        <p class="nv-health-goals__subheading nv-section-subheading" data-nv-animate="fade-up" data-nv-delay="100">{{ display_subheading }}</p>
+      {% endif %}
+    </div>
+
+    <div class="nv-health-goals__grid">
+      {% for block in section.blocks %}
+        {% liquid
+          assign fallback_product = blank
+          case forloop.index
+            when 1
+              assign fallback_product = all_products['nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels']
+              assign fallback_title = 'Daily Defense'
+              assign fallback_description = 'Botanical support formulated to complement consistent everyday wellness routines.'
+            when 2
+              assign fallback_product = all_products['nutravora-pumpkin-seed-oil-saw-palmetto-300-softgels']
+              assign fallback_title = 'Targeted Support'
+              assign fallback_description = "Focused daily support designed with men's wellness routines in mind."
+            when 3
+              assign fallback_product = all_products['nutravora-vitamin-d3-k2-supplement-10-000-iu-d3-cholecalciferol-with-200-mcg-k2-mk-7-high-strength-bone-heart-immune-support-enhanced-with-coconut-oil-non-gmo-gluten-free-300-softgels-1']
+              assign fallback_title = 'Morning Foundation'
+              assign fallback_description = 'Start your day with foundational nutrients designed to support daily wellness and balance.'
+            else
+              assign fallback_product = all_products['nutravora-triple-strength-omega-3-fish-oil-4200-mg-per-serving-with-1300-mg-epa-850-mg-dha-lemon-flavor-burpless-formula-wild-caught-non-gmo-gluten-free-300-softgels']
+              assign fallback_title = 'Daily Balance'
+              assign fallback_description = 'Essential omega fatty acids designed to support everyday wellness and a balanced lifestyle.'
+          endcase
+
+          assign routine_product = block.settings.product | default: fallback_product
+          assign routine_variant = routine_product.selected_or_first_available_variant
+          assign routine_title = block.settings.routine_title | default: fallback_title | default: block.settings.title
+          assign routine_description = block.settings.routine_description | default: fallback_description | default: block.settings.description
+          assign routine_link = block.settings.link | default: routine_product.url | default: routes.all_products_collection_url
+          assign quick_view_image = ''
+          assign quick_view_description = routine_product.description | default: routine_description | strip_html | strip
+          if routine_product.featured_media
+            assign quick_view_image = routine_product.featured_media | image_url: width: 900
+          endif
+          assign quick_view_images = ''
+          for media in routine_product.media
+            if media.media_type == 'image'
+              assign quick_view_media_url = media | image_url: width: 900
+              if quick_view_images == ''
+                assign quick_view_images = quick_view_media_url
+              else
+                assign quick_view_images = quick_view_images | append: '||' | append: quick_view_media_url
+              endif
+            endif
+          endfor
+          if quick_view_images == ''
+            assign quick_view_images = quick_view_image
+          endif
+          assign animation_delay = forloop.index0 | times: 100 | plus: 200
+          if animation_delay > 800
+            assign animation_delay = 800
+          endif
+        %}
+
+        <article class="nv-health-goals__tile" data-nv-animate="scale-up" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+          <a class="nv-health-goals__tile-link" href="{{ routine_link }}" aria-label="{{ routine_title | escape }}"></a>
+
+          <div class="nv-health-goals__copy">
+            {% if routine_title != blank %}
+              <h3 class="nv-health-goals__title">{{ routine_title }}</h3>
+            {% endif %}
+            {% if routine_description != blank %}
+              <p class="nv-health-goals__description">{{ routine_description }}</p>
+            {% endif %}
+
+            {% if routine_variant %}
+              <div class="nv-health-goals__commerce">
+                <span class="nv-health-goals__price">{{ routine_variant.price | money }}</span>
+                {% if routine_variant.unit_price_measurement %}
+                  <span class="nv-health-goals__unit">({{ routine_variant.unit_price | money }}/{{ routine_variant.unit_price_measurement.reference_unit }})</span>
+                {% endif %}
+                {% render 'nv-prime-tag-card', product: routine_product, variant: routine_variant %}
+              </div>
+            {% endif %}
+
+            {% if routine_product != blank %}
+              <div class="nv-health-goals__rating-source" hidden>
+                <div class="areviews_product_item areviews_stars{{ routine_product.id }}" data-product-id="{{ routine_product.id }}"></div>
+              </div>
+              <button
+                type="button"
+                class="nv-health-goals__quick"
+                data-nv-quick-view-trigger
+                data-product-title="{{ routine_product.title | escape }}"
+                data-product-id="{{ routine_product.id }}"
+                data-product-url="{{ routine_product.url | escape }}"
+                data-product-vendor="{{ routine_product.vendor | escape }}"
+                data-product-description="{{ quick_view_description | escape }}"
+                data-product-image="{{ quick_view_image | escape }}"
+                data-product-images="{{ quick_view_images | strip | escape }}"
+                data-product-price="{{ routine_variant.price | money | escape }}"
+                data-product-compare="{{ routine_variant.compare_at_price | money | escape }}"
+                data-product-on-sale="{% if routine_variant.compare_at_price > routine_variant.price %}true{% else %}false{% endif %}"
+                data-product-available="{% if routine_variant.available %}true{% else %}false{% endif %}"
+                data-product-variant-id="{{ routine_variant.id }}"
+                aria-label="Quick look at {{ routine_product.title | escape }}"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M3.8 12s3-5.2 8.2-5.2S20.2 12 20.2 12s-3 5.2-8.2 5.2S3.8 12 3.8 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+                <span>Quick look</span>
+              </button>
+            {% endif %}
+          </div>
+
+          {% if routine_product.featured_media %}
+            <a href="{{ routine_link }}" class="nv-health-goals__media" aria-label="{{ routine_product.title | escape }}">
+              {{ routine_product.featured_media | image_url: width: 520 | image_tag: alt: routine_product.title, loading: 'lazy', class: 'nv-health-goals__image' }}
+            </a>
+          {% elsif block.settings.icon != blank %}
+            <span class="nv-health-goals__media nv-health-goals__media--icon" aria-hidden="true">{{ block.settings.icon }}</span>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-health-goals{
+    padding:var(--nv-health-goals-padding-top, 48px) 20px var(--nv-health-goals-padding-bottom, 48px);
+    background:var(--nv-health-goals-bg, #fffdf8);
+    color:var(--nv-health-goals-text, var(--nv-text-primary));
+    overflow:hidden;
+  }
+  .nv-health-goals__inner{
+    max-width:var(--nv-health-goals-max-width, 1080px);
+    margin:0 auto;
+  }
+  .nv-health-goals__header{
+    max-width:920px;
+    margin:0 auto 18px;
+    text-align:center;
+  }
+  .nv-health-goals__heading{
+    margin:0;
+    color:var(--nv-health-goals-text, var(--nv-text-primary));
+    font-size:clamp(24px, 2.2vw, var(--nv-health-goals-heading-size, 30px));
+    font-weight:800;
+    line-height:1.12;
+    letter-spacing:-.025em;
+  }
+  .nv-health-goals__subheading{
+    margin:28px 0 0;
+    color:var(--nv-health-goals-muted, var(--nv-text-muted));
+    font-size:clamp(17px, 1.75vw, var(--nv-health-goals-subheading-size, 20px));
+    font-weight:400;
+    line-height:1.6;
+  }
+  .nv-health-goals__grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:16px;
+  }
+  .nv-health-goals__tile{
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(128px, 38%);
+    align-items:center;
+    gap:18px;
+    min-height:246px;
+    padding:max(22px, var(--nv-health-goals-card-padding, 30px));
+    border:0;
+    border-radius:0;
+    background:var(--nv-health-goals-card-bg, #fbfcfb);
+    color:inherit;
+    box-shadow:none;
+    isolation:isolate;
+    transition:background-color .18s ease, transform .18s ease;
+  }
+  .nv-health-goals__tile:hover,
+  .nv-health-goals__tile:focus-within{
+    background:#f7f9f7;
+    transform:translateY(-1px);
+  }
+  .nv-health-goals__tile-link{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    border-radius:inherit;
+  }
+  .nv-health-goals__copy{
+    position:relative;
+    z-index:2;
+    display:grid;
+    align-content:center;
+    justify-items:start;
+    gap:12px;
+    min-width:0;
+    height:100%;
+  }
+  .nv-health-goals__title{
+    margin:0;
+    color:var(--nv-health-goals-text, var(--nv-text-primary));
+    font-size:clamp(23px, 2.35vw, var(--nv-health-goals-title-size, 28px));
+    font-weight:500;
+    line-height:1.08;
+    letter-spacing:-.035em;
+  }
+  .nv-health-goals__description{
+    max-width:30ch;
+    margin:0;
+    overflow:hidden;
+    color:#161a18;
+    font-size:clamp(13px, 1.1vw, var(--nv-health-goals-description-size, 14px));
+    font-weight:400;
+    line-height:1.35;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+  }
+  .nv-health-goals__commerce{
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:5px 8px;
+    margin-top:2px;
+  }
+  .nv-health-goals__price{
+    color:#08323a;
+    font-size:clamp(22px, 2.3vw, 27px);
+    font-weight:700;
+    letter-spacing:-.04em;
+    line-height:1;
+  }
+  .nv-health-goals__price sup{
+    font-size:.55em;
+  }
+  .nv-health-goals__unit{
+    color:#161a18;
+    font-size:11px;
+    line-height:1.2;
+  }
+  .nv-health-goals__commerce .nv-prime-tag,
+  .nv-health-goals__commerce .nv-prime-tag__fallback,
+  .nv-health-goals__commerce .nv-prime-badge-slot,
+  .nv-health-goals__commerce .nv-prime-badge-slot__fallback{
+    border:0;
+    background:transparent;
+    padding:0;
+    color:#0073bb;
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:-.03em;
+    text-transform:none;
+    box-shadow:none;
+  }
+  .nv-health-goals__commerce .nv-prime-tag__fallback::before,
+  .nv-health-goals__commerce .nv-prime-badge-slot__fallback::before{
+    background:#ff9900;
+  }
+  .nv-health-goals__quick{
+    appearance:none;
+    position:relative;
+    z-index:3;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    min-height:34px;
+    margin-top:14px;
+    padding:6px 12px;
+    border:1px solid #00657a;
+    border-radius:999px;
+    color:#0b1f22;
+    background:transparent;
+    font-size:13px;
+    font-weight:500;
+    line-height:1;
+    cursor:pointer;
+    transition:background-color .18s ease, color .18s ease, transform .18s ease;
+  }
+  .nv-health-goals__quick svg{
+    width:16px;
+    height:16px;
+  }
+  .nv-health-goals__quick:hover,
+  .nv-health-goals__quick:focus-visible{
+    background:#0f3f35;
+    color:#fff;
+    transform:translateY(-1px);
+    outline:none;
+  }
+  .nv-health-goals__media{
+    position:relative;
+    z-index:2;
+    display:grid;
+    place-items:center;
+    align-self:center;
+    justify-self:end;
+    width:100%;
+    min-height:170px;
+    text-decoration:none;
+  }
+  .nv-health-goals__image{
+    width:100%;
+    max-width:170px;
+    max-height:180px;
+    object-fit:contain;
+    filter:drop-shadow(0 14px 16px rgba(17,34,26,.08));
+    transition:transform .22s ease;
+  }
+  .nv-health-goals__tile:hover .nv-health-goals__image,
+  .nv-health-goals__tile:focus-within .nv-health-goals__image{
+    transform:translateY(-3px) scale(1.02);
+  }
+  .nv-health-goals__media--icon{
+    display:grid;
+    place-items:center;
+    width:150px;
+    height:150px;
+    border:1px solid rgba(49,92,74,.12);
+    border-radius:24px;
+    background:#fff;
+    font-size:52px;
+    line-height:1;
+  }
+  @media (max-width: 920px){
+    .nv-health-goals__grid{
+      grid-template-columns:1fr;
+    }
+    .nv-health-goals__tile{
+      min-height:220px;
+    }
+  }
+  @media (max-width: 560px){
+    .nv-health-goals{
+      padding:max(34px, var(--nv-health-goals-padding-top, 48px) * .76) 14px max(34px, var(--nv-health-goals-padding-bottom, 48px) * .76);
+    }
+    .nv-health-goals__header{
+      margin-bottom:18px;
+    }
+    .nv-health-goals__subheading{
+      margin-top:12px;
+    }
+    .nv-health-goals__grid{
+      gap:12px;
+    }
+    .nv-health-goals__tile{
+      grid-template-columns:minmax(0, 1fr) minmax(98px, 34%);
+      gap:10px;
+      min-height:190px;
+      padding:18px;
+    }
+    .nv-health-goals__heading{
+      font-size:min(var(--nv-health-goals-heading-size, 30px), 27px);
+    }
+    .nv-health-goals__subheading{
+      font-size:min(var(--nv-health-goals-subheading-size, 20px), 15px);
+    }
+    .nv-health-goals__title{
+      font-size:min(var(--nv-health-goals-title-size, 28px), 22px);
+    }
+    .nv-health-goals__description{
+      font-size:min(var(--nv-health-goals-description-size, 14px), 12px);
+      -webkit-line-clamp:3;
+    }
+    .nv-health-goals__price{
+      font-size:21px;
+    }
+    .nv-health-goals__unit,
+    .nv-health-goals__commerce .nv-prime-tag,
+    .nv-health-goals__commerce .nv-prime-tag__fallback,
+    .nv-health-goals__commerce .nv-prime-badge-slot,
+    .nv-health-goals__commerce .nv-prime-badge-slot__fallback{
+      font-size:10px;
+    }
+    .nv-health-goals__quick{
+      min-height:32px;
+      margin-top:8px;
+      padding:6px 10px;
+      font-size:12px;
+    }
+    .nv-health-goals__media{
+      min-height:142px;
+    }
+    .nv-health-goals__image{
+      max-width:118px;
+      max-height:148px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "NV Health Goals",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Build Your Daily Wellness Routine"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Choose a simple daily routine designed to work together as part of balanced wellness habits."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFDF8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#181A17"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#5E625D"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Tile background",
+      "default": "#FBFCFB"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Tile border",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Tile radius",
+      "min": 14,
+      "max": 34,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Tile padding",
+      "min": 18,
+      "max": 44,
+      "step": 2,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Tile shadow",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1400,
+      "step": 20,
+      "default": 1080,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 42,
+      "step": 1,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 15,
+      "max": 24,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "tile_title_font_size",
+      "label": "Tile title font size",
+      "min": 20,
+      "max": 34,
+      "step": 1,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "tile_description_font_size",
+      "label": "Tile description font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_font_size",
+      "label": "Icon font size",
+      "min": 20,
+      "max": 34,
+      "step": 1,
+      "default": 25,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_box_size",
+      "label": "Icon box size",
+      "min": 40,
+      "max": 64,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "goal",
+      "name": "Health goal",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Routine product"
+        },
+        {
+          "type": "text",
+          "id": "routine_title",
+          "label": "Routine title override"
+        },
+        {
+          "type": "textarea",
+          "id": "routine_description",
+          "label": "Routine description override"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Emoji icon",
+          "default": "🛡️"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Goal title",
+          "default": "Immune Support"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "One-line description",
+          "default": "Defend your body naturally"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Health Goals",
+      "blocks": [
+        {
+          "type": "goal",
+          "settings": {
+            "icon": "🛡️",
+            "title": "Immune Support",
+            "description": "Defend your body naturally",
+            "link": "/collections/all"
+          }
+        },
+        {
+          "type": "goal",
+          "settings": {
+            "icon": "💪",
+            "title": "Men's Health",
+            "description": "Prostate and vitality support",
+            "link": "/collections/all"
+          }
+        },
+        {
+          "type": "goal",
+          "settings": {
+            "icon": "❤️",
+            "title": "Heart & Circulation",
+            "description": "Support daily cardiovascular wellness",
+            "link": "/collections/all"
+          }
+        },
+        {
+          "type": "goal",
+          "settings": {
+            "icon": "🌿",
+            "title": "Daily Wellness",
+            "description": "Build a simple supplement routine",
+            "link": "/collections/all"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

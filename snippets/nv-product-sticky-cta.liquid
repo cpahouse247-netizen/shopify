@@ -1,0 +1,63 @@
+{%- if template.name == 'product' and product != blank -%}
+  {%- liquid
+    assign resolved_template_override = template_override | strip
+    assign resolved_product_form_id = product_form_id | strip
+  -%}
+  {%- capture sticky_cta_enabled -%}{% render 'nv-conversion-context', product: product, field: 'sticky_cta_enabled', template_override: resolved_template_override %}{%- endcapture -%}
+  {%- assign sticky_cta_enabled = sticky_cta_enabled | strip -%}
+
+  {%- if sticky_cta_enabled == 'true' -%}
+    {%- capture sticky_cta -%}
+      {% render 'nv-product-cta-stack',
+        product: product,
+        template_override: resolved_template_override,
+        class: 'nv-product-cta-stack nv-product-cta-stack--sticky',
+        suppress_buy_with_prime_primary: settings.show_buy_with_prime_zone,
+        show_amazon_disclosure: true
+      %}
+    {%- endcapture -%}
+    {%- assign sticky_cta = sticky_cta | strip -%}
+
+    {%- if sticky_cta != blank -%}
+      <div class="nv-sticky-cta" id="nvStickyCta" hidden>
+        <div class="nv-sticky-cta__inner">
+          <div class="nv-sticky-cta__meta">
+            <p class="nv-sticky-cta__title">{{ product.title }}</p>
+            <div class="nv-sticky-cta__commerce">
+              <div class="price nv-sticky-cta__price">{% render 'price', product: product %}</div>
+              <div class="nv-sticky-cta__prime-slot">
+                {% render 'nv-prime-tag-pdp', product: product, variant: product.selected_or_first_available_variant %}
+              </div>
+            </div>
+          </div>
+          <div class="nv-sticky-cta__actions">
+            {% if resolved_product_form_id != blank %}
+              <button
+                type="submit"
+                form="{{ resolved_product_form_id }}"
+                class="btn nv-sticky-cta__cart-button nv-btn nv-btn--primary nv-btn--md"
+                {% unless product.available %}disabled aria-disabled="true"{% endunless %}
+              >
+                {% if product.available %}Add to cart{% else %}Sold out{% endif %}
+              </button>
+            {% endif %}
+            {{ sticky_cta }}
+          </div>
+        </div>
+      </div>
+  
+      <script>
+        (function() {
+          const el = document.getElementById('nvStickyCta');
+          if (!el) return;
+          const showAfter = 320;
+          const onScroll = () => {
+            el.hidden = window.scrollY <= showAfter;
+          };
+          window.addEventListener('scroll', onScroll, { passive: true });
+          onScroll();
+        })();
+      </script>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

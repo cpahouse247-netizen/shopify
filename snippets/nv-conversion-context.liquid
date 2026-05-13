@@ -1,0 +1,204 @@
+{% comment %}
+  NutraVora conversion resolver.
+
+  This snippet is the single source of truth for product CTA decisions.
+  It returns one requested field at a time so other snippets can consume
+  the same logic without duplicating business rules.
+
+  Accepted inputs:
+  - product: Product object
+  - field: which resolved value to output
+  - template_override: optional mode override passed by a template/section
+
+  Supported fields:
+  - mode
+  - amazon_link
+  - amazon_available
+  - amazon_label
+  - amazon_new_tab
+  - amazon_disclosure_text
+  - amazon_missing_link_text
+  - primary_kind
+  - show_secondary_amazon
+  - show_buy_with_prime_zone
+  - cta_stack_order
+  - shopify_label
+  - buy_with_prime_label
+  - buy_with_prime_loading_label
+  - sticky_cta_enabled
+  - buy_with_prime_enabled
+  - buy_with_prime_button_id
+  - selected_variant_id
+{% endcomment %}
+{%- liquid
+  assign resolved_mode = settings.default_conversion_mode | default: 'amazon_attribution'
+  assign allowed_modes = 'amazon_attribution,buy_with_prime,hybrid' | split: ','
+
+  assign product_mode = blank
+  if product and product.metafields.custom.conversion_mode != blank
+    assign product_mode = product.metafields.custom.conversion_mode.value | default: product.metafields.custom.conversion_mode | downcase | strip
+  endif
+
+  assign product_cta_label_override = blank
+  if product and product.metafields.custom.cta_label_override != blank
+    assign product_cta_label_override = product.metafields.custom.cta_label_override.value | default: product.metafields.custom.cta_label_override | strip
+  endif
+
+  assign product_show_secondary_cta = blank
+  if product and product.metafields.custom.show_secondary_cta != blank
+    assign product_show_secondary_cta = product.metafields.custom.show_secondary_cta.value | default: product.metafields.custom.show_secondary_cta
+  endif
+
+  assign template_mode = template_override | default: blank | downcase | strip
+
+  if product_mode != blank and allowed_modes contains product_mode
+    assign resolved_mode = product_mode
+  elsif template_mode != blank and allowed_modes contains template_mode
+    assign resolved_mode = template_mode
+  endif
+
+  assign amazon_link = settings.amazon_default_link | strip
+  if settings.use_product_amazon_attribution_links and product
+    assign product_amazon_attribution_link = blank
+    if product.metafields.custom.amazon_attribution_link != blank
+      assign product_amazon_attribution_link = product.metafields.custom.amazon_attribution_link.value | default: product.metafields.custom.amazon_attribution_link | strip
+    elsif product.metafields.custom.amazon_link != blank
+      assign product_amazon_attribution_link = product.metafields.custom.amazon_link.value | default: product.metafields.custom.amazon_link | strip
+    endif
+
+    if product_amazon_attribution_link != blank
+      assign amazon_link = product_amazon_attribution_link
+    endif
+  endif
+
+  assign buy_with_prime_enabled = false
+  if product and product.metafields.custom.buy_with_prime_enabled != blank
+    assign buy_with_prime_enabled = product.metafields.custom.buy_with_prime_enabled.value | default: product.metafields.custom.buy_with_prime_enabled
+  endif
+
+  assign buy_with_prime_button_id = blank
+  if product and product.metafields.custom.buy_with_prime_button_id != blank
+    assign buy_with_prime_button_id = product.metafields.custom.buy_with_prime_button_id.value | default: product.metafields.custom.buy_with_prime_button_id
+  endif
+
+  assign primary_kind = 'amazon'
+  case resolved_mode
+    when 'amazon_attribution'
+      assign primary_kind = 'amazon'
+    when 'buy_with_prime'
+      assign primary_kind = 'buy_with_prime'
+    when 'hybrid'
+      assign primary_kind = settings.hybrid_primary_action | default: 'buy_with_prime'
+      unless primary_kind == 'buy_with_prime' or primary_kind == 'add_to_cart'
+        assign primary_kind = 'buy_with_prime'
+      endunless
+  endcase
+
+  assign show_secondary_amazon = false
+  if resolved_mode == 'hybrid' and settings.hybrid_show_secondary_amazon and settings.show_secondary_amazon_cta and amazon_link != blank
+    assign show_secondary_amazon = true
+  endif
+  if product_show_secondary_cta == false
+    assign show_secondary_amazon = false
+  elsif product_show_secondary_cta and amazon_link != blank
+    assign show_secondary_amazon = true
+  endif
+
+  assign show_buy_with_prime_zone = false
+  if settings.show_buy_with_prime_zone
+    if resolved_mode == 'buy_with_prime' or resolved_mode == 'hybrid' or buy_with_prime_enabled
+      assign show_buy_with_prime_zone = true
+    endif
+  endif
+
+  assign amazon_available = false
+  if amazon_link != blank
+    assign amazon_available = true
+  endif
+
+  assign selected_variant_id = blank
+  if product and product.selected_or_first_available_variant
+    assign selected_variant_id = product.selected_or_first_available_variant.id
+  endif
+
+  assign amazon_label = settings.amazon_cta_label | default: 'Buy on Amazon'
+  if product_cta_label_override != blank
+    assign amazon_label = product_cta_label_override
+  endif
+  assign amazon_disclosure_text = settings.amazon_disclosure_text
+  assign amazon_missing_link_text = settings.amazon_missing_link_text | default: 'Amazon purchase link unavailable'
+  assign shopify_label = settings.shopify_cta_label | default: 'Add to cart'
+  if product_cta_label_override != blank
+    assign shopify_label = product_cta_label_override
+  endif
+  assign buy_with_prime_label = settings.buy_with_prime_label | default: 'Buy with Prime'
+  if product_cta_label_override != blank
+    assign buy_with_prime_label = product_cta_label_override
+  endif
+  assign buy_with_prime_loading_label = settings.buy_with_prime_loading_label | default: 'Loading Buy with Prime'
+  assign cta_stack_order = settings.cta_stack_order | default: 'primary_first'
+  assign sticky_cta_enabled = settings.enable_sticky_cta
+
+  case field
+    when 'mode'
+      echo resolved_mode
+    when 'amazon_link'
+      echo amazon_link
+    when 'amazon_available'
+      if amazon_available
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'amazon_label'
+      echo amazon_label
+    when 'amazon_new_tab'
+      if settings.amazon_open_new_tab
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'amazon_disclosure_text'
+      echo amazon_disclosure_text
+    when 'amazon_missing_link_text'
+      echo amazon_missing_link_text
+    when 'primary_kind'
+      echo primary_kind
+    when 'show_secondary_amazon'
+      if show_secondary_amazon
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'show_buy_with_prime_zone'
+      if show_buy_with_prime_zone
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'cta_stack_order'
+      echo cta_stack_order
+    when 'shopify_label'
+      echo shopify_label
+    when 'buy_with_prime_label'
+      echo buy_with_prime_label
+    when 'buy_with_prime_loading_label'
+      echo buy_with_prime_loading_label
+    when 'sticky_cta_enabled'
+      if sticky_cta_enabled
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'buy_with_prime_enabled'
+      if buy_with_prime_enabled
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'buy_with_prime_button_id'
+      echo buy_with_prime_button_id
+    when 'selected_variant_id'
+      echo selected_variant_id
+  endcase
+-%}

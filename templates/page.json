@@ -1,0 +1,42 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-privacy-policy",
+      "name": "Main privacy policy",
+      "settings": {
+        "show_page_title": true,
+        "hero_title": "",
+        "hero_text": "",
+        "content_width": "medium",
+        "background_color": "#fbfaf6",
+        "surface_color": "#ffffff",
+        "surface_soft_color": "#f7f1e7",
+        "text_color": "#1b3026",
+        "muted_text_color": "#65736b",
+        "accent_color": "#c99838",
+        "border_color": "#ddd7c9",
+        "title_size": 48,
+        "title_mobile_size": 34,
+        "body_size": 16,
+        "body_mobile_size": 15,
+        "heading_size": 25,
+        "card_radius": 28,
+        "content_max_width": 1160,
+        "side_padding": 48,
+        "side_padding_mobile": 24,
+        "card_padding": 56,
+        "card_padding_mobile": 26,
+        "section_padding_top": 72,
+        "section_padding_bottom": 84,
+        "show_bottom_cta": false,
+        "bottom_cta_heading": "Need help with privacy questions?",
+        "bottom_cta_text": "Contact NutraVora support for privacy, account, or data-related questions.",
+        "bottom_cta_button_label": "Contact Support",
+        "bottom_cta_button_link": ""
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

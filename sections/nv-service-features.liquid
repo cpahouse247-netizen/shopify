@@ -1,0 +1,408 @@
+{%- liquid
+  assign feature_count = 0
+  for block in section.blocks
+    if block.type == 'feature_item'
+      assign feature_count = feature_count | plus: 1
+    endif
+  endfor
+-%}
+
+<section
+  class="section nv-section--sm nv-service-features"
+  style="
+    --nv-service-features-bg: {{ section.settings.background_color }};
+    --nv-service-features-card-bg: {{ section.settings.card_background_color | default: '#FFFFFF' }};
+    --nv-service-features-card-border: {{ section.settings.card_border_color | default: '#D9DED8' }};
+    --nv-service-features-card-radius: {{ section.settings.card_border_radius | default: 22 }}px;
+    --nv-service-features-card-padding: {{ section.settings.card_padding | default: 18 }}px;
+    --nv-service-features-card-shadow-opacity: {{ section.settings.card_shadow_opacity | default: 8 | divided_by: 100.0 }};
+    --nv-service-features-icon-bg: {{ section.settings.icon_background_color | default: '#FFFFFF' }};
+    --nv-service-features-icon-border: {{ section.settings.icon_border_color | default: '#D9DED8' }};
+    --nv-service-features-max-width: {{ section.settings.content_max_width }}px;
+    --nv-service-features-columns: {{ section.settings.columns_desktop }};
+    --nv-service-features-columns-mobile: {{ section.settings.columns_mobile }};
+    --nv-service-features-title-color: {{ section.settings.title_color }};
+    --nv-service-features-body-color: {{ section.settings.body_color }};
+    --nv-service-features-icon-color: {{ section.settings.icon_color }};
+    --nv-service-features-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-service-features-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --nv-service-features-item-title-size: {{ section.settings.item_title_font_size }}px;
+    --nv-service-features-item-body-size: {{ section.settings.item_body_font_size }}px;
+    --nv-service-features-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-service-features-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-service-features-item-gap: {{ section.settings.item_gap }}px;
+    --nv-service-features-icon-size: {{ section.settings.icon_size }}px;
+    --nv-service-features-icon-wrap-size: {{ section.settings.icon_wrapper_size }}px;
+  "
+>
+  <div class="container nv-service-features__inner">
+    {% if section.settings.show_heading %}
+      <div class="nv-service-features__intro nv-service-features__intro--{{ section.settings.item_alignment }}">
+        {% if section.settings.section_heading != blank %}
+          <h2 class="nv-service-features__heading nv-section-heading">{{ section.settings.section_heading }}</h2>
+        {% endif %}
+        {% if section.settings.section_subheading != blank %}
+          <p class="nv-service-features__subheading">{{ section.settings.section_subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if feature_count > 0 %}
+      <div
+        class="nv-service-features__grid nv-service-features__grid--{{ section.settings.icon_position }} nv-service-features__grid--align-{{ section.settings.item_alignment }}"
+      >
+        {% for block in section.blocks %}
+          {% if block.type == 'feature_item' %}
+            {%- liquid
+              assign icon_alt = block.settings.icon_alt
+              if icon_alt == blank
+                assign icon_alt = block.settings.title
+              endif
+              assign animation_delay = forloop.index0 | times: 100 | plus: 100
+              if animation_delay > 800
+                assign animation_delay = 800
+              endif
+            -%}
+            <article class="nv-service-features__item nv-service-features__item--{{ section.settings.icon_position }}" data-nv-animate="fade-up" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+              {% if block.settings.link != blank %}
+                <a class="nv-service-features__item-link" href="{{ block.settings.link }}">
+              {% else %}
+                <div class="nv-service-features__item-link">
+              {% endif %}
+
+              <div class="nv-service-features__icon-wrap">
+                {% if block.settings.icon_image != blank %}
+                  {{ block.settings.icon_image | image_url: width: 160 | image_tag: loading: 'lazy', class: 'nv-service-features__icon', alt: icon_alt, sizes: '64px' }}
+                {% else %}
+                  <span class="nv-service-features__icon-placeholder" aria-hidden="true"></span>
+                {% endif %}
+              </div>
+
+              <div class="nv-service-features__content">
+                {% if block.settings.title != blank %}
+                  <h3 class="nv-service-features__title nv-h5">{{ block.settings.title }}</h3>
+                {% endif %}
+                {% if block.settings.body != blank %}
+                  <p class="nv-service-features__body nv-body-sm">{{ block.settings.body }}</p>
+                {% endif %}
+                {% if block.settings.link != blank and block.settings.link_label != blank %}
+                  <span class="nv-service-features__link-label">{{ block.settings.link_label }}</span>
+                {% endif %}
+              </div>
+
+              {% if block.settings.link != blank %}
+                </a>
+              {% else %}
+                </div>
+              {% endif %}
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="nv-service-features__empty">
+        <p>Add feature blocks in the Theme Editor to populate this section.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Service Features",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Service Features"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "Use this section to highlight support, fulfillment, and quality reassurance."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Feature card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Feature card border",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Feature card radius",
+      "min": 10,
+      "max": 32,
+      "step": 2,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Feature card padding",
+      "min": 12,
+      "max": 30,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Feature card shadow",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "default": 1280,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "default": "5",
+      "options": [
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" },
+        { "value": "6", "label": "6" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "item_alignment",
+      "label": "Item alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "default": "top",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "left", "label": "Left" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#181A17"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body color",
+      "default": "#5E625D"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon accent color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "icon_background_color",
+      "label": "Icon background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "icon_border_color",
+      "label": "Icon border",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_title_font_size",
+      "label": "Item title font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_body_font_size",
+      "label": "Item body font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "label": "Item gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_wrapper_size",
+      "label": "Icon wrapper size",
+      "min": 40,
+      "max": 88,
+      "step": 2,
+      "default": 52,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature_item",
+      "name": "Feature item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image"
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Icon alt text",
+          "default": "Service feature icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Fast fulfillment"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body",
+          "default": "Short supporting text that communicates a clear service or trust benefit."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional link"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Optional link label",
+          "default": "Learn more"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Service Features",
+      "blocks": [
+        { "type": "feature_item", "settings": { "title": "Fast fulfillment", "body": "Set expectations around shipping or fulfillment in concise, trustworthy language." } },
+        { "type": "feature_item", "settings": { "title": "Secure payment", "body": "Highlight checkout confidence and clear purchase handling." } },
+        { "type": "feature_item", "settings": { "title": "Customer support", "body": "Use this space to reinforce responsive support and brand accessibility." } },
+        { "type": "feature_item", "settings": { "title": "Quality assurance", "body": "Summarize the standards behind review, sourcing, or presentation." } },
+        { "type": "feature_item", "settings": { "title": "Easy returns", "body": "Communicate your return or reassurance policy in a calm, premium way." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

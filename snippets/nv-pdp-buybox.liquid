@@ -1,0 +1,1048 @@
+{%- liquid
+  assign resolved_template_override = template_override | strip
+  assign resolved_product_form_id = product_form_id | strip
+  if resolved_product_form_id == blank
+    assign resolved_product_form_id = 'nv-premium-product-form-' | append: section.id
+  endif
+
+  assign resolved_brand = product.vendor | strip
+  assign resolved_subheadline = hero_subheadline | strip
+  assign resolved_item_number = item_number | strip
+  if resolved_item_number == blank
+    assign resolved_item_number = current_variant.sku | strip
+  endif
+
+  assign resolved_product_type = product.type | strip
+  assign resolved_rating = review_rating | plus: 0
+  assign resolved_review_count = review_count
+  assign resolved_recommendation = recommendation_text | strip
+  assign resolved_bought_text = bought_count_text | strip
+  assign is_variant_available = current_variant.available
+  assign variant_inventory_tracked = false
+  if current_variant.inventory_management != blank
+    assign variant_inventory_tracked = true
+  endif
+  assign variant_inventory_quantity = current_variant.inventory_quantity | default: 0
+  assign has_sale = false
+  assign sale_savings = 0
+  assign sale_percent = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign has_sale = true
+    assign sale_savings = current_variant.compare_at_price | minus: current_variant.price
+    assign sale_percent = sale_savings | times: 100.0 | divided_by: current_variant.compare_at_price | round
+  endif
+
+  assign payment_message_text = product.metafields.custom.payment_message.value | default: product.metafields.custom.payment_message | strip
+  assign amazon_attribution_link = product.metafields.custom.amazon_attribution_link.value | default: product.metafields.custom.amazon_attribution_link | strip
+  assign resolved_amazon_fallback_link = amazon_fallback_link | strip
+  assign nv_amazon_url = amazon_attribution_link | default: resolved_amazon_fallback_link | strip
+  assign nv_has_amazon = false
+  if nv_amazon_url != blank
+    assign nv_has_amazon = true
+  endif
+  assign trust_strip_fallback_1_label = section.settings.trust_strip_fallback_1_label | default: '30-Day Guarantee' | strip
+  assign trust_strip_fallback_2_label = section.settings.trust_strip_fallback_2_label | default: 'Non-GMO Formula' | strip
+  assign trust_strip_fallback_3_label = section.settings.trust_strip_fallback_3_label | default: 'Lab Tested Standards' | strip
+
+  assign spotlight_items = hero_spotlight_lines
+  if spotlight_items == blank
+    assign spotlight_source = product.metafields.custom.features_benefits_list.value | default: product.metafields.custom.features_benefits_list
+    if spotlight_source != blank
+      assign spotlight_items = spotlight_source | metafield_tag | strip_html | newline_to_br | split: '<br />'
+    endif
+  endif
+
+  assign trust_badges = hero_trust_badge_lines
+  if trust_badges == blank
+    assign trust_badges_source = product.metafields.custom.hero_trust_badges.value | default: product.metafields.custom.hero_trust_badges | default: product.metafields.custom.trust_badges.value | default: product.metafields.custom.trust_badges
+    if trust_badges_source != blank
+      assign trust_badges = trust_badges_source | metafield_tag | strip_html | newline_to_br | split: '<br />'
+    endif
+  endif
+
+  assign share_url = shop.url | append: product.url
+  assign share_title = product.title
+
+  assign has_variant_picker_block = false
+  for block in section.blocks
+    if block.type == 'variant_picker'
+      assign has_variant_picker_block = true
+      break
+    endif
+  endfor
+-%}
+
+{%- capture resolved_mode -%}{% render 'nv-conversion-context', product: product, field: 'mode', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_mode = resolved_mode | strip -%}
+{%- capture amazon_available -%}{% render 'nv-conversion-context', product: product, field: 'amazon_available', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign amazon_available = amazon_available | strip -%}
+{%- capture show_buy_with_prime_zone -%}{% render 'nv-conversion-context', product: product, field: 'show_buy_with_prime_zone', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign show_buy_with_prime_zone = show_buy_with_prime_zone | strip -%}
+
+<aside class="nv-pdp-hero__buybox-col nv-pdp-buybox{% unless is_variant_available %} is-unavailable{% endunless %}">
+  <div class="nv-pdp-buybox__card">
+    {% form 'product', product, id: resolved_product_form_id, class: 'nv-pdp-buybox__form' %}
+      {% if product.has_only_default_variant or has_variant_picker_block == false %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+      {% endif %}
+
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'vendor' %}
+            {% assign show_vendor = block.settings.show_vendor %}
+            {% assign block_vendor = block.settings.vendor_override | strip | default: resolved_brand %}
+            {% if show_vendor and block_vendor != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--vendor" data-buybox-block="vendor" {{ block.shopify_attributes }}>
+                <p class="nv-pdp-buybox__vendor">{{ block_vendor }}</p>
+              </div>
+            {% endif %}
+
+          {% when 'title' %}
+            {% if block.settings.show_title and product.title != blank %}
+              {% assign block_subheadline = resolved_subheadline | default: block.settings.subheadline_fallback | strip %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--title" data-buybox-block="title" {{ block.shopify_attributes }}>
+                {% if block.settings.title_tag == 'h2' %}
+                  <h2 class="nv-pdp-buybox__title">{{ product.title }}</h2>
+                {% else %}
+                  <h1 class="nv-pdp-buybox__title">{{ product.title }}</h1>
+                {% endif %}
+                {% if block_subheadline != blank %}
+                  <p class="nv-pdp-buybox__subheadline">{{ block_subheadline }}</p>
+                {% endif %}
+                {% if trust_badges != blank %}
+                  <div class="nv-pdp-buybox__hero-trust-badges" aria-label="Product trust badges">
+                    {% for trust_badge in trust_badges %}
+                      {% assign normalized_trust_badge = trust_badge | strip %}
+                      {% if normalized_trust_badge != blank %}
+                        <span class="nv-pdp-buybox__hero-trust-badge">{{ normalized_trust_badge }}</span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if resolved_recommendation != blank or resolved_bought_text != blank %}
+                  <div class="nv-pdp-buybox__title-support">
+                    {% if resolved_recommendation != blank %}
+                      <p class="nv-pdp-buybox__proof">{{ resolved_recommendation }}</p>
+                    {% endif %}
+                    {% if resolved_bought_text != blank %}
+                      <p class="nv-pdp-buybox__proof-meta">{{ resolved_bought_text }}</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% when 'product_rating' %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--rating nv-pdp-buybox__block--areviews-rating" data-buybox-block="product-rating" {{ block.shopify_attributes }}>
+              <div class="nv-pdp-buybox__areviews-link" role="button" tabindex="0" data-nv-areviews-scroll aria-label="View customer reviews">
+                <span class="areviews_header_stars" aria-live="polite"></span>
+              </div>
+              {% if resolved_rating > 0 %}
+                <div class="nv-pdp-buybox__rating-row nv-pdp-buybox__rating-row--fallback" data-nv-rating-fallback>
+                  {% render 'rating-stars', rating: resolved_rating %}
+                  {% if block.settings.show_review_label or block.settings.show_review_count %}
+                    <span class="nv-pdp-buybox__rating-text">
+                      {% if block.settings.show_review_label %}{{ resolved_rating | round: 1 }}{% endif %}
+                      {% if block.settings.show_review_count and resolved_review_count != blank %}
+                        {% if block.settings.show_review_label %} • {% endif %}{{ resolved_review_count }} reviews
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </div>
+              {% elsif block.settings.empty_state == 'show_placeholder' %}
+                <p class="nv-pdp-buybox__microcopy">Customer reviews coming soon.</p>
+              {% endif %}
+            </div>
+
+          {% when 'product_meta_row' %}
+            {% assign show_meta = false %}
+            {% if block.settings.show_sku and resolved_item_number != blank %}
+              {% assign show_meta = true %}
+            {% endif %}
+            {% if block.settings.show_type and resolved_product_type != blank %}
+              {% assign show_meta = true %}
+            {% endif %}
+            {% if show_meta %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--meta" data-buybox-block="product-meta" {{ block.shopify_attributes }}>
+                <div class="nv-pdp-buybox__meta-row">
+                  {% if block.settings.show_sku and resolved_item_number != blank %}
+                    <span class="nv-pdp-buybox__meta-item"><span class="nv-pdp-buybox__meta-label">{{ block.settings.sku_label }}:</span><span class="nv-pdp-buybox__meta-value">{{ resolved_item_number }}</span></span>
+                  {% endif %}
+                  {% if block.settings.show_type and resolved_product_type != blank %}
+                    <span class="nv-pdp-buybox__meta-item"><span class="nv-pdp-buybox__meta-label">{{ block.settings.type_label }}:</span><span class="nv-pdp-buybox__meta-value">{{ resolved_product_type }}</span></span>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'price' %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--price" data-buybox-block="price" {{ block.shopify_attributes }}>
+              <div class="nv-pdp-buybox__price-row">
+                <div class="nv-pdp-buybox__price">{% render 'price', product: product, show_compare_at_price: block.settings.show_compare_at %}</div>
+                {% if has_sale and block.settings.show_sale_badge %}
+                  <span class="nv-pdp-buybox__sale-badge">
+                    {% if sale_percent > 0 %}
+                      {{ sale_percent }}% off
+                    {% else %}
+                      {{ block.settings.sale_badge_label }}
+                    {% endif %}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+          {% when 'certification_badges' %}
+            <div
+              class="nv-pdp-buybox__block nv-pdp-buybox__block--certification-badges"
+              data-buybox-block="certification-badges"
+              data-nv-animate="fade-up"
+              style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;"
+              {{ block.shopify_attributes }}
+            >
+              {% if block.settings.show_non_gmo %}
+                <span style="display:inline-flex;align-items:center;flex:0 0 auto;border-radius:20px;padding:5px 12px;background:{{ block.settings.badge_bg_color }};border:1px solid {{ block.settings.badge_border_color }};color:{{ block.settings.badge_text_color }};font-size:11px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.5px;">✓ Non-GMO</span>
+              {% endif %}
+              {% if block.settings.show_gluten_free %}
+                <span style="display:inline-flex;align-items:center;flex:0 0 auto;border-radius:20px;padding:5px 12px;background:{{ block.settings.badge_bg_color }};border:1px solid {{ block.settings.badge_border_color }};color:{{ block.settings.badge_text_color }};font-size:11px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.5px;">✓ Gluten-Free</span>
+              {% endif %}
+              {% if block.settings.show_lab_tested %}
+                <span style="display:inline-flex;align-items:center;flex:0 0 auto;border-radius:20px;padding:5px 12px;background:{{ block.settings.badge_bg_color }};border:1px solid {{ block.settings.badge_border_color }};color:{{ block.settings.badge_text_color }};font-size:11px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.5px;">✓ Lab Tested</span>
+              {% endif %}
+              {% if block.settings.show_gmp %}
+                <span style="display:inline-flex;align-items:center;flex:0 0 auto;border-radius:20px;padding:5px 12px;background:{{ block.settings.badge_bg_color }};border:1px solid {{ block.settings.badge_border_color }};color:{{ block.settings.badge_text_color }};font-size:11px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.5px;">✓ GMP Facility</span>
+              {% endif %}
+            </div>
+
+          {% when 'supply_value_callout' %}
+            {% if block.settings.show_block %}
+              {% if block.settings.use_metafield and product.metafields.custom.supply_label != blank %}
+                {% assign supply_text = product.metafields.custom.supply_label.value | default: product.metafields.custom.supply_label %}
+              {% else %}
+                {% assign supply_text = block.settings.fallback_text %}
+              {% endif %}
+
+              {% if supply_text != blank %}
+                <div
+                  class="nv-pdp-buybox__block nv-pdp-buybox__block--supply-callout"
+                  data-buybox-block="supply-value-callout"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="nv-supply-callout nv-supply-callout--{{ block.settings.callout_style }}">
+                    {% if block.settings.show_value_icon %}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                      </svg>
+                    {% endif %}
+                    <span>{{ supply_text }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+
+          {% when 'shipping_line' %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--shipping" data-buybox-block="shipping-line" {{ block.shopify_attributes }}>
+              <div class="nv-shipping-line">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="1" y="3" width="15" height="13"/>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+                <span>
+                  {% if product.metafields.custom.shipping_note != blank %}
+                    {{ product.metafields.custom.shipping_note.value | default: product.metafields.custom.shipping_note }}
+                  {% else %}
+                    {{ block.settings.fallback_text | default: settings.default_shipping_note | default: 'Fast Prime delivery available on Amazon' }}
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+
+          {% when 'inventory_status' %}
+            {% assign inventory_label = blank %}
+            {% if variant_inventory_tracked %}
+              {% if is_variant_available == false %}
+                {% assign inventory_label = block.settings.out_of_stock_text | strip %}
+                {% if inventory_label == blank %}
+                  {% assign inventory_label = 'Out of stock' %}
+                {% endif %}
+              {% elsif variant_inventory_quantity > 0 and variant_inventory_quantity <= block.settings.low_stock_threshold %}
+                {% assign inventory_label = block.settings.low_stock_text | strip %}
+                {% if inventory_label == blank %}
+                  {% assign inventory_label = 'Low stock' %}
+                {% endif %}
+              {% elsif is_variant_available %}
+                {% assign inventory_label = block.settings.in_stock_text | strip %}
+                {% if inventory_label == blank %}
+                  {% assign inventory_label = 'In stock' %}
+                {% endif %}
+                {% assign normalized_inventory_label = inventory_label | downcase %}
+                {% if inventory_label == 'Available In stock' or normalized_inventory_label contains 'available in stock' %}
+                  {% assign inventory_label = 'In stock' %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+            {% if inventory_label != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--inventory" data-buybox-block="inventory-status" {{ block.shopify_attributes }}>
+                <div class="nv-pdp-buybox__inventory nv-pdp-buybox__inventory--{% if is_variant_available == false %}out{% elsif variant_inventory_quantity > 0 and variant_inventory_quantity <= block.settings.low_stock_threshold %}low{% else %}in{% endif %}">
+                  {% if block.settings.show_icon %}
+                    <span class="nv-pdp-buybox__inventory-dot" aria-hidden="true"></span>
+                  {% endif %}
+                  <span class="nv-pdp-buybox__inventory-text">{{ inventory_label }}</span>
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'payment_message' %}
+            {% assign block_payment_message = payment_message_text | default: block.settings.fallback_text | strip %}
+            {% if block_payment_message != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--payment-message" data-buybox-block="payment-message" {{ block.shopify_attributes }}>
+                <p class="nv-pdp-buybox__microcopy">{{ block_payment_message }}</p>
+              </div>
+            {% endif %}
+
+          {% when 'features_list' %}
+            {% assign feature_items = spotlight_items %}
+            {% if feature_items == blank and block.settings.fallback_list != blank %}
+              {% assign feature_items = block.settings.fallback_list | newline_to_br | split: '<br />' %}
+            {% endif %}
+            {% assign rendered_features = 0 %}
+            {% if feature_items != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--features" data-buybox-block="features-list" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <p class="nv-pdp-buybox__features-title">{{ block.settings.heading }}</p>
+                {% endif %}
+                <ul class="nv-pdp-buybox__features-list" data-mobile-limit="{{ block.settings.max_items_mobile }}">
+                  {% for line in feature_items %}
+                    {% assign normalized_line = line | strip %}
+                    {% if normalized_line != blank and rendered_features < block.settings.max_items_desktop %}
+                      <li class="nv-pdp-buybox__features-item{% if rendered_features >= block.settings.max_items_mobile %} nv-pdp-buybox__features-item--mobile-hidden{% endif %}">{{ normalized_line }}</li>
+                      {% assign rendered_features = rendered_features | plus: 1 %}
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+          {% when 'text' %}
+            {% assign text_heading = block.settings.heading | strip %}
+            {% assign text_body = block.settings.body %}
+            {% if text_heading != blank or text_body != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--text" data-buybox-block="text" {{ block.shopify_attributes }}>
+                {% if text_heading != blank %}
+                  <p class="nv-pdp-buybox__content-heading">{{ text_heading }}</p>
+                {% endif %}
+                {% if text_body != blank %}
+                  <div class="nv-pdp-buybox__rte rte">{{ text_body }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% when 'custom_liquid' %}
+            {% assign liquid_heading = block.settings.heading | strip %}
+            {% assign liquid_body = block.settings.custom_liquid %}
+            {% if liquid_heading != blank or liquid_body != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--custom-liquid" data-buybox-block="custom-liquid" {{ block.shopify_attributes }}>
+                {% if liquid_heading != blank %}
+                  <p class="nv-pdp-buybox__content-heading">{{ liquid_heading }}</p>
+                {% endif %}
+                {% if liquid_body != blank %}
+                  <div class="nv-pdp-buybox__custom-liquid">{{ liquid_body }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% when 'variant_picker' %}
+            {% assign should_hide_variant_picker = false %}
+            {% if product.has_only_default_variant and block.settings.hide_if_single_variant %}
+              {% assign should_hide_variant_picker = true %}
+            {% endif %}
+            {% unless should_hide_variant_picker %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--variant" data-buybox-block="variant-picker" {{ block.shopify_attributes }}>
+                <label class="nv-pdp-buybox__label" for="PremiumProductVariant-{{ section.id }}">Options</label>
+                <select id="PremiumProductVariant-{{ section.id }}" name="id" class="nv-pdp-buybox__select">
+                  {% for variant in product.variants %}
+                    <option value="{{ variant.id }}" {% if variant.id == current_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                      {{ variant.title }}{% unless variant.available %} - Sold out{% endunless %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endunless %}
+
+          {% when 'quantity_selector' %}
+            {% assign min_quantity = block.settings.min_quantity | default: 1 %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--quantity" data-buybox-block="quantity-selector" {{ block.shopify_attributes }}>
+              <label class="nv-pdp-buybox__label" for="PremiumProductQuantity-{{ section.id }}">{{ block.settings.label }}</label>
+              <div class="nv-pdp-buybox__qty-control" data-qty-control>
+                <button type="button" class="nv-pdp-buybox__qty-button" data-qty-change="-1" aria-label="Decrease quantity" {% unless is_variant_available %}disabled{% endunless %}>−</button>
+                <input id="PremiumProductQuantity-{{ section.id }}" class="nv-pdp-buybox__qty-input" type="number" name="quantity" value="{{ min_quantity }}" min="{{ min_quantity }}" step="1" inputmode="numeric" {% unless is_variant_available %}disabled{% endunless %}>
+                <button type="button" class="nv-pdp-buybox__qty-button" data-qty-change="1" aria-label="Increase quantity" {% unless is_variant_available %}disabled{% endunless %}>+</button>
+              </div>
+            </div>
+
+          {% when 'buy_buttons' %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--buy-buttons" data-buybox-block="buy-buttons" {{ block.shopify_attributes }}>
+              <div class="nv-pdp-buybox__primary-actions">
+                <button type="submit" class="btn nv-pdp-buybox__main-cta nv-btn nv-btn--primary nv-btn--lg nv-btn--full" {% unless is_variant_available %}disabled aria-disabled="true"{% endunless %}>
+                  {% if is_variant_available %}{{ block.settings.add_to_cart_label }}{% else %}{{ block.settings.sold_out_label }}{% endif %}
+                </button>
+              </div>
+            </div>
+
+          {% when 'amazon_buy_button' %}
+            {% assign amazon_button_label = block.settings.button_label | strip %}
+            {% if amazon_button_label == blank %}
+              {% assign amazon_button_label = 'Buy on Amazon' %}
+            {% endif %}
+            {%- # Amazon CTA: uses MAAS metafield, falls back to store URL -%}
+            {% assign amazon_cta_url = nv_amazon_url %}
+            {% if amazon_cta_url != blank %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--amazon-buy-button" data-buybox-block="amazon-buy-button" {{ block.shopify_attributes }}>
+                <a
+                  class="btn nv-pdp-buybox__secondary-cta nv-pdp-buybox__secondary-cta--amazon nv-btn nv-btn--amazon nv-btn--lg nv-btn--full"
+                  href="{{ amazon_cta_url }}"
+                  data-amazon-btn
+                  {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer sponsored"{% endif %}
+                >
+                  {% if block.settings.show_icon %}
+                    <span class="nv-pdp-buybox__secondary-cta-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M7.6 15.8c1.7 1.2 4 1.8 6.8 1.8 2.1 0 4-.3 5.6-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M10 13.2 12.2 7h1.7l2.2 6.2M10.7 11.3h4.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  {% endif %}
+                  <span>{{ amazon_button_label }}</span> <span class="nv-btn__amazon-arrow">→</span>
+                </a>
+              </div>
+            {% endif %}
+
+          {% when 'amazon_trust_note' %}
+            {% if block.settings.show_block and nv_has_amazon %}
+              <div class="nv-amazon-trust" {{ block.shopify_attributes }}>
+                <div class="nv-amazon-trust__header">
+                  {% if block.settings.show_prime_badge %}
+                    <span class="nv-amazon-trust__prime-badge">
+                      <svg width="40" height="13" viewBox="0 0 40 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Amazon Prime">
+                        <rect width="40" height="13" rx="2" fill="#232F3E"/>
+                        <text x="4" y="10" font-size="8" fill="#FF9900" font-family="Arial" font-weight="bold">prime</text>
+                      </svg>
+                    </span>
+                  {% endif %}
+                  {% if block.settings.show_secure_icon %}
+                    <span class="nv-amazon-trust__secure">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                      Secure checkout
+                    </span>
+                  {% endif %}
+                </div>
+
+                {% if block.settings.note_line_1 != blank %}
+                  <p class="nv-amazon-trust__line-1">{{ block.settings.note_line_1 }}</p>
+                {% endif %}
+
+                {% if block.settings.note_line_2 != blank %}
+                  <p class="nv-amazon-trust__line-2">{{ block.settings.note_line_2 }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% when 'buy_with_shop' %}
+            {% if block.settings.show_when_available and is_variant_available %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--shop-pay" data-buybox-block="buy-with-shop" {{ block.shopify_attributes }}>
+                <div class="nv-pdp-buybox__shop-pay">
+                  {{ form | payment_button }}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'external_cta' %}
+            {% assign should_render_prime_cta = false %}
+            {% if block.settings.prefer_prime and show_buy_with_prime_zone == 'true' %}
+              {% assign should_render_prime_cta = true %}
+            {% endif %}
+            {% if resolved_mode == 'buy_with_prime' or resolved_mode == 'hybrid' %}
+              {% assign should_render_prime_cta = true %}
+            {% endif %}
+            {% assign should_render_amazon_cta = false %}
+            {% if amazon_available == 'true' and resolved_mode != 'buy_with_prime' %}
+              {% assign should_render_amazon_cta = true %}
+            {% endif %}
+            {% if nv_has_amazon %}
+              {% assign should_render_amazon_cta = false %}
+            {% endif %}
+            {% assign should_render_external_cta = false %}
+            {% if should_render_prime_cta or should_render_amazon_cta %}
+              {% assign should_render_external_cta = true %}
+            {% endif %}
+            {% if is_variant_available and should_render_external_cta %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--external" data-buybox-block="external-cta" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <p class="nv-pdp-buybox__external-heading">{{ block.settings.heading }}</p>
+                {% endif %}
+
+                {% if should_render_prime_cta %}
+                  <div class="nv-pdp-buybox__external-slot nv-pdp-buybox__external-slot--prime">
+                    {% render 'nv-buy-with-prime-slot',
+                      product: product,
+                      template_override: resolved_template_override,
+                      class: 'nv-pdp-buybox__prime-slot',
+                      placement: 'pdp-buybox'
+                    %}
+                  </div>
+                {% endif %}
+
+                {% if should_render_amazon_cta %}
+                  <div class="nv-pdp-buybox__external-slot nv-pdp-buybox__external-slot--amazon">
+                    {% render 'nv-amazon-cta',
+                      product: product,
+                      template_override: resolved_template_override,
+                      wrapper_class: 'nv-pdp-buybox__amazon-slot',
+                      analytics_context: 'buybox-amazon-cta',
+                      show_disclosure: false
+                    %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% when 'more_payment_options' %}
+            {% if section.settings.show_payment_areas and shop.enabled_payment_types.size > 0 %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--payment-link" data-buybox-block="payment-link" {{ block.shopify_attributes }}>
+                <a class="nv-pdp-buybox__payment-link" href="#nvPremiumTrustPayments-{{ section.id }}">{{ block.settings.label }}</a>
+              </div>
+            {% endif %}
+
+          {% when 'safe_checkout' %}
+            {% if section.settings.show_payment_areas %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--safe-checkout" data-buybox-block="safe-checkout" {{ block.shopify_attributes }}>
+                <div class="nv-pdp-buybox__guarantee">
+                  <span class="nv-pdp-buybox__guarantee-line"></span>
+                  <span class="nv-pdp-buybox__guarantee-text">{{ block.settings.label }}</span>
+                  <span class="nv-pdp-buybox__guarantee-line"></span>
+                </div>
+                {% assign trust_items_source = trust_badges %}
+                {% if trust_items_source == blank %}
+                  {% assign trust_items_source = 'Fast Shipping|Free Return|Secure Packaging|100% Original Products|PCI DSS Compliance|ISO 27001 Certified' | split: '|' %}
+                {% endif %}
+                <div class="nv-pdp-buybox__trust-payments" id="nvPremiumTrustPayments-{{ section.id }}" data-trust-payments>
+                  <div class="nv-pdp-buybox__trust-scroller">
+                    <button type="button" class="nv-pdp-buybox__trust-arrow nv-pdp-buybox__trust-arrow--prev" data-trust-scroll="prev" aria-label="Scroll trust items left">
+                      <span aria-hidden="true">‹</span>
+                    </button>
+                    <div class="nv-pdp-buybox__trust-viewport" data-trust-viewport tabindex="0">
+                      <div class="nv-pdp-buybox__trust-track" data-trust-track>
+                        {% for line in trust_items_source %}
+                          {% assign normalized_line = line | strip %}
+                          {% if normalized_line != blank %}
+                            {% assign trust_icon = 'badge' %}
+                            {% assign trust_downcase = normalized_line | downcase %}
+                            {% if trust_downcase contains 'shipping' %}
+                              {% assign trust_icon = 'shipping' %}
+                            {% elsif trust_downcase contains 'return' %}
+                              {% assign trust_icon = 'return' %}
+                            {% elsif trust_downcase contains 'packaging' %}
+                              {% assign trust_icon = 'packaging' %}
+                            {% elsif trust_downcase contains 'pci' %}
+                              {% assign trust_icon = 'pci' %}
+                            {% elsif trust_downcase contains 'iso' %}
+                              {% assign trust_icon = 'iso' %}
+                            {% endif %}
+                            <div class="nv-pdp-buybox__trust-card" role="listitem">
+                              <span class="nv-pdp-buybox__trust-icon nv-pdp-buybox__trust-icon--{{ trust_icon }}" aria-hidden="true">
+                                {% case trust_icon %}
+                                  {% when 'shipping' %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M3 7h11v8H3zM14 10h3l4 4v1h-7zM7 19.5a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3Zm11 0a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  {% when 'return' %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5l-3 3l3 3V9h8a4 4 0 1 1 0 8h-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  {% when 'packaging' %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3Zm0 0v18M4 7.5l8 4.5l8-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  {% when 'pci' %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v14H4zM8 9h8M8 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  {% when 'iso' %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                  {% else %}
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3l6 2v5c0 4-2.3 7.3-6 9c-3.7-1.7-6-5-6-9V5l6-2Zm-2.5 9l1.7 1.7L14.7 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                {% endcase %}
+                              </span>
+                              <span class="nv-pdp-buybox__trust-copy">{{ normalized_line }}</span>
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <button type="button" class="nv-pdp-buybox__trust-arrow nv-pdp-buybox__trust-arrow--next" data-trust-scroll="next" aria-label="Scroll trust items right">
+                      <span aria-hidden="true">›</span>
+                    </button>
+                  </div>
+                  {% if shop.enabled_payment_types.size > 0 %}
+                    <div class="nv-pdp-buybox__trust-payments-divider"></div>
+                    <div class="nv-pdp-buybox__payments" id="nvPremiumPaymentMethods-{{ section.id }}" aria-label="Accepted payment methods">
+                      {% for type in shop.enabled_payment_types limit: 8 %}
+                        <span class="nv-pdp-buybox__payment-icon">{{ type | payment_type_svg_tag }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'money_back_guarantee' %}
+            <div
+              class="nv-pdp-buybox__block nv-pdp-buybox__block--money-back-guarantee"
+              data-buybox-block="money-back-guarantee"
+              data-nv-animate="fade-up"
+              style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:{{ block.settings.background_color }};border:1px solid {{ block.settings.border_color }};color:{{ block.settings.text_color }};"
+              {{ block.shopify_attributes }}
+            >
+              {% if block.settings.show_shield_icon %}
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:0 0 24px;color:#315c4a;" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" focusable="false" style="display:block;width:24px;height:24px;">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </span>
+              {% endif %}
+              <div style="min-width:0;">
+                {% if block.settings.guarantee_title != blank %}
+                  <p style="margin:0;color:{{ block.settings.text_color }};font-size:13px;font-weight:600;line-height:1.3;">{{ block.settings.guarantee_title }}</p>
+                {% endif %}
+                {% if block.settings.guarantee_body != blank %}
+                  <p style="margin:2px 0 0;color:{{ block.settings.text_color }};font-size:12px;line-height:1.35;opacity:.8;">{{ block.settings.guarantee_body }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+          {% when 'payment_icons' %}
+            
+
+          {% when 'trust_strip' %}
+            {% assign trust_strip_source = product.metafields.custom.trust_strip_items.value | default: product.metafields.custom.trust_strip_items | default: product.metafields.custom.trust_items.value | default: product.metafields.custom.trust_items %}
+            {% assign trust_strip_items = blank %}
+            {% assign render_default_trust_strip = false %}
+            {% if trust_strip_source != blank %}
+              {% assign trust_strip_items = trust_strip_source | metafield_tag | strip_html | newline_to_br | split: '<br />' %}
+            {% elsif block.settings.fallback_items != blank %}
+              {% assign trust_strip_items = block.settings.fallback_items | newline_to_br | split: '<br />' %}
+            {% else %}
+              {% assign render_default_trust_strip = true %}
+            {% endif %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--trust-strip" data-buybox-block="trust-strip" data-nv-animate="fade-in" {{ block.shopify_attributes }}>
+              <div class="nv-pdp-buybox__trust-strip" role="list" aria-label="Purchase trust highlights">
+                {% if render_default_trust_strip %}
+                  {% assign default_trust_labels = trust_strip_fallback_1_label | append: '|' | append: trust_strip_fallback_2_label | append: '|' | append: trust_strip_fallback_3_label | split: '|' %}
+                  {% for default_trust_label in default_trust_labels limit: block.settings.max_items %}
+                    {% assign normalized_default_label = default_trust_label | strip %}
+                    {% if normalized_default_label != blank %}
+                      <div class="nv-pdp-buybox__trust-strip-item" role="listitem">
+                        <span class="nv-pdp-buybox__trust-strip-icon" aria-hidden="true">
+                          {% case forloop.index %}
+                            {% when 1 %}
+                              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3.5 18.5 6v5.2c0 4.1-2.6 7.6-6.5 9.1-3.9-1.5-6.5-5-6.5-9.1V6L12 3.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m8.9 12.1 2 2 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            {% when 2 %}
+                              <svg viewBox="0 0 24 24" focusable="false"><path d="M18.5 5.5c-5.9.3-9.7 4.1-9.7 9.1 0 2.5 1.7 4.3 4.3 4.3 4.9 0 8.7-3.8 9.1-9.7-.8-.2-2.2-.2-3.7 0Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 19.5c2.9-4.8 6.7-8.1 12.2-10.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            {% else %}
+                              <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m8.6 12.2 2.2 2.2 4.7-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          {% endcase %}
+                        </span>
+                        <span class="nv-pdp-buybox__trust-strip-text">{{ normalized_default_label }}</span>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {% for trust_strip_item in trust_strip_items limit: block.settings.max_items %}
+                    {% assign normalized_trust_item = trust_strip_item | strip %}
+                    {% if normalized_trust_item != blank %}
+                      <div class="nv-pdp-buybox__trust-strip-item" role="listitem">
+                        <span class="nv-pdp-buybox__trust-strip-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m8.6 12.2 2.2 2.2 4.7-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span class="nv-pdp-buybox__trust-strip-text">{{ normalized_trust_item }}</span>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+
+          {% when 'bundle_module' %}
+            {% assign bundle_products = product.metafields.custom.frequently_bought_together.value %}
+            {% assign show_bundle_module = section.settings.show_bundle_area %}
+            {% if block.settings.hide_if_empty and bundle_products == blank %}
+              {% assign show_bundle_module = false %}
+            {% endif %}
+            {% if show_bundle_module and bundle_products != blank %}
+              {% assign bundle_total = current_variant.price %}
+              {% assign bundle_compare_total = current_variant.compare_at_price %}
+              {% if bundle_compare_total == blank or bundle_compare_total < current_variant.price %}
+                {% assign bundle_compare_total = current_variant.price %}
+              {% endif %}
+              {% assign rendered_bundle_items = 0 %}
+              {% assign bundle_savings_label = block.settings.savings_label | default: 'Bundle & Save' %}
+              {% assign bundle_trust_note = block.settings.bundle_trust_note | default: 'Free shipping on Amazon Prime eligible bundles' %}
+              {% assign amazon_bundle_url = nv_amazon_url %}
+              {% assign show_amazon_bundle_cta = true %}
+              {% if block.settings.show_amazon_bundle_cta == false %}
+                {% assign show_amazon_bundle_cta = false %}
+              {% endif %}
+              <div class="nv-pdp-buybox__block nv-pdp-buybox__block--bundle" data-buybox-block="bundle" {{ block.shopify_attributes }}>
+                <div class="nv-bundle" data-nv-animate="fade-up" data-nv-delay="200">
+                  <div class="nv-bundle__header">
+                    <h3 class="nv-bundle__title">{{ block.settings.heading | default: 'Frequently Bought Together' }}</h3>
+                    {% if bundle_savings_label != blank %}
+                      <span class="nv-bundle__savings-badge">{{ bundle_savings_label }}</span>
+                    {% endif %}
+                  </div>
+
+                <div
+                  class="nv-pdp-buybox__bundle"
+                  data-bundle-module
+                  data-cart-add-url="{{ routes.cart_add_url }}.js"
+                  data-cart-url="{{ routes.cart_url }}"
+                  data-currency-code="{{ cart.currency.iso_code | default: localization.country.currency.iso_code | default: shop.currency }}"
+                >
+                  <div class="nv-pdp-buybox__bundle-items nv-bundle__products" role="list" aria-label="Bundle items">
+                    <article
+                      class="nv-pdp-buybox__bundle-item nv-pdp-buybox__bundle-item--selected nv-pdp-buybox__bundle-item--current nv-bundle__item"
+                      role="listitem"
+                      data-bundle-item
+                      data-variant-id="{{ current_variant.id }}"
+                      data-price="{{ current_variant.price }}"
+                      data-compare-price="{{ bundle_compare_total }}"
+                      data-selected="true"
+                    >
+                      <button type="button" class="nv-pdp-buybox__bundle-toggle" data-bundle-toggle aria-pressed="true" aria-label="Toggle bundle item">
+                        <div class="nv-pdp-buybox__bundle-media-wrap">
+                          <div class="nv-pdp-buybox__bundle-media">
+                            <span class="nv-pdp-buybox__bundle-badge" aria-hidden="true">✓</span>
+                            {% if product.featured_media.preview_image %}
+                              {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: product.title, class: 'nv-bundle__item-image' }}
+                            {% endif %}
+                          </div>
+                        </div>
+                      </button>
+                      <div class="nv-pdp-buybox__bundle-copy">
+                        <span class="nv-bundle__item-title">{{ product.title }}</span>
+                        <div class="nv-pdp-buybox__bundle-price-row">
+                          <p class="nv-pdp-buybox__bundle-price nv-bundle__item-price">{{ current_variant.price | money }}</p>
+                          {% if current_variant.compare_at_price > current_variant.price %}
+                            <p class="nv-pdp-buybox__bundle-compare">{{ current_variant.compare_at_price | money }}</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </article>
+
+                    {% for bundle_product in bundle_products limit: 2 %}
+                      {% if bundle_product != blank and bundle_product.handle != product.handle %}
+                        {% assign bundle_variant = bundle_product.selected_or_first_available_variant %}
+                        {% assign bundle_total = bundle_total | plus: bundle_variant.price %}
+                        {% assign bundle_compare_price = bundle_variant.compare_at_price %}
+                        {% if bundle_compare_price == blank or bundle_compare_price < bundle_variant.price %}
+                          {% assign bundle_compare_price = bundle_variant.price %}
+                        {% endif %}
+                        {% assign bundle_compare_total = bundle_compare_total | plus: bundle_compare_price %}
+                        {% assign rendered_bundle_items = rendered_bundle_items | plus: 1 %}
+                        <span class="nv-pdp-buybox__bundle-plus nv-bundle__plus" aria-hidden="true">+</span>
+                        <article
+                          class="nv-pdp-buybox__bundle-item nv-pdp-buybox__bundle-item--selected nv-bundle__item"
+                          role="listitem"
+                          data-bundle-item
+                          data-variant-id="{{ bundle_variant.id }}"
+                          data-price="{{ bundle_variant.price }}"
+                          data-compare-price="{{ bundle_compare_price }}"
+                          data-selected="true"
+                        >
+                          <button type="button" class="nv-pdp-buybox__bundle-toggle" data-bundle-toggle aria-pressed="true" aria-label="Toggle bundle item">
+                            <div class="nv-pdp-buybox__bundle-media-wrap">
+                              <div class="nv-pdp-buybox__bundle-media">
+                                <span class="nv-pdp-buybox__bundle-badge" aria-hidden="true">✓</span>
+                                {% if bundle_product.featured_media.preview_image %}
+                                  {{ bundle_product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: bundle_product.title, class: 'nv-bundle__item-image' }}
+                                {% endif %}
+                              </div>
+                            </div>
+                          </button>
+                          <div class="nv-pdp-buybox__bundle-copy">
+                            <span class="nv-bundle__item-title">{{ bundle_product.title }}</span>
+                            <div class="nv-pdp-buybox__bundle-price-row">
+                              <p class="nv-pdp-buybox__bundle-price nv-bundle__item-price">{{ bundle_variant.price | money }}</p>
+                              {% if bundle_variant.compare_at_price > bundle_variant.price %}
+                                <p class="nv-pdp-buybox__bundle-compare">{{ bundle_variant.compare_at_price | money }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </article>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+
+                  {% if rendered_bundle_items > 0 %}
+                    <div class="nv-pdp-buybox__bundle-summary">
+                      <div class="nv-pdp-buybox__bundle-summary-copy nv-bundle__pricing">
+                        <span class="nv-pdp-buybox__bundle-total-label nv-bundle__total-label">Bundle total</span>
+                        <div class="nv-pdp-buybox__bundle-total-wrap">
+                          {% if bundle_compare_total > bundle_total %}
+                            <span class="nv-pdp-buybox__bundle-total-compare nv-bundle__original-price" data-bundle-total-compare="{{ bundle_compare_total }}">{{ bundle_compare_total | money }}</span>
+                          {% endif %}
+                          <strong class="nv-pdp-buybox__bundle-total nv-bundle__total-price" data-bundle-total="{{ bundle_total }}">{{ bundle_total | money }}</strong>
+                        </div>
+                        {% if bundle_compare_total > bundle_total %}
+                          <span class="nv-bundle__you-save">Save {{ bundle_compare_total | minus: bundle_total | money }}</span>
+                        {% endif %}
+                      </div>
+                      <div class="nv-bundle__cta">
+                        <button type="button" class="btn nv-pdp-buybox__bundle-cta nv-bundle__add-btn nv-btn nv-btn--primary nv-btn--md" data-bundle-add>Add Selected To Cart</button>
+                        {% if show_amazon_bundle_cta and amazon_bundle_url != blank %}
+                          <a href="{{ amazon_bundle_url }}" class="nv-bundle__amazon-btn nv-btn nv-btn--amazon nv-btn--md" target="_blank" rel="noopener noreferrer" data-amazon-btn>{{ block.settings.amazon_bundle_label | default: 'Buy Bundle on Amazon →' }}</a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+                  {% if bundle_trust_note != blank %}
+                    <p class="nv-bundle__trust-note">✓ {{ bundle_trust_note }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'share' %}
+            {% if section.settings.show_share_area %}
+              {% assign show_share_links = false %}
+              {% if block.settings.show_facebook or block.settings.show_x or block.settings.show_pinterest or block.settings.show_email %}
+                {% assign show_share_links = true %}
+              {% endif %}
+              {% if show_share_links %}
+                <div class="nv-pdp-buybox__block nv-pdp-buybox__block--share" data-buybox-block="share" {{ block.shopify_attributes }}>
+                  <div class="nv-pdp-buybox__share" role="list" aria-label="Share product">
+                    {% if block.settings.show_facebook %}
+                      <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_param_escape }}" target="_blank" rel="noopener" role="listitem" aria-label="Share on Facebook">
+                        <span class="nv-pdp-buybox__share-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M14 8h2V5h-2c-2.6 0-4 1.5-4 4v2H8v3h2v5h3v-5h2.3l.7-3h-3V9c0-.7.3-1 1-1Z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="nv-pdp-buybox__share-label">Facebook</span>
+                      </a>
+                    {% endif %}
+                    {% if block.settings.show_x %}
+                      <a href="https://twitter.com/intent/tweet?url={{ share_url | url_param_escape }}&text={{ share_title | url_param_escape }}" target="_blank" rel="noopener" role="listitem" aria-label="Share on X">
+                        <span class="nv-pdp-buybox__share-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="m5 5 5.7 7.3L5.4 19H8l3.9-4.8 3.7 4.8H19l-5.9-7.6L18.2 5h-2.6L12 9.5 8.5 5H5Zm3 1.8 7.5 10.4h-1.4L6.6 6.8H8Z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="nv-pdp-buybox__share-label">X</span>
+                      </a>
+                    {% endif %}
+                    {% if block.settings.show_pinterest %}
+                      <a href="https://pinterest.com/pin/create/button/?url={{ share_url | url_param_escape }}&description={{ share_title | url_param_escape }}" target="_blank" rel="noopener" role="listitem" aria-label="Save on Pinterest">
+                        <span class="nv-pdp-buybox__share-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12.1 4.5c-4 0-6.1 2.7-6.1 5.6 0 1.8 1 3.1 2.2 3.6.2.1.4 0 .5-.3l.2-.9c.1-.3 0-.4-.2-.7-.4-.5-.7-1.1-.7-2 0-2.1 1.6-3.9 4-3.9 2.2 0 3.5 1.4 3.5 3.2 0 2.4-1.1 4.4-2.6 4.4-.9 0-1.5-.7-1.3-1.6.2-1 .7-2.1.7-2.8 0-.7-.4-1.2-1.1-1.2-.9 0-1.6.9-1.6 2.1 0 .8.3 1.3.3 1.3l-1.1 4.8c-.3 1.3-.1 2.9 0 3.1l.1.1c.1 0 .1 0 .2-.1.1-.2 1.6-2 2.1-3.3l.6-2.4c.3.6 1.1 1 2 1 2.7 0 4.6-2.5 4.6-5.7 0-2.6-2.2-5.3-6.3-5.3Z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="nv-pdp-buybox__share-label">Pin</span>
+                      </a>
+                    {% endif %}
+                    {% if block.settings.show_email %}
+                      <a href="mailto:?subject={{ share_title | url_param_escape }}&body={{ share_url | url_param_escape }}" role="listitem" aria-label="Share by email">
+                        <span class="nv-pdp-buybox__share-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M4 7.5h16v9H4v-9Zm1.7 1.4 6.3 4.4 6.3-4.4H5.7Zm12.8 6.2v-4.6L12 15l-6.5-4.5v4.6h13Z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="nv-pdp-buybox__share-label">Email</span>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+
+          {% when '@app' %}
+            <div class="nv-pdp-buybox__block nv-pdp-buybox__block--app" data-buybox-block="app" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+        {% endcase %}
+      {% endfor %}
+    {% endform %}
+  </div>
+</aside>
+
+<script>
+  (function() {
+    const sectionRoot = document.getElementById('MainProductPremium-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    const trustPayments = sectionRoot.querySelector('[data-trust-payments]');
+    if (trustPayments) {
+      const viewport = trustPayments.querySelector('[data-trust-viewport]');
+      const prevButton = trustPayments.querySelector('[data-trust-scroll="prev"]');
+      const nextButton = trustPayments.querySelector('[data-trust-scroll="next"]');
+
+      if (viewport) {
+        viewport.scrollLeft = 0;
+        const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let trustAutoScrollTimer = null;
+        let trustResumeTimer = null;
+        let trustUserPaused = false;
+
+        const trustScrollStep = () => {
+          const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+          if (maxScroll <= 8 || trustUserPaused) return;
+          if (viewport.scrollLeft >= maxScroll - 8) {
+            viewport.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            viewport.scrollBy({ left: 112, behavior: 'smooth' });
+          }
+        };
+
+        const startTrustAutoScroll = () => {
+          if (prefersReducedMotion || trustAutoScrollTimer) return;
+          trustAutoScrollTimer = window.setInterval(trustScrollStep, 2600);
+        };
+
+        const pauseTrustAutoScroll = () => {
+          trustUserPaused = true;
+          window.clearTimeout(trustResumeTimer);
+          trustResumeTimer = window.setTimeout(() => {
+            trustUserPaused = false;
+          }, 4200);
+        };
+
+        if (prevButton) {
+          prevButton.addEventListener('click', () => {
+            pauseTrustAutoScroll();
+            viewport.scrollBy({ left: -180, behavior: 'smooth' });
+          });
+        }
+
+        if (nextButton) {
+          nextButton.addEventListener('click', () => {
+            pauseTrustAutoScroll();
+            viewport.scrollBy({ left: 180, behavior: 'smooth' });
+          });
+        }
+
+        viewport.addEventListener('pointerdown', pauseTrustAutoScroll, { passive: true });
+        viewport.addEventListener('wheel', pauseTrustAutoScroll, { passive: true });
+        viewport.addEventListener('focusin', pauseTrustAutoScroll);
+        trustPayments.addEventListener('mouseenter', pauseTrustAutoScroll);
+        trustPayments.addEventListener('mouseleave', () => {
+          window.clearTimeout(trustResumeTimer);
+          trustResumeTimer = window.setTimeout(() => {
+            trustUserPaused = false;
+          }, 900);
+        });
+
+        startTrustAutoScroll();
+      }
+    }
+
+    const bundle = sectionRoot.querySelector('[data-bundle-module]');
+    if (!bundle) return;
+
+    const items = Array.from(bundle.querySelectorAll('[data-bundle-item]'));
+    const totalNode = bundle.querySelector('[data-bundle-total]');
+    const compareNode = bundle.querySelector('[data-bundle-total-compare]');
+    const addButton = bundle.querySelector('[data-bundle-add]');
+    const currencyCode = bundle.getAttribute('data-currency-code') || 'USD';
+    const cartAddUrl = bundle.getAttribute('data-cart-add-url') || '/cart/add.js';
+    const cartUrl = bundle.getAttribute('data-cart-url') || '/cart';
+
+    const formatMoney = (cents) => {
+      const value = Number(cents || 0) / 100;
+      try {
+        return new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency: currencyCode
+        }).format(value);
+      } catch (error) {
+        return value.toFixed(2);
+      }
+    };
+
+    const updateBundle = () => {
+      let total = 0;
+      let compareTotal = 0;
+      let selectedCount = 0;
+
+      items.forEach((item) => {
+        const isSelected = item.getAttribute('data-selected') === 'true';
+        item.classList.toggle('nv-pdp-buybox__bundle-item--selected', isSelected);
+        item.classList.toggle('is-unselected', !isSelected);
+        const toggle = item.querySelector('[data-bundle-toggle]');
+        if (toggle) toggle.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+
+        if (isSelected) {
+          selectedCount += 1;
+          total += Number(item.getAttribute('data-price') || 0);
+          compareTotal += Number(item.getAttribute('data-compare-price') || 0);
+        }
+      });
+
+      if (totalNode) totalNode.textContent = formatMoney(total);
+      if (compareNode) {
+        if (compareTotal > total) {
+          compareNode.textContent = formatMoney(compareTotal);
+          compareNode.hidden = false;
+        } else {
+          compareNode.hidden = true;
+        }
+      }
+
+      if (addButton) addButton.disabled = selectedCount === 0;
+    };
+
+    items.forEach((item) => {
+      const toggle = item.querySelector('[data-bundle-toggle]');
+      if (!toggle) return;
+      toggle.addEventListener('click', () => {
+        const nextSelected = item.getAttribute('data-selected') !== 'true';
+        item.setAttribute('data-selected', nextSelected ? 'true' : 'false');
+        updateBundle();
+      });
+    });
+
+    if (addButton) {
+      addButton.addEventListener('click', async () => {
+        const selectedItems = items
+          .filter((item) => item.getAttribute('data-selected') === 'true')
+          .map((item) => ({
+            id: Number(item.getAttribute('data-variant-id')),
+            quantity: 1
+          }))
+          .filter((item) => item.id);
+
+        if (!selectedItems.length) return;
+
+        addButton.disabled = true;
+        const originalText = addButton.textContent;
+        addButton.textContent = 'Adding...';
+
+        try {
+          const response = await fetch(cartAddUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ items: selectedItems })
+          });
+
+          if (!response.ok) throw new Error('Unable to add bundle items');
+          window.location.href = cartUrl;
+        } catch (error) {
+          addButton.disabled = false;
+          addButton.textContent = originalText;
+        }
+      });
+    }
+
+    updateBundle();
+  })();
+</script>

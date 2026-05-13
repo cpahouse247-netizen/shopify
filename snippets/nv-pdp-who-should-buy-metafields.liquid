@@ -1,0 +1,188 @@
+{%- liquid
+  assign section_heading = product.metafields.custom.who_should_buy_heading.value | default: product.metafields.custom.who_should_buy_heading | strip
+  assign good_for_raw = product.metafields.custom.good_for_list.value | default: product.metafields.custom.good_for_list | strip
+  assign not_ideal_raw = product.metafields.custom.not_ideal_for_list.value | default: product.metafields.custom.not_ideal_for_list | strip
+  assign good_for_raw = good_for_raw | replace: 'Appeals to customers who prioritize simple premium supplement posit', 'Appeals to customers who prioritize a simple, premium supplement format with clean-label positioning.'
+  assign good_for_raw = good_for_raw | replace: 'Appeals to customers who prioritize a simple, premium supplement format with a clean-label positioning.', 'Appeals to customers who prioritize a simple, premium supplement format with clean-label positioning.'
+
+  assign has_good_for = false
+  assign has_not_ideal = false
+  if good_for_raw != blank
+    assign has_good_for = true
+  endif
+  if not_ideal_raw != blank
+    assign has_not_ideal = true
+  endif
+
+  assign has_content = false
+  if section_heading != blank
+    if has_good_for or has_not_ideal
+      assign has_content = true
+    endif
+  endif
+
+  assign good_for_count = 0
+  capture good_for_items
+    if has_good_for
+      assign source_lines = good_for_raw | replace: '},{', '}|~|{' | newline_to_br | replace: '<br/>', '<br />' | replace: '<br />', '|~|' | split: '|~|'
+      for line in source_lines
+        assign clean_line = line | strip | strip_html | replace: '&nbsp;', ' ' | strip
+        assign clean_line = clean_line | replace: 'Appeals to customers who prioritize simple premium supplement posit', 'Appeals to customers who prioritize a simple, premium supplement format with clean-label positioning.'
+        assign clean_line = clean_line | replace: 'Appeals to customers who prioritize a simple, premium supplement format with a clean-label positioning.', 'Appeals to customers who prioritize a simple, premium supplement format with clean-label positioning.'
+        if clean_line == blank
+          continue
+        endif
+
+        assign item_title = blank
+        assign item_body = blank
+
+        if clean_line contains '|'
+          assign pair = clean_line | split: '|'
+          assign item_title = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+          capture item_body
+            for piece in pair offset: 1
+              assign body_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+              if body_piece != blank
+                unless forloop.first
+                  echo ' | '
+                endunless
+                echo body_piece
+              endif
+            endfor
+          endcapture
+        elsif clean_line contains ':'
+          assign pair = clean_line | split: ':'
+          assign item_title = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+          capture item_body
+            for piece in pair offset: 1
+              assign body_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+              if body_piece != blank
+                unless forloop.first
+                  echo ': '
+                endunless
+                echo body_piece
+              endif
+            endfor
+          endcapture
+        endif
+
+        assign item_body = item_body | strip
+
+        if item_title != blank and item_body != blank
+          assign good_for_count = good_for_count | plus: 1
+          echo '<article class="nv-who-should-buy__item">'
+          echo '<h3 class="nv-who-should-buy__item-title">'
+          echo item_title
+          echo '</h3>'
+          echo '<p class="nv-who-should-buy__item-text">'
+          echo item_body
+          echo '</p>'
+          echo '</article>'
+        endif
+      endfor
+    endif
+  endcapture
+
+  assign not_ideal_count = 0
+  capture not_ideal_items
+    if has_not_ideal
+      assign source_lines = not_ideal_raw | replace: '},{', '}|~|{' | newline_to_br | replace: '<br/>', '<br />' | replace: '<br />', '|~|' | split: '|~|'
+      for line in source_lines
+        assign clean_line = line | strip | strip_html | replace: '&nbsp;', ' ' | strip
+        if clean_line == blank
+          continue
+        endif
+
+        assign item_title = blank
+        assign item_body = blank
+
+        if clean_line contains '|'
+          assign pair = clean_line | split: '|'
+          assign item_title = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+          capture item_body
+            for piece in pair offset: 1
+              assign body_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+              if body_piece != blank
+                unless forloop.first
+                  echo ' | '
+                endunless
+                echo body_piece
+              endif
+            endfor
+          endcapture
+        elsif clean_line contains ':'
+          assign pair = clean_line | split: ':'
+          assign item_title = pair.first | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+          capture item_body
+            for piece in pair offset: 1
+              assign body_piece = piece | strip | remove: '[' | remove: ']' | remove: '{' | remove: '}' | replace: '"', ''
+              if body_piece != blank
+                unless forloop.first
+                  echo ': '
+                endunless
+                echo body_piece
+              endif
+            endfor
+          endcapture
+        endif
+
+        assign item_body = item_body | strip
+
+        if item_title != blank and item_body != blank
+          assign not_ideal_count = not_ideal_count | plus: 1
+          echo '<article class="nv-who-should-buy__item">'
+          echo '<h3 class="nv-who-should-buy__item-title">'
+          echo item_title
+          echo '</h3>'
+          echo '<p class="nv-who-should-buy__item-text">'
+          echo item_body
+          echo '</p>'
+          echo '</article>'
+        endif
+      endfor
+    endif
+  endcapture
+-%}
+
+{%- if has_content -%}
+  <section class="nv-who-should-buy" aria-labelledby="nvWhoShouldBuyHeading-{{ product.id }}">
+    <div class="nv-who-should-buy__header">
+      <h2 id="nvWhoShouldBuyHeading-{{ product.id }}" class="nv-who-should-buy__title">{{ section_heading }}</h2>
+      <div class="nv-who-should-buy__rule">
+        <span class="nv-who-should-buy__accent"></span>
+      </div>
+    </div>
+
+    <div class="nv-who-should-buy__grid">
+      {%- if has_good_for -%}
+        <div class="nv-who-should-buy__column nv-who-should-buy__column--good">
+          <div class="nv-who-should-buy__icon nv-who-should-buy__icon--good" aria-hidden="true">
+            <span class="nv-who-should-buy__icon-check"></span>
+          </div>
+          <div class="nv-who-should-buy__column-content">
+            {%- if good_for_count > 0 -%}
+              {{ good_for_items }}
+            {%- else -%}
+              <div class="nv-who-should-buy__fallback rte">{{ good_for_raw | newline_to_br }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if has_not_ideal -%}
+        <div class="nv-who-should-buy__column nv-who-should-buy__column--avoid">
+          <div class="nv-who-should-buy__icon nv-who-should-buy__icon--avoid" aria-hidden="true">
+            <span class="nv-who-should-buy__icon-x"></span>
+          </div>
+          <div class="nv-who-should-buy__column-content">
+            {%- if not_ideal_count > 0 -%}
+              {{ not_ideal_items }}
+            {%- else -%}
+              <div class="nv-who-should-buy__fallback rte">{{ not_ideal_raw | newline_to_br }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}

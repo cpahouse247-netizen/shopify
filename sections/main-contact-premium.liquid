@@ -1,0 +1,795 @@
+<section
+  class="nv-contact-premium section-{{ section.id }}"
+  style="
+    --nv-contact-bg: {{ section.settings.background_color }};
+    --nv-contact-surface: {{ section.settings.surface_color }};
+    --nv-contact-border: {{ section.settings.border_color }};
+    --nv-contact-accent: {{ section.settings.accent_color }};
+    --nv-contact-text: {{ section.settings.text_color }};
+    --nv-contact-muted: {{ section.settings.muted_text_color }};
+    --nv-contact-title-size: {{ section.settings.title_font_size }}px;
+    --nv-contact-title-mobile-size: {{ section.settings.title_mobile_font_size }}px;
+    --nv-contact-intro-size: {{ section.settings.intro_font_size }}px;
+    --nv-contact-body-size: {{ section.settings.body_font_size }}px;
+    --nv-contact-card-radius: {{ section.settings.card_radius }}px;
+    --nv-contact-card-padding: {{ section.settings.card_padding }}px;
+    --nv-contact-section-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-contact-section-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  "
+>
+  <div class="nv-contact-premium__container page-width">
+    <div class="nv-contact-premium__hero">
+      {% if section.settings.eyebrow != blank %}
+        <p class="nv-contact-premium__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% if section.settings.title != blank %}
+        <h1 class="nv-contact-premium__title">{{ section.settings.title }}</h1>
+      {% endif %}
+
+      {% if section.settings.intro != blank %}
+        <div class="nv-contact-premium__intro rte">
+          {{ section.settings.intro }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="nv-contact-premium__layout">
+      <div class="nv-contact-premium__info">
+        <div class="nv-contact-premium__card nv-contact-premium__card--primary">
+          <div class="nv-contact-premium__info-grid">
+            <div class="nv-contact-premium__info-item">
+              <p class="nv-contact-premium__label">{{ section.settings.email_label }}</p>
+              <a class="nv-contact-premium__value nv-contact-premium__value--link" href="mailto:{{ section.settings.email | escape }}">
+                {{ section.settings.email }}
+              </a>
+            </div>
+
+            <div class="nv-contact-premium__info-item">
+              <p class="nv-contact-premium__label">{{ section.settings.hours_label }}</p>
+              <p class="nv-contact-premium__value">{{ section.settings.hours_line_1 }}</p>
+              <p class="nv-contact-premium__subvalue">{{ section.settings.hours_line_2 }}</p>
+            </div>
+
+            <div class="nv-contact-premium__info-item">
+              <p class="nv-contact-premium__label">{{ section.settings.address_label }}</p>
+              <p class="nv-contact-premium__value">{{ section.settings.address }}</p>
+            </div>
+          </div>
+        </div>
+
+        {% if section.settings.show_support_panel %}
+          <div class="nv-contact-premium__support-list">
+            <div class="nv-contact-premium__support-item">
+              <div class="nv-contact-premium__support-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9Zm4.05 7.2-4.6 5.52a1 1 0 0 1-1.48.07l-2.58-2.45 1.38-1.45 1.8 1.71 3.84-4.61Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="nv-contact-premium__support-title">{{ section.settings.highlight_1_title }}</h2>
+                <p class="nv-contact-premium__support-text">{{ section.settings.highlight_1_text }}</p>
+              </div>
+            </div>
+
+            <div class="nv-contact-premium__support-item">
+              <div class="nv-contact-premium__support-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2 4 5v6c0 5.25 3.4 10.14 8 11.72 4.6-1.58 8-6.47 8-11.72V5Zm0 5a2 2 0 1 1-2 2 2 2 0 0 1 2-2Zm3 9H9v-1a3 3 0 0 1 6 0Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="nv-contact-premium__support-title">{{ section.settings.highlight_2_title }}</h2>
+                <p class="nv-contact-premium__support-text">{{ section.settings.highlight_2_text }}</p>
+              </div>
+            </div>
+
+            <div class="nv-contact-premium__support-item">
+              <div class="nv-contact-premium__support-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M11 3h2v8h-2Zm1 19a8 8 0 0 1-5.66-13.66l1.41 1.41A6 6 0 1 0 18 14h2a8 8 0 0 1-8 8Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="nv-contact-premium__support-title">{{ section.settings.highlight_3_title }}</h2>
+                <p class="nv-contact-premium__support-text">{{ section.settings.highlight_3_text }}</p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="nv-contact-premium__form-wrap">
+        <div class="nv-contact-premium__card nv-contact-premium__card--form">
+          {% if section.settings.form_title != blank %}
+            <h2 class="nv-contact-premium__form-title">{{ section.settings.form_title }}</h2>
+          {% endif %}
+
+          {% if section.settings.form_text != blank %}
+            <div class="nv-contact-premium__form-text rte">
+              {{ section.settings.form_text }}
+            </div>
+          {% endif %}
+
+          {%- form 'contact', class: 'nv-contact-premium__form' -%}
+            {%- if form.posted_successfully? -%}
+              <div class="nv-contact-premium__success" tabindex="-1" autofocus>
+                Thanks for reaching out. Our team will get back to you as soon as possible.
+              </div>
+            {%- elsif form.errors -%}
+              <div class="nv-contact-premium__errors" tabindex="-1" autofocus>
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="nv-contact-premium__field-grid">
+              <div class="field">
+                <label class="nv-contact-premium__field-label" for="ContactFormName-{{ section.id }}">Name</label>
+                <input
+                  class="nv-contact-premium__input"
+                  type="text"
+                  id="ContactFormName-{{ section.id }}"
+                  name="contact[name]"
+                  value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                  autocomplete="name"
+                  placeholder="Your name"
+                >
+              </div>
+
+              <div class="field">
+                <label class="nv-contact-premium__field-label" for="ContactFormEmail-{{ section.id }}">Email</label>
+                <input
+                  class="nv-contact-premium__input"
+                  type="email"
+                  id="ContactFormEmail-{{ section.id }}"
+                  name="contact[email]"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  autocomplete="email"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  placeholder="you@example.com"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="nv-contact-premium__field-grid">
+              <div class="field">
+                <label class="nv-contact-premium__field-label" for="ContactFormOrder-{{ section.id }}">Order number</label>
+                <input
+                  class="nv-contact-premium__input"
+                  type="text"
+                  id="ContactFormOrder-{{ section.id }}"
+                  name="contact[Order number]"
+                  placeholder="Optional"
+                >
+              </div>
+
+              <div class="field">
+                <label class="nv-contact-premium__field-label" for="ContactFormSubject-{{ section.id }}">Subject</label>
+                <input
+                  class="nv-contact-premium__input"
+                  type="text"
+                  id="ContactFormSubject-{{ section.id }}"
+                  name="contact[Subject]"
+                  placeholder="How can we help?"
+                >
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="nv-contact-premium__field-label" for="ContactFormBody-{{ section.id }}">Message</label>
+              <textarea
+                rows="7"
+                class="nv-contact-premium__textarea"
+                id="ContactFormBody-{{ section.id }}"
+                name="contact[body]"
+                placeholder="Share your question and include any useful details."
+              >{{- form.body -}}</textarea>
+            </div>
+
+            <button type="submit" class="nv-contact-premium__button">
+              Send message
+            </button>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-contact-premium {
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--nv-contact-accent, #C9A24A) 14%, transparent), transparent 30%),
+      radial-gradient(circle at 92% 12%, rgba(49, 92, 74, 0.08), transparent 34%),
+      linear-gradient(180deg, var(--nv-contact-bg, #FAF8F3) 0%, #f6f2ea 100%);
+    color: var(--nv-contact-text, #1f2a24);
+    padding: var(--nv-contact-section-padding-top, 48px) 10px var(--nv-contact-section-padding-bottom, 64px);
+  }
+
+  .nv-contact-premium .page-width {
+    max-width: 1280px;
+    padding-inline: clamp(16px, 3vw, 28px);
+  }
+
+  .nv-contact-premium__container {
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .nv-contact-premium__hero {
+    max-width: 800px;
+    margin: 0 auto 38px;
+    text-align: center;
+  }
+
+  .nv-contact-premium__eyebrow {
+    margin: 0 0 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-contact-muted, #5F6B64) 78%, transparent);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .nv-contact-premium__title {
+    margin: 0;
+    font-size: clamp(34px, 4vw, var(--nv-contact-title-size, 52px));
+    line-height: 1.05;
+    letter-spacing: -0.032em;
+    color: var(--nv-contact-text, #1a231f);
+    text-wrap: balance;
+  }
+
+  .nv-contact-premium__intro {
+    margin-top: 14px;
+    font-size: var(--nv-contact-intro-size, 16px);
+    line-height: 1.72;
+    color: color-mix(in srgb, var(--nv-contact-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-contact-premium__layout {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.05fr);
+    gap: clamp(20px, 2.5vw, 30px);
+    align-items: start;
+  }
+
+  .nv-contact-premium__card {
+    border: 1px solid color-mix(in srgb, var(--nv-contact-border, #D9DED8) 82%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--nv-contact-surface, #FFFFFF) 86%, transparent), rgba(255,255,255,.64));
+    border-radius: var(--nv-contact-card-radius, 28px);
+    box-shadow: 0 18px 48px rgba(31, 42, 36, 0.06);
+  }
+
+  .nv-contact-premium__card--primary {
+    padding: var(--nv-contact-card-padding, 28px);
+    margin-bottom: 18px;
+  }
+
+  .nv-contact-premium__card--form {
+    padding: calc(var(--nv-contact-card-padding, 28px) + 2px);
+  }
+
+  .nv-contact-premium__info-grid {
+    display: grid;
+    gap: 22px;
+  }
+
+  .nv-contact-premium__info-item + .nv-contact-premium__info-item {
+    padding-top: 22px;
+    border-top: 1px solid color-mix(in srgb, var(--nv-contact-border, #D9DED8) 78%, transparent);
+  }
+
+  .nv-contact-premium__label {
+    margin: 0 0 7px;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--nv-contact-muted, #5F6B64) 76%, transparent);
+    font-weight: 600;
+  }
+
+  .nv-contact-premium__value,
+  .nv-contact-premium__subvalue {
+    margin: 0;
+    font-size: calc(var(--nv-contact-body-size, 15px) + 1px);
+    line-height: 1.65;
+    color: var(--nv-contact-text, #1e2823);
+  }
+
+  .nv-contact-premium__value--link {
+    color: #184d3b;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .nv-contact-premium__support-list {
+    display: grid;
+    gap: 14px;
+  }
+
+  .nv-contact-premium__support-item {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 20px 22px;
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--nv-contact-surface, #FFFFFF) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--nv-contact-border, #D9DED8) 68%, transparent);
+    box-shadow: 0 10px 24px rgba(31, 42, 36, 0.04);
+  }
+
+  .nv-contact-premium__support-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #184d3b 10%, var(--nv-contact-surface, #FFFFFF));
+    color: #184d3b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nv-contact-premium__support-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nv-contact-premium__support-title {
+    margin: 0 0 5px;
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--nv-contact-text, #1d2722);
+  }
+
+  .nv-contact-premium__support-text {
+    margin: 0;
+    font-size: var(--nv-contact-body-size, 15px);
+    line-height: 1.66;
+    color: color-mix(in srgb, var(--nv-contact-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-contact-premium__form-title {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 2.8vw, 34px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--nv-contact-text, #1a231f);
+  }
+
+  .nv-contact-premium__form-text {
+    margin-bottom: 20px;
+    font-size: var(--nv-contact-body-size, 15px);
+    line-height: 1.68;
+    color: color-mix(in srgb, var(--nv-contact-muted, #5F6B64) 86%, transparent);
+  }
+
+  .nv-contact-premium__form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .nv-contact-premium__field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .nv-contact-premium__field-label {
+    display: inline-block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--nv-contact-text, #233029);
+  }
+
+  .nv-contact-premium__input,
+  .nv-contact-premium__textarea {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--nv-contact-border, #D9DED8) 88%, #1f2a24);
+    background: color-mix(in srgb, var(--nv-contact-surface, #FFFFFF) 92%, transparent);
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--nv-contact-text, #1f2a24);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .nv-contact-premium__input:focus,
+  .nv-contact-premium__textarea:focus {
+    border-color: rgba(24, 77, 59, 0.4);
+    box-shadow: 0 0 0 4px rgba(24, 77, 59, 0.08);
+    background: #fff;
+  }
+
+  .nv-contact-premium__textarea {
+    min-height: 170px;
+    resize: vertical;
+  }
+
+  .nv-contact-premium__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: #184d3b;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nv-contact-premium__button:hover {
+    background: #123d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(24, 77, 59, 0.16);
+  }
+
+  .nv-contact-premium__success,
+  .nv-contact-premium__errors {
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .nv-contact-premium__success {
+    background: rgba(24, 77, 59, 0.08);
+    color: #184d3b;
+  }
+
+  .nv-contact-premium__errors {
+    background: rgba(155, 31, 31, 0.08);
+    color: #7f1d1d;
+  }
+
+  @media screen and (max-width: 989px) {
+    .nv-contact-premium__layout {
+      grid-template-columns: 1fr;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .nv-contact-premium__hero {
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .nv-contact-premium {
+      padding: 58px 0 52px;
+    }
+
+    .nv-contact-premium .page-width {
+      padding-inline: 17px;
+    }
+
+    .nv-contact-premium__hero {
+      text-align: left;
+      margin-bottom: 22px;
+    }
+
+    .nv-contact-premium__eyebrow {
+      text-align: left;
+      font-size: 10px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .nv-contact-premium__card--primary,
+    .nv-contact-premium__card--form {
+      padding: min(var(--nv-contact-card-padding, 28px), 22px);
+      border-radius: min(var(--nv-contact-card-radius, 28px), 22px);
+    }
+
+    .nv-contact-premium__field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .nv-contact-premium__title {
+      font-size: clamp(30px, 8vw, var(--nv-contact-title-mobile-size, 36px));
+      line-height: 1.1;
+      text-align: left;
+    }
+
+    .nv-contact-premium__intro {
+      font-size: max(14px, calc(var(--nv-contact-intro-size, 16px) - 1px));
+      line-height: 1.65;
+    }
+
+    .nv-contact-premium__support-item {
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .nv-contact-premium__support-icon {
+      width: 42px;
+      height: 42px;
+    }
+
+    .nv-contact-premium__form-title {
+      font-size: 24px;
+      text-align: left;
+    }
+
+    .nv-contact-premium__button {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Main contact premium",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Customer Support"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Contact Us"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>We’re here to help with product questions, order support, and general inquiries. Reach out to the NutraVora team and we’ll guide you as quickly as possible.</p>"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "default": "support@nutravora.com"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Support hours"
+    },
+    {
+      "type": "text",
+      "id": "hours_line_1",
+      "label": "Hours line 1",
+      "default": "Monday to Friday"
+    },
+    {
+      "type": "text",
+      "id": "hours_line_2",
+      "label": "Hours line 2",
+      "default": "9:00 AM to 5:00 PM"
+    },
+    {
+      "type": "text",
+      "id": "address_label",
+      "label": "Address label",
+      "default": "Office address"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address",
+      "default": "7901 4th St N, Ste 300, St. Petersburg, FL 33702"
+    },
+    {
+      "type": "text",
+      "id": "highlight_1_title",
+      "label": "Highlight 1 title",
+      "default": "Fast, thoughtful support"
+    },
+    {
+      "type": "textarea",
+      "id": "highlight_1_text",
+      "label": "Highlight 1 text",
+      "default": "Helpful answers for product questions, orders, and general support."
+    },
+    {
+      "type": "text",
+      "id": "highlight_2_title",
+      "label": "Highlight 2 title",
+      "default": "Secure, professional service"
+    },
+    {
+      "type": "textarea",
+      "id": "highlight_2_text",
+      "label": "Highlight 2 text",
+      "default": "A clean and reliable support experience designed for customer confidence."
+    },
+    {
+      "type": "text",
+      "id": "highlight_3_title",
+      "label": "Highlight 3 title",
+      "default": "A team that knows the formula"
+    },
+    {
+      "type": "textarea",
+      "id": "highlight_3_text",
+      "label": "Highlight 3 text",
+      "default": "Guidance shaped around the NutraVora product lineup and customer experience."
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form title",
+      "default": "Send us a message"
+    },
+    {
+      "type": "richtext",
+      "id": "form_text",
+      "label": "Form text",
+      "default": "<p>Use the form below and our team will get back to you as soon as possible.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_support_panel",
+      "label": "Show support highlights",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Premium style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Page background",
+      "default": "#FAF8F3"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Surface color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#C9A24A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1F2A24"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#5F6B64"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Desktop title size",
+      "min": 38,
+      "max": 64,
+      "step": 1,
+      "default": 52,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_mobile_font_size",
+      "label": "Mobile title size",
+      "min": 30,
+      "max": 44,
+      "step": 1,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "intro_font_size",
+      "label": "Intro text size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body text size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top spacing",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom spacing",
+      "min": 32,
+      "max": 112,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main contact premium"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,218 @@
+{%- comment -%}
+  NutraVora Meta Tags System
+  Handles: SEO meta, OG tags, Twitter cards, canonical URLs, hreflang, robots directives.
+  Premium Supplement Brand - v1.0
+{%- endcomment -%}
+
+{%- liquid
+  assign is_product = false
+  assign is_collection = false
+  assign is_article = false
+  assign is_homepage = false
+  assign is_page = false
+
+  if request.page_type == 'product'
+    assign is_product = true
+  elsif request.page_type == 'collection'
+    assign is_collection = true
+  elsif request.page_type == 'article'
+    assign is_article = true
+  elsif request.page_type == 'index'
+    assign is_homepage = true
+  elsif request.page_type == 'page'
+    assign is_page = true
+  endif
+
+  assign default_meta_desc = settings.default_meta_description | default: 'NutraVora premium herbal supplements. Non-GMO, lab-tested, Amazon Prime eligible.'
+  assign twitter_handle = settings.twitter_handle | default: '@NutraVora'
+-%}
+
+{%- comment -%} Build Meta Title {%- endcomment -%}
+{%- if is_product -%}
+  {%- assign meta_title = product.title | append: ' | NutraVora Premium Supplements' -%}
+  {%- if product.title.size > 50 -%}
+    {%- assign meta_title = product.title | truncate: 50 | append: ' | NutraVora' -%}
+  {%- endif -%}
+{%- elsif is_collection -%}
+  {%- assign collection_title_downcase = collection.title | downcase -%}
+  {%- if collection_title_downcase contains 'supplement' -%}
+    {%- assign meta_title = collection.title | append: ' | NutraVora' -%}
+  {%- else -%}
+    {%- assign meta_title = collection.title | append: ' Supplements | NutraVora' -%}
+  {%- endif -%}
+{%- elsif is_article -%}
+  {%- assign meta_title = article.title | append: ' | NutraVora Wellness Blog' -%}
+{%- elsif is_homepage -%}
+  {%- assign meta_title = 'NutraVora | Premium Herbal Supplements for Immune & Wellness Support' -%}
+{%- elsif is_page -%}
+  {%- assign meta_title = page.title | append: ' | NutraVora' -%}
+{%- else -%}
+  {%- assign meta_title = page_title | append: ' | NutraVora' -%}
+{%- endif -%}
+
+{%- comment -%} Build Meta Description {%- endcomment -%}
+{%- if is_product -%}
+  {%- if product.metafields.custom.meta_description != blank -%}
+    {%- assign meta_desc = product.metafields.custom.meta_description.value | default: product.metafields.custom.meta_description -%}
+  {%- elsif product.description != blank -%}
+    {%- assign meta_desc = product.description | strip_html | strip_newlines | truncate: 155 -%}
+  {%- else -%}
+    {%- assign meta_desc = product.title | append: ' - Premium supplement by NutraVora. Non-GMO, gluten-free, third-party tested. Available on Amazon with Prime shipping.' -%}
+  {%- endif -%}
+{%- elsif is_collection -%}
+  {%- if collection.description != blank -%}
+    {%- assign meta_desc = collection.description | strip_html | truncate: 155 -%}
+  {%- else -%}
+    {%- assign meta_desc = 'Shop NutraVora ' | append: collection.title | append: ' supplements. Non-GMO, lab-tested formulas available with Amazon Prime shipping.' -%}
+  {%- endif -%}
+{%- elsif is_article -%}
+  {%- if article.excerpt != blank -%}
+    {%- assign meta_desc = article.excerpt | strip_html | truncate: 155 -%}
+  {%- else -%}
+    {%- assign meta_desc = article.content | strip_html | truncate: 155 -%}
+  {%- endif -%}
+{%- elsif is_homepage -%}
+  {%- assign meta_desc = default_meta_desc -%}
+{%- elsif is_page -%}
+  {%- if page.content != blank -%}
+    {%- assign meta_desc = page.content | strip_html | truncate: 155 -%}
+  {%- else -%}
+    {%- assign meta_desc = page.title | append: ' - NutraVora premium supplements.' -%}
+  {%- endif -%}
+{%- else -%}
+  {%- assign meta_desc = page_description | default: default_meta_desc -%}
+{%- endif -%}
+
+{%- comment -%} Build OG Image {%- endcomment -%}
+{%- if is_product and product.featured_image -%}
+  {%- assign og_image = product.featured_image | image_url: width: 1200 -%}
+  {%- assign og_image_alt = product.featured_image.alt | default: product.title -%}
+  {%- assign og_image_width = 1200 -%}
+  {%- assign og_image_height = 630 -%}
+{%- elsif is_collection and collection.image -%}
+  {%- assign og_image = collection.image | image_url: width: 1200 -%}
+  {%- assign og_image_alt = collection.image.alt | default: collection.title -%}
+  {%- assign og_image_width = 1200 -%}
+  {%- assign og_image_height = 630 -%}
+{%- elsif is_article and article.image -%}
+  {%- assign og_image = article.image | image_url: width: 1200 -%}
+  {%- assign og_image_alt = article.image.alt | default: article.title -%}
+  {%- assign og_image_width = 1200 -%}
+  {%- assign og_image_height = 630 -%}
+{%- elsif settings.share_image -%}
+  {%- assign og_image = settings.share_image | image_url: width: 1200 -%}
+  {%- assign og_image_alt = shop.name -%}
+  {%- assign og_image_width = 1200 -%}
+  {%- assign og_image_height = 630 -%}
+{%- elsif settings.logo -%}
+  {%- assign og_image = settings.logo | image_url: width: 1200 -%}
+  {%- assign og_image_alt = shop.name -%}
+  {%- assign og_image_width = 1200 -%}
+  {%- assign og_image_height = 630 -%}
+{%- endif -%}
+
+{%- assign canonical_url = request.origin | append: request.path -%}
+
+{%- if is_product -%}
+  {%- assign og_url = request.origin | append: product.url -%}
+{%- elsif is_collection -%}
+  {%- assign og_url = request.origin | append: collection.url -%}
+{%- elsif is_article -%}
+  {%- assign og_url = request.origin | append: article.url -%}
+{%- else -%}
+  {%- assign og_url = canonical_url -%}
+{%- endif -%}
+
+{%- if is_product -%}
+  {%- assign og_type = 'product' -%}
+{%- elsif is_article -%}
+  {%- assign og_type = 'article' -%}
+{%- else -%}
+  {%- assign og_type = 'website' -%}
+{%- endif -%}
+
+<!-- NutraVora SEO Meta Tags -->
+<title>{{ meta_title | escape }}</title>
+<meta name="description" content="{{ meta_desc | escape }}">
+
+<!-- Canonical -->
+<link rel="canonical" href="{{ canonical_url }}">
+
+<!-- Robots -->
+{%- if request.page_type == 'search' or request.path contains '/account' or request.path contains '/cart' or request.path contains '/checkout' -%}
+  <meta name="robots" content="noindex, nofollow">
+{%- elsif is_collection and current_tags -%}
+  <meta name="robots" content="noindex, follow">
+{%- else -%}
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+{%- endif -%}
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:title" content="{{ meta_title | escape }}">
+<meta property="og:description" content="{{ meta_desc | escape }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:locale" content="{{ request.locale.iso_code | replace: '-', '_' }}">
+
+{%- if og_image -%}
+  <meta property="og:image" content="https:{{ og_image }}">
+  <meta property="og:image:secure_url" content="https:{{ og_image }}">
+  <meta property="og:image:width" content="{{ og_image_width }}">
+  <meta property="og:image:height" content="{{ og_image_height }}">
+  <meta property="og:image:alt" content="{{ og_image_alt | escape }}">
+  <meta property="og:image:type" content="image/jpeg">
+{%- endif -%}
+
+<!-- Product-specific OG tags -->
+{%- if is_product -%}
+  <meta property="product:price:amount" content="{{ product.price | divided_by: 100.0 }}">
+  <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
+  <meta property="product:availability" content="{%- if product.available -%}in stock{%- else -%}out of stock{%- endif -%}">
+  <meta property="product:brand" content="NutraVora">
+  <meta property="product:condition" content="new">
+{%- endif -%}
+
+<!-- Article-specific OG tags -->
+{%- if is_article -%}
+  <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+  <meta property="article:modified_time" content="{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+  <meta property="article:author" content="{{ article.author }}">
+  <meta property="article:section" content="{{ blog.title }}">
+  {%- for tag in article.tags -%}
+    <meta property="article:tag" content="{{ tag }}">
+  {%- endfor -%}
+{%- endif -%}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="{{ twitter_handle | escape }}">
+<meta name="twitter:creator" content="{{ twitter_handle | escape }}">
+<meta name="twitter:title" content="{{ meta_title | escape }}">
+<meta name="twitter:description" content="{{ meta_desc | escape }}">
+{%- if og_image -%}
+  <meta name="twitter:image" content="https:{{ og_image }}">
+  <meta name="twitter:image:alt" content="{{ og_image_alt | escape }}">
+{%- endif -%}
+
+<!-- Additional SEO -->
+<meta name="author" content="NutraVora">
+<meta name="copyright" content="© {{ 'now' | date: '%Y' }} NutraVora">
+<meta name="theme-color" content="#315c4a">
+<meta name="msapplication-TileColor" content="#315c4a">
+
+<!-- Pagination -->
+{% # theme-check-disable RemoteAsset %}
+{%- if paginate.previous -%}
+  <link rel="prev" href="{{ paginate.previous.url }}">
+{%- endif -%}
+{%- if paginate.next -%}
+  <link rel="next" href="{{ paginate.next.url }}">
+{%- endif -%}
+{% # theme-check-enable RemoteAsset %}
+
+<!-- Favicon -->
+{%- if settings.favicon -%}
+  <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
+  <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+{%- endif -%}

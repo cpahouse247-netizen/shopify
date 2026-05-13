@@ -1,0 +1,34 @@
+{% comment %}
+  PDP breadcrumbs
+
+  Inputs:
+  - product: Product object
+  - collection: optional collection context
+  - show_collections_label: optional boolean
+{% endcomment %}
+{%- liquid
+  assign resolved_collection = collection
+  assign show_collections_label = show_collections_label
+  if show_collections_label == blank
+    assign show_collections_label = true
+  endif
+-%}
+
+<nav class="nv-breadcrumbs nv-product__breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ routes.root_url }}">Home</a>
+  <span class="sep" aria-hidden="true">&gt;</span>
+
+  {% if resolved_collection %}
+    {% if show_collections_label %}
+      <a href="{{ routes.collections_url }}">Collections</a>
+      <span class="sep" aria-hidden="true">&gt;</span>
+    {% endif %}
+    <a href="{{ resolved_collection.url }}">{{ resolved_collection.title }}</a>
+    <span class="sep" aria-hidden="true">&gt;</span>
+  {% else %}
+    <a href="{{ routes.all_products_collection_url }}">Products</a>
+    <span class="sep" aria-hidden="true">&gt;</span>
+  {% endif %}
+
+  <span class="current">{{ product.title }}</span>
+</nav>

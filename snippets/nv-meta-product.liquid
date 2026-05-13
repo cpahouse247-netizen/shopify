@@ -1,0 +1,43 @@
+{%- comment -%}
+  NutraVora Product-Specific Meta Enrichment
+  Adds supplement-specific meta signals.
+{%- endcomment -%}
+
+{%- if request.page_type == 'product' -%}
+  {%- liquid
+    assign supply_label = product.metafields.custom.supply_label.value | default: product.metafields.custom.supply_label | default: ''
+    assign rating = product.metafields.custom.rating.value | default: product.metafields.custom.rating | default: settings.default_rating | default: '4.8'
+    assign review_count = product.metafields.custom.review_count.value | default: product.metafields.custom.review_count | default: settings.default_review_count | default: '221+'
+    assign variant = product.selected_or_first_available_variant
+    assign product_asin = product.metafields.custom.asin.value | default: product.metafields.custom.asin | default: ''
+  -%}
+
+  {%- comment -%}
+    Build keyword-rich meta description for products.
+    Format: [Product] - [Supply]. [Rating] star rated by [Count] Amazon customers.
+    Non-GMO, lab-tested. Prime eligible.
+  {%- endcomment -%}
+  {%- assign enriched_desc = product.title -%}
+  {%- if supply_label != blank -%}
+    {%- assign enriched_desc = enriched_desc | append: ' - ' | append: supply_label -%}
+  {%- endif -%}
+  {%- assign enriched_desc = enriched_desc | append: '. Rated ' | append: rating | append: ' stars by ' | append: review_count | append: ' Amazon customers. Non-GMO, gluten-free, third-party tested. Prime eligible.' -%}
+
+  {%- if enriched_desc.size <= 155 -%}
+    <meta name="description" content="{{ enriched_desc | escape }}">
+    <meta property="og:description" content="{{ enriched_desc | escape }}">
+    <meta name="twitter:description" content="{{ enriched_desc | escape }}">
+  {%- endif -%}
+
+  <!-- Product GTIN/MPN for Google Shopping -->
+  {%- if variant.barcode != blank -%}
+    <meta name="product:gtin" content="{{ variant.barcode }}">
+  {%- endif -%}
+  {%- if variant.sku != blank -%}
+    <meta name="product:mpn" content="{{ variant.sku }}">
+  {%- endif -%}
+
+  <!-- Amazon store association -->
+  <meta name="amazon:store" content="NutraVora">
+  <meta name="amazon:asin" content="{{ product_asin | escape }}">
+{%- endif -%}

@@ -1,0 +1,66 @@
+<section class="section nv-home-social-proof">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        {% if section.settings.eyebrow != blank %}
+          <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+        <h2>{{ section.settings.heading }}</h2>
+      </div>
+      {% if section.settings.subtext != blank %}
+        <p class="nv-home-social-proof__sub">{{ section.settings.subtext }}</p>
+      {% endif %}
+    </div>
+
+    <div class="nv-home-social-proof__grid">
+      {% for block in section.blocks %}
+        <article class="nv-review" {{ block.shopify_attributes }}>
+          <div class="nv-review__meta">
+            <span class="nv-review__author">{{ block.settings.author }}</span>
+            {% render 'rating-stars', rating: block.settings.rating %}
+          </div>
+          {% if block.settings.title != blank %}
+            <h3>{{ block.settings.title }}</h3>
+          {% endif %}
+          {% if block.settings.body != blank %}
+            <p class="nv-review__body">{{ block.settings.body }}</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Home Social Proof",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Social proof" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Premium presentation, consistent customer trust." },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Use editorialized customer sentiment that stays compliant and focused on product experience." }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "author", "label": "Author", "default": "Verified customer" },
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "text", "id": "title", "label": "Title", "default": "Premium feel from the product page to delivery." },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "The brand feels polished, the product positioning is clear, and the overall experience inspires confidence." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "NV Home Social Proof",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

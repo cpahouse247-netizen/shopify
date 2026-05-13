@@ -1,0 +1,158 @@
+{%- liquid
+  assign description_html = product.description | strip
+  assign description_plain = description_html | strip_html | strip
+  if description_plain contains 'PREMIUM DUAL-ACTION FORMULA'
+    capture description_html
+      echo '<p><strong>Dual-action botanical formula:</strong> Oil of Oregano and Black Seed Oil are paired in convenient softgel form for a consistent daily wellness routine.</p>'
+      echo '<p><strong>Five-month daily supply:</strong> The 300-softgel pouch provides a practical supply when used as directed, supporting steady daily supplementation without frequent reordering.</p>'
+      echo '<p><strong>Quality-focused production:</strong> Produced in a cGMP-compliant facility and tested for purity and potency, with quality standards designed for dependable supplement use.</p>'
+      echo '<p><strong>Simple daily routine:</strong> A straightforward softgel format fits easily into a daily routine and avoids the strong taste often associated with botanical oils.</p>'
+      echo '<p><strong>NutraVora quality promise:</strong> NutraVora focuses on clear labeling, consistent manufacturing standards, and a dependable customer experience.</p>'
+    endcapture
+  endif
+  assign description_html = description_html | replace: 'PREMIUM DUAL-ACTION FORMULA:', 'Dual-action botanical formula:'
+  assign description_html = description_html | replace: 'EXCEPTIONAL VALUE:', 'Five-month daily supply:'
+  assign description_html = description_html | replace: 'PREMIUM QUALITY ASSURANCE:', 'Quality-focused production:'
+  assign description_html = description_html | replace: 'EASY DAILY WELLNESS:', 'Simple daily wellness routine:'
+  assign description_html = description_html | replace: 'TRUSTED BRAND COMMITMENT:', 'NutraVora quality promise:'
+  assign description_html = description_html | replace: 'Advanced combination of 7500mg Oil of Oregano with 1000mg Black Seed Oil per serving (2 softgels daily) - two traditional herbs in convenient softgel form for your daily wellness routine', 'Oil of Oregano and Black Seed Oil are paired in convenient softgel form for a consistent daily wellness routine.'
+  assign description_html = description_html | replace: '300 premium softgels provide a full 5-month supply (2 softgels daily) - more than 3x the quantity of typical supplements, saving you money while ensuring consistent daily supplementation', 'The 300-softgel pouch provides a practical five-month supply when used as directed, supporting steady daily supplementation without frequent reordering.'
+  assign description_html = description_html | replace: 'Manufactured in a cGMP-compliant facility using pure, potent ingredients - third-party lab tested for purity and potency to ensure you receive the highest quality herbal supplement', 'Produced in a cGMP-compliant facility and tested for purity and potency, with quality standards designed for dependable supplement use.'
+  assign description_html = description_html | replace: 'Simple twice-daily softgel routine fits seamlessly into your lifestyle - no strong taste or odor, gentle on stomach when taken with food for busy lifestyles seeking natural wellness support', 'A straightforward softgel format fits easily into a daily routine and avoids the strong taste often associated with botanical oils.'
+  assign description_html = description_html | replace: 'NutraVora stands behind every pouch with our quality promise - manufactured in the USA following strict quality standards for your peace of mind and satisfaction', 'NutraVora focuses on clear labeling, consistent manufacturing standards, and a dependable customer experience.'
+  assign specs_raw = product.metafields.custom.specs_table.value | default: product.metafields.custom.specs_table | strip
+
+  if description_html == blank and specs_raw == blank
+    assign hide_section = true
+  else
+    assign hide_section = false
+  endif
+
+  assign parsed_specs_count = 0
+  capture parsed_specs_rows
+    if specs_raw != blank
+      assign specs_lines = specs_raw | newline_to_br | replace: '<br/>', '<br />' | split: '<br />'
+      for line in specs_lines
+        assign clean_line = line | strip | strip_html | replace: '&nbsp;', ' ' | strip
+        if clean_line == blank
+          continue
+        endif
+
+        assign spec_label = blank
+        assign spec_value = blank
+
+        if clean_line contains '|'
+          assign pair = clean_line | split: '|'
+          assign spec_label = pair.first | strip | replace: '"', ''
+          capture spec_value
+            for item in pair offset: 1
+              assign value_piece = item | strip | replace: '"', ''
+              if value_piece != blank
+                unless forloop.first
+                  echo ' | '
+                endunless
+                echo value_piece
+              endif
+            endfor
+          endcapture
+        elsif clean_line contains ':'
+          assign pair = clean_line | split: ':'
+          assign spec_label = pair.first | strip | replace: '"', ''
+          capture spec_value
+            for item in pair offset: 1
+              assign value_piece = item | strip | replace: '"', ''
+              if value_piece != blank
+                unless forloop.first
+                  echo ': '
+                endunless
+                echo value_piece
+              endif
+            endfor
+          endcapture
+        endif
+
+        assign spec_value = spec_value | strip
+
+        if spec_label != blank and spec_value != blank
+          assign parsed_specs_count = parsed_specs_count | plus: 1
+          echo '<tr class="nv-product-details__table-row">'
+          echo '<th scope="row" class="nv-product-details__table-cell nv-product-details__table-cell--label">'
+          echo spec_label
+          echo '</th>'
+          echo '<td class="nv-product-details__table-cell nv-product-details__table-cell--value">'
+          echo spec_value
+          echo '</td>'
+          echo '</tr>'
+        endif
+      endfor
+    endif
+  endcapture
+-%}
+
+{%- unless hide_section -%}
+  <section class="nv-product-details" aria-labelledby="nvProductDetailsHeading-{{ product.id }}">
+    <div class="nv-product-details__header">
+      <h2 id="nvProductDetailsHeading-{{ product.id }}" class="nv-product-details__title">Product Details</h2>
+      <div class="nv-product-details__rule">
+        <span class="nv-product-details__accent"></span>
+      </div>
+    </div>
+
+    {%- if description_html != blank -%}
+      <div class="nv-product-details__content">
+        {%- if description_html contains '</p>' -%}
+          {%- assign description_rows = description_html | replace: '</p>', '</p>|~|' | split: '|~|' -%}
+          {%- for row in description_rows -%}
+            {%- assign row_text = row | strip_html | strip -%}
+            {%- if row_text != blank -%}
+              <div class="nv-product-details__detail-row">
+                <span class="nv-product-details__marker" aria-hidden="true"></span>
+                <div class="nv-product-details__detail-copy rte">
+                  {{ row }}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- elsif description_html contains '<br' -%}
+          {%- assign description_rows = description_html | replace: '<br/>', '<br />' | replace: '<br />', '|~|' | split: '|~|' -%}
+          {%- for row in description_rows -%}
+            {%- assign row_text = row | strip_html | strip -%}
+            {%- if row_text != blank -%}
+              <div class="nv-product-details__detail-row">
+                <span class="nv-product-details__marker" aria-hidden="true"></span>
+                <div class="nv-product-details__detail-copy">
+                  {{ row }}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <div class="nv-product-details__detail-row">
+            <span class="nv-product-details__marker" aria-hidden="true"></span>
+            <div class="nv-product-details__detail-copy rte">
+              {{ description_html }}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if specs_raw != blank -%}
+      <div class="nv-product-details__specs">
+        {%- if parsed_specs_count > 0 -%}
+          <div class="nv-product-details__table-wrap">
+            <table class="nv-product-details__table">
+              <tbody>
+                {{ parsed_specs_rows }}
+              </tbody>
+            </table>
+          </div>
+        {%- else -%}
+          <div class="nv-product-details__specs-fallback rte">
+            {{ specs_raw | newline_to_br }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </section>
+{%- endunless -%}

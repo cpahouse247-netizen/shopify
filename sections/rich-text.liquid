@@ -1,0 +1,20 @@
+{% comment %}
+Section: Rich Text
+Description: Story / science block.
+{% endcomment %}
+<section class="section">
+  <div class="container" style="max-width:900px">
+    <h2 class="center">{{ section.settings.heading }}</h2>
+    <div class="rte">{{ section.settings.content }}</div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Rich text",
+  "settings":[
+    {"type":"text","id":"heading","label":"Heading","default":"Science you can feel"},
+    {"type":"richtext","id":"content","label":"Content","default":"<p>Formulated with Carvacrol & Thymoquinone in easy-to-swallow softgels.</p>"}
+  ],
+  "presets":[{"name":"Rich text"}]
+}
+{% endschema %}

@@ -1,0 +1,396 @@
+{%- liquid
+  assign selected_blog = section.settings.blog_source
+  assign posts_limit = section.settings.posts_to_show | default: 3
+-%}
+
+<section
+  class="section nv-section nv-blog-editorial"
+  style="
+    --nv-blog-editorial-bg: {{ section.settings.background_color }};
+    --nv-blog-editorial-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-blog-editorial-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-blog-editorial-max-width: {{ section.settings.content_max_width }}px;
+    --nv-blog-editorial-columns: {{ section.settings.columns_desktop }};
+    --nv-blog-editorial-columns-mobile: {{ section.settings.columns_mobile }};
+    --nv-blog-editorial-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-blog-editorial-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --nv-blog-editorial-title-size: {{ section.settings.card_title_font_size }}px;
+    --nv-blog-editorial-excerpt-size: {{ section.settings.card_excerpt_font_size }}px;
+    --nv-blog-editorial-meta-size: {{ section.settings.card_meta_font_size }}px;
+    --nv-blog-editorial-link-size: {{ section.settings.card_link_font_size }}px;
+    --nv-blog-editorial-image-ratio: {{ section.settings.card_image_ratio }};
+    --nv-blog-editorial-card-bg: {{ section.settings.card_background_color }};
+    --nv-blog-editorial-card-border: {{ section.settings.card_border_color }};
+    --nv-blog-editorial-card-radius: {{ section.settings.card_border_radius }}px;
+    --nv-blog-editorial-card-padding: {{ section.settings.card_padding }}px;
+    --nv-blog-editorial-card-shadow-opacity: {{ section.settings.card_shadow_opacity | divided_by: 100.0 }};
+    --nv-blog-editorial-image-radius: {{ section.settings.card_image_radius }}px;
+  "
+>
+  <div class="container nv-blog-editorial__inner">
+    <div class="nv-blog-editorial__intro nv-blog-editorial__intro--{{ section.settings.heading_alignment }}">
+      {% if section.settings.section_heading != blank %}
+        <h2 class="nv-blog-editorial__heading" data-nv-animate="fade-up">{{ section.settings.section_heading }}</h2>
+      {% endif %}
+      {% if section.settings.show_decorative_divider %}
+        <div class="nv-blog-editorial__divider" aria-hidden="true">
+          <span class="nv-blog-editorial__divider-line"></span>
+          <span class="nv-blog-editorial__divider-mark"></span>
+          <span class="nv-blog-editorial__divider-line"></span>
+        </div>
+      {% endif %}
+      {% if section.settings.section_subheading != blank %}
+        <p class="nv-blog-editorial__subheading">{{ section.settings.section_subheading }}</p>
+      {% endif %}
+    </div>
+
+    {% if selected_blog != blank and selected_blog.articles_count > 0 %}
+      <div class="nv-blog-editorial__grid nv-blog-editorial__grid--{{ section.settings.content_alignment }}">
+        {% for article in selected_blog.articles limit: posts_limit %}
+          {%- liquid
+            assign category_label = blank
+            if article.tags.size > 0
+              assign category_label = article.tags.first
+            endif
+            assign animation_delay = forloop.index0 | times: 100 | plus: 200
+            if animation_delay > 800
+              assign animation_delay = 800
+            endif
+          -%}
+          <article class="nv-blog-editorial__card" data-nv-animate="fade-up" data-nv-delay="{{ animation_delay }}">
+            <a href="{{ article.url }}" class="nv-blog-editorial__media-link">
+              <div class="nv-blog-editorial__media">
+                {% if article.image != blank %}
+                  {{ article.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', class: 'nv-blog-editorial__image', alt: article.title, sizes: '(max-width: 768px) 100vw, 33vw' }}
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'nv-blog-editorial__placeholder' }}
+                {% endif %}
+
+                {% if section.settings.show_date_badge %}
+                  <div class="nv-blog-editorial__date-badge">
+                    <span class="nv-blog-editorial__date-day">{{ article.published_at | date: '%d' }}</span>
+                    <span class="nv-blog-editorial__date-month">{{ article.published_at | date: '%b' }}</span>
+                  </div>
+                {% endif %}
+
+                {% if section.settings.show_category_tag and category_label != blank %}
+                  <span class="nv-blog-editorial__tag">{{ category_label }}</span>
+                {% endif %}
+              </div>
+            </a>
+
+            <div class="nv-blog-editorial__content">
+              <h3 class="nv-blog-editorial__title">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h3>
+
+              {% if section.settings.show_meta_line %}
+                <p class="nv-blog-editorial__meta">
+                  <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+                </p>
+              {% endif %}
+
+              {% if section.settings.show_excerpt %}
+                <p class="nv-blog-editorial__excerpt">
+                  {{ article.excerpt_or_content | strip_html | truncatewords: 24 }}
+                </p>
+              {% endif %}
+
+              {% if section.settings.show_continue_reading %}
+                <a class="nv-blog-editorial__read-more nv-btn nv-btn--ghost nv-btn--sm" href="{{ article.url }}">
+                  {{ section.settings.continue_reading_label }} <span class="nv-btn__icon--right">→</span>
+                </a>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="nv-blog-editorial__empty">
+        <p>Select a blog in the Theme Editor to display recent posts in this section.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Blog Editorial",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Our Blog"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "Education, ingredient stories, and practical wellness guidance."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_divider",
+      "label": "Show decorative divider",
+      "default": true
+    },
+    {
+      "type": "blog",
+      "id": "blog_source",
+      "label": "Blog source"
+    },
+    {
+      "type": "range",
+      "id": "posts_to_show",
+      "label": "Posts to show",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date_badge",
+      "label": "Show date badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category_tag",
+      "label": "Show category/tag",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_meta_line",
+      "label": "Show meta line",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_continue_reading",
+      "label": "Show continue reading link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "continue_reading_label",
+      "label": "Continue reading label",
+      "default": "Continue reading"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Card content alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size",
+      "label": "Card title font size",
+      "min": 16,
+      "max": 30,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_excerpt_font_size",
+      "label": "Card excerpt font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_meta_font_size",
+      "label": "Card meta font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_link_font_size",
+      "label": "Card link font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1400,
+      "step": 20,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Card shadow opacity",
+      "min": 0,
+      "max": 18,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "card_image_radius",
+      "label": "Image corner radius",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_image_ratio",
+      "label": "Card image ratio",
+      "default": "4 / 3",
+      "options": [
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 3", "label": "Landscape" },
+        { "value": "3 / 4", "label": "Portrait" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Blog Editorial"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,338 @@
+/* ============================================
+   NutraVora Mobile UX Polish
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+@media (max-width: 768px) {
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  .nv-btn,
+  .nv-product-card__amazon-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nv-health-goals__grid,
+  .nv-scrolling-bar__track,
+  [class*="scroll"] {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .nv-hero__heading {
+    font-size: 32px !important;
+    line-height: 1.15;
+  }
+
+  .nv-hero__subheading {
+    font-size: 15px !important;
+  }
+
+  .nv-hero__cta-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nv-hero__cta-group .nv-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px 24px;
+    font-size: 15px;
+  }
+
+  .nv-hero__badges {
+    gap: 6px;
+  }
+
+  .nv-section-heading {
+    font-size: 26px !important;
+    margin-bottom: 10px;
+  }
+
+  .nv-section-subheading {
+    font-size: 14px !important;
+    margin-bottom: 24px;
+  }
+
+  .nv-product-card {
+    border-radius: var(--nv-radius-lg);
+  }
+
+  .nv-product-card__content {
+    padding: 12px;
+    gap: 6px;
+  }
+
+  .nv-product-card__title {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+  }
+
+  .nv-product-card__price {
+    font-size: 16px;
+  }
+
+  .nv-product-card__amazon-overlay {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  .nv-sticky-atc__inner {
+    padding: 8px 16px;
+  }
+
+  .nv-sticky-atc__actions {
+    gap: 8px;
+  }
+
+  .nv-sticky-atc__amazon-btn,
+  .nv-sticky-atc__cart-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .nv-cert-badges,
+  [class*="certification"] {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .nv-cert-badges::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nv-amazon-trust {
+    padding: 10px 12px;
+  }
+
+  .nv-amazon-trust__line-1,
+  .nv-amazon-trust__line-2 {
+    font-size: 11px;
+  }
+
+  .nv-supply-callout--banner {
+    width: 100%;
+  }
+
+  .nv-bundle {
+    padding: var(--nv-space-4);
+  }
+
+  .nv-bundle__products {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+
+  .nv-bundle__products::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nv-bundle__cta {
+    flex-direction: column;
+  }
+
+  .nv-bundle__add-btn,
+  .nv-bundle__amazon-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nv-reviews-grid,
+  [class*="nv-reviews"] {
+    padding: var(--nv-space-10) 0;
+  }
+
+  .nv-reviews-grid__grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nv-health-goals__tile {
+    min-width: 180px;
+    padding: var(--nv-space-4);
+  }
+
+  .nv-health-goals__icon {
+    font-size: 28px;
+  }
+
+  .nv-health-goals__tile-title {
+    font-size: 14px;
+  }
+
+  .nv-hiw__feature-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .nv-hiw__feature-title {
+    font-size: 14px;
+  }
+
+  .nv-hiw__feature-body {
+    font-size: 12px;
+  }
+
+  .nv-timeline__step-title {
+    font-size: 18px;
+  }
+
+  .nv-timeline__step-body {
+    font-size: 13px;
+  }
+
+  .nv-footer__trust-bar-inner {
+    gap: var(--nv-space-3);
+  }
+
+  .nv-footer__trust-item {
+    font-size: 12px;
+  }
+
+  .nv-footer__newsletter-input {
+    font-size: 16px !important;
+  }
+
+  .nv-btn--lg {
+    padding: 14px 24px;
+    font-size: 14px;
+  }
+
+  .nv-btn--xl {
+    padding: 15px 28px;
+    font-size: 15px;
+  }
+
+  .nv-lp-faq summary {
+    font-size: 14px;
+    padding-right: var(--nv-space-4);
+  }
+
+  .nv-scrolling-bar,
+  [class*="nv-scrolling"] {
+    padding: 0px 0;
+  }
+
+  .nv-service-features__grid,
+  [class*="service-features"] .grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--nv-space-4);
+  }
+
+  .nv-trust-icons__grid,
+  [class*="trust-icons"] .grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--nv-space-4);
+  }
+
+  .nv-blog-editorial__grid,
+  [class*="blog-editorial"] .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nv-final-cta,
+  [class*="nv-final-cta"] {
+    padding: var(--nv-space-12) 0;
+  }
+
+  .nv-final-cta .nv-btn-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nv-final-cta .nv-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nv-mobile-amazon-bar {
+    display: block !important;
+  }
+
+  .nv-sticky-atc--visible ~ .nv-mobile-amazon-bar,
+  body:has(.nv-sticky-atc--visible) .nv-mobile-amazon-bar {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .nv-mobile-amazon-bar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .nv-hero__heading {
+    font-size: 28px !important;
+  }
+
+  .nv-section-heading {
+    font-size: 24px !important;
+  }
+
+  .nv-health-goals__tile {
+    min-width: 160px;
+  }
+
+  .nv-sticky-atc__amazon-btn,
+  .nv-sticky-atc__cart-btn {
+    font-size: 12px;
+    padding: 9px 10px;
+  }
+
+  .nv-footer__body-inner {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .nv-section-heading {
+    font-size: 30px;
+  }
+
+  .nv-hero__heading {
+    font-size: 42px;
+  }
+
+  .nv-health-goals__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nv-hiw__layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nv-footer__body-inner {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

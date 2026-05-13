@@ -1,0 +1,19 @@
+{%- liquid
+  assign section_heading = product.metafields.custom.editorial_heading.value | default: product.metafields.custom.editorial_heading | strip
+  assign editorial_summary = product.metafields.custom.editorial_summary.value | default: product.metafields.custom.editorial_summary | strip
+-%}
+
+{%- if section_heading != blank and editorial_summary != blank -%}
+  <section class="nv-editorial-summary" aria-labelledby="nvEditorialSummaryHeading-{{ product.id }}">
+    <div class="nv-editorial-summary__header">
+      <h2 id="nvEditorialSummaryHeading-{{ product.id }}" class="nv-editorial-summary__title">{{ section_heading }}</h2>
+      <div class="nv-editorial-summary__rule">
+        <span class="nv-editorial-summary__accent"></span>
+      </div>
+    </div>
+
+    <div class="nv-editorial-summary__body rte">
+      {{ editorial_summary | newline_to_br }}
+    </div>
+  </section>
+{%- endif -%}

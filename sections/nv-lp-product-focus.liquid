@@ -1,0 +1,254 @@
+{%- liquid
+  assign focus_product = section.settings.product
+  assign title = section.settings.heading_override
+  if title == blank and focus_product != blank
+    assign title = focus_product.title
+  elsif title == blank
+    assign title = 'NutraVora Daily Wellness Formula'
+  endif
+
+  assign description = section.settings.description_override
+  if description == blank and focus_product != blank
+    assign description = focus_product.description | strip_html | truncate: 220
+  elsif description == blank
+    assign description = 'Clean-label daily wellness support formulated for consistency, value, and simple long-term routines.'
+  endif
+
+  assign primary_url = section.settings.primary_cta_url | default: 'https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294'
+  assign secondary_url = section.settings.secondary_cta_url
+  if secondary_url == blank and focus_product != blank
+    assign secondary_url = focus_product.url
+  elsif secondary_url == blank
+    assign secondary_url = '/collections/all'
+  endif
+-%}
+
+<section class="nv-lp-product-focus nv-lp-section nv-lp-product-focus--{{ section.settings.background_tone }} nv-lp-product-focus--{{ section.settings.layout }}">
+  <div class="nv-lp-inner">
+    <div class="nv-lp-product-focus__grid">
+      <div class="nv-lp-product-focus__media">
+        {%- if focus_product.featured_media -%}
+          {{ focus_product.featured_media | image_url: width: 820 | image_tag: loading: 'lazy', class: 'nv-lp-product-focus__image', alt: title }}
+        {%- else -%}
+          <div class="nv-lp-product-focus__placeholder">
+            <span>NutraVora</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="nv-lp-product-focus__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="nv-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+
+        <h2 class="nv-section-heading">{{ title }}</h2>
+
+        {%- if section.settings.show_supply_callout -%}
+          <span class="nv-lp-product-focus__supply">{{ section.settings.supply_text }}</span>
+        {%- endif -%}
+
+        <p class="nv-lp-product-focus__description">{{ description }}</p>
+
+        {%- if section.settings.show_certifications -%}
+          <div class="nv-lp-product-focus__badges" aria-label="Certifications">
+            <span class="nv-badge nv-badge--brand">Non-GMO</span>
+            <span class="nv-badge nv-badge--brand">Gluten-Free</span>
+            <span class="nv-badge nv-badge--brand">Lab Tested</span>
+            <span class="nv-badge nv-badge--brand">GMP Facility</span>
+          </div>
+        {%- endif -%}
+
+        <ul class="nv-lp-product-focus__bullets">
+          <li>Designed for consistent daily wellness routines.</li>
+          <li>Large-supply format built for long-term value.</li>
+          <li>Thoughtfully presented with clear product details.</li>
+        </ul>
+
+        {%- if section.settings.show_price -%}
+          <div class="nv-lp-product-focus__price">
+            {%- if focus_product != blank and focus_product.price -%}
+              {{ focus_product.price | money }}
+              {%- if focus_product.compare_at_price > focus_product.price -%}
+                <span>{{ focus_product.compare_at_price | money }}</span>
+              {%- endif -%}
+            {%- else -%}
+              $27.99
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="nv-lp-product-focus__cta">
+          {%- if section.settings.primary_cta_label != blank -%}
+            <a class="nv-btn nv-btn--amazon nv-btn--md" href="{{ primary_url }}" target="_blank" rel="noopener noreferrer">
+              {{ section.settings.primary_cta_label | remove: '→' | strip }} <span class="nv-btn__amazon-arrow">→</span>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.secondary_cta_label != blank -%}
+            <a class="nv-btn nv-btn--outline nv-btn--md" href="{{ secondary_url }}">
+              {{ section.settings.secondary_cta_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-lp-product-focus--cream {
+    background: var(--nv-cream-warm);
+  }
+
+  .nv-lp-product-focus--white {
+    background: var(--nv-white);
+  }
+
+  .nv-lp-product-focus__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--nv-space-12);
+    align-items: center;
+  }
+
+  .nv-lp-product-focus--image_right .nv-lp-product-focus__media {
+    order: 2;
+  }
+
+  .nv-lp-product-focus__media {
+    background: var(--nv-white);
+    border: 1px solid var(--nv-border-light);
+    border-radius: var(--nv-radius-2xl);
+    box-shadow: var(--nv-shadow-lg);
+    padding: var(--nv-space-6);
+  }
+
+  .nv-lp-product-focus__image,
+  .nv-lp-product-focus__placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    border-radius: var(--nv-radius-xl);
+    background: linear-gradient(135deg, var(--nv-cream-warm), var(--nv-green-surface));
+  }
+
+  .nv-lp-product-focus__placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--nv-green-primary);
+    font-family: var(--nv-font-heading);
+    font-size: var(--nv-text-3xl);
+  }
+
+  .nv-lp-product-focus__supply {
+    display: inline-flex;
+    margin: 2px 0 18px;
+    padding: 6px 14px;
+    border-radius: var(--nv-radius-full);
+    background: var(--nv-green-surface);
+    color: var(--nv-green-primary);
+    font-size: 12px;
+    font-weight: var(--nv-weight-semibold);
+  }
+
+  .nv-lp-product-focus__description {
+    color: var(--nv-text-secondary);
+    font-size: var(--nv-text-md);
+    line-height: var(--nv-leading-relaxed);
+    margin: 0 0 var(--nv-space-5);
+  }
+
+  .nv-lp-product-focus__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-2);
+    margin-bottom: var(--nv-space-5);
+  }
+
+  .nv-lp-product-focus__bullets {
+    display: grid;
+    gap: var(--nv-space-2);
+    padding-left: 18px;
+    color: var(--nv-text-muted);
+    margin: 0 0 var(--nv-space-5);
+  }
+
+  .nv-lp-product-focus__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--nv-space-3);
+    font-size: var(--nv-text-2xl);
+    font-weight: var(--nv-weight-bold);
+    color: var(--nv-green-dark);
+    margin-bottom: var(--nv-space-5);
+  }
+
+  .nv-lp-product-focus__price span {
+    font-size: var(--nv-text-base);
+    color: var(--nv-text-subtle);
+    text-decoration: line-through;
+  }
+
+  .nv-lp-product-focus__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nv-space-3);
+  }
+
+  @media (max-width: 768px) {
+    .nv-lp-product-focus__grid {
+      grid-template-columns: 1fr;
+      gap: var(--nv-space-8);
+    }
+
+    .nv-lp-product-focus--image_right .nv-lp-product-focus__media {
+      order: 0;
+    }
+
+    .nv-lp-product-focus__cta .nv-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP Product Focus",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Featured Formula" },
+    { "type": "text", "id": "heading_override", "label": "Heading override" },
+    { "type": "textarea", "id": "description_override", "label": "Description override" },
+    { "type": "text", "id": "primary_cta_label", "label": "Primary CTA label", "default": "Buy on Amazon →" },
+    { "type": "url", "id": "primary_cta_url", "label": "Primary CTA URL" },
+    { "type": "text", "id": "secondary_cta_label", "label": "Secondary CTA label", "default": "View Full Details" },
+    { "type": "url", "id": "secondary_cta_url", "label": "Secondary CTA URL" },
+    { "type": "checkbox", "id": "show_price", "label": "Show price", "default": true },
+    { "type": "checkbox", "id": "show_supply_callout", "label": "Show supply callout", "default": true },
+    { "type": "text", "id": "supply_text", "label": "Supply text", "default": "300 Softgels — ~10 Month Supply" },
+    { "type": "checkbox", "id": "show_certifications", "label": "Show certifications", "default": true },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "image_left",
+      "options": [
+        { "value": "image_left", "label": "Image left" },
+        { "value": "image_right", "label": "Image right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_tone",
+      "label": "Background tone",
+      "default": "cream",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "cream", "label": "Cream" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "LP Product Focus" }
+  ]
+}
+{% endschema %}

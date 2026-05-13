@@ -1,0 +1,656 @@
+{% liquid
+  assign page_title_text = page.title
+  if section.settings.hero_title != blank
+    assign page_title_text = section.settings.hero_title
+  endif
+
+  assign normalized_page_title = page.title | strip | downcase
+  assign normalized_content = page.content | strip | downcase
+  assign show_resolved_title = section.settings.show_page_title
+
+  if normalized_content contains '<h1'
+    assign show_resolved_title = false
+  endif
+
+  if normalized_content contains normalized_page_title
+    assign first_text_chunk = page.content | strip_html | strip | downcase | truncate: 120, ''
+    if first_text_chunk contains normalized_page_title
+      assign show_resolved_title = false
+    endif
+  endif
+
+  assign show_policy_header = false
+  if show_resolved_title or section.settings.hero_text != blank
+    assign show_policy_header = true
+  endif
+%}
+
+<section
+  class="nv-policy-page nv-policy-page--privacy section-{{ section.id }}"
+  style="
+    --nv-policy-bg: {{ section.settings.background_color | default: '#fbfaf6' }};
+    --nv-policy-surface: {{ section.settings.surface_color | default: '#ffffff' }};
+    --nv-policy-surface-soft: {{ section.settings.surface_soft_color | default: '#f7f1e7' }};
+    --nv-policy-text: {{ section.settings.text_color | default: '#1b3026' }};
+    --nv-policy-muted: {{ section.settings.muted_text_color | default: '#65736b' }};
+    --nv-policy-accent: {{ section.settings.accent_color | default: '#c99838' }};
+    --nv-policy-border: {{ section.settings.border_color | default: '#ddd7c9' }};
+    --nv-policy-title-size: {{ section.settings.title_size | default: 48 }}px;
+    --nv-policy-title-mobile-size: {{ section.settings.title_mobile_size | default: 34 }}px;
+    --nv-policy-body-size: {{ section.settings.body_size | default: 16 }}px;
+    --nv-policy-body-mobile-size: {{ section.settings.body_mobile_size | default: 15 }}px;
+    --nv-policy-heading-size: {{ section.settings.heading_size | default: 25 }}px;
+    --nv-policy-radius: {{ section.settings.card_radius | default: 28 }}px;
+    --nv-policy-content-max: {{ section.settings.content_max_width | default: 1160 }}px;
+    --nv-policy-side-padding: {{ section.settings.side_padding | default: 48 }}px;
+    --nv-policy-side-padding-mobile: {{ section.settings.side_padding_mobile | default: 24 }}px;
+    --nv-policy-card-padding: {{ section.settings.card_padding | default: 56 }}px;
+    --nv-policy-card-padding-mobile: {{ section.settings.card_padding_mobile | default: 26 }}px;
+    --nv-policy-section-padding-top: {{ section.settings.section_padding_top | default: 72 }}px;
+    --nv-policy-section-padding-bottom: {{ section.settings.section_padding_bottom | default: 84 }}px;
+  "
+>
+  <div class="nv-policy-page__inner nv-policy-page__inner--{{ section.settings.content_width }}">
+    {% if show_policy_header %}
+      <div class="nv-policy-page__header">
+        {% if show_resolved_title %}
+          <h1 class="nv-policy-page__title">{{ page_title_text }}</h1>
+        {% endif %}
+
+        {% if section.settings.hero_text != blank %}
+          <div class="nv-policy-page__intro rte">
+            {{ section.settings.hero_text }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="nv-policy-page__body-wrap nv-policy-page__body-wrap--single">
+      <div class="nv-policy-page__body rte">
+        {{ page.content }}
+      </div>
+    </div>
+
+    {% if section.settings.show_bottom_cta and section.settings.bottom_cta_heading != blank %}
+      <div class="nv-policy-page__footer-cta">
+        <div class="nv-policy-page__footer-cta-content">
+          <h2 class="nv-policy-page__footer-cta-title">
+            {{ section.settings.bottom_cta_heading }}
+          </h2>
+
+          {% if section.settings.bottom_cta_text != blank %}
+            <p class="nv-policy-page__footer-cta-text">
+              {{ section.settings.bottom_cta_text }}
+            </p>
+          {% endif %}
+        </div>
+
+        {% if section.settings.bottom_cta_button_label != blank and section.settings.bottom_cta_button_link != blank %}
+          <a class="nv-policy-page__footer-cta-button" href="{{ section.settings.bottom_cta_button_link }}">
+            {{ section.settings.bottom_cta_button_label }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .nv-policy-page {
+    background:
+      radial-gradient(circle at 12% 10%, rgba(199, 156, 57, 0.08), transparent 30%),
+      linear-gradient(180deg, var(--nv-policy-bg, #fbfaf6) 0%, #f7f4ed 100%);
+    color: var(--nv-policy-text, #1f2a24);
+    padding: clamp(36px, 4.5vw, var(--nv-policy-section-padding-top, 72px)) 0 var(--nv-policy-section-padding-bottom, 84px);
+  }
+
+  .nv-policy-page__inner {
+    width: 100%;
+    margin: 0 auto;
+    padding-inline: clamp(var(--nv-policy-side-padding-mobile, 24px), 3vw, var(--nv-policy-side-padding, 48px));
+  }
+
+  .nv-policy-page__inner--narrow {
+    max-width: min(100%, calc(var(--nv-policy-content-max, 1160px) + (clamp(var(--nv-policy-side-padding-mobile, 24px), 3vw, var(--nv-policy-side-padding, 48px)) * 2)));
+  }
+
+  .nv-policy-page__inner--medium {
+    max-width: min(100%, calc(var(--nv-policy-content-max, 1160px) + (clamp(var(--nv-policy-side-padding-mobile, 24px), 3vw, var(--nv-policy-side-padding, 48px)) * 2)));
+  }
+
+  .nv-policy-page__inner--wide {
+    max-width: min(100%, calc(var(--nv-policy-content-max, 1160px) + (clamp(var(--nv-policy-side-padding-mobile, 24px), 3vw, var(--nv-policy-side-padding, 48px)) * 2)));
+  }
+
+  .nv-policy-page__header {
+    width: min(100%, var(--nv-policy-content-max, 1160px));
+    max-width: 1120px;
+    margin: 0 auto clamp(1.1rem, 2.4vw, 1.9rem);
+    padding: clamp(0.75rem, 1.8vw, 1.35rem) 0 clamp(0.8rem, 1.8vw, 1.3rem);
+    border-bottom: 1px solid color-mix(in srgb, var(--nv-policy-border, #d8d2c4) 78%, transparent);
+  }
+
+  .nv-policy-page__eyebrow {
+    margin: 0 0 1rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--nv-policy-muted, #66756c);
+    font-weight: 700;
+  }
+
+  .nv-policy-page__title {
+    margin: 0;
+    max-width: min(100%, 42ch);
+    font-size: clamp(2.15rem, 3.1vw, var(--nv-policy-title-size, 48px));
+    line-height: 1.04;
+    letter-spacing: 0;
+    font-weight: 650;
+    color: var(--nv-policy-text, #1d2722);
+  }
+
+  .nv-policy-page__intro {
+    margin-top: 1.2rem;
+    max-width: 68rem;
+    font-size: calc(var(--nv-policy-body-size, 16px) + 1px);
+    line-height: 1.68;
+    color: var(--nv-policy-muted, #66756c);
+  }
+
+  .nv-policy-page__body-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .nv-policy-page__body-wrap--single {
+    width: 100%;
+    max-width: min(100%, var(--nv-policy-content-max, 1160px));
+    margin: 0 auto;
+  }
+
+  .nv-policy-page__body {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    padding: clamp(var(--nv-policy-card-padding-mobile, 26px), 3.6vw, var(--nv-policy-card-padding, 56px));
+    border: 1px solid color-mix(in srgb, var(--nv-policy-border, #d8d2c4) 82%, transparent);
+    border-radius: var(--nv-policy-radius, 28px);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--nv-policy-surface, #ffffff) 90%, transparent) 0%, color-mix(in srgb, var(--nv-policy-surface-soft, #f8f4eb) 76%, transparent) 100%);
+    box-shadow: 0 24px 70px rgba(25, 45, 35, 0.07);
+    font-size: var(--nv-policy-body-size, 16px);
+    line-height: 1.78;
+    color: color-mix(in srgb, var(--nv-policy-text, #1f2a24) 88%, #ffffff 12%);
+  }
+
+  .nv-policy-page__body > *:first-child {
+    margin-top: 0;
+  }
+
+  .nv-policy-page__body h1 {
+    margin: 0 0 1.5rem;
+    font-size: clamp(2rem, 3.2vw, var(--nv-policy-title-size, 48px));
+    line-height: 1.08;
+    letter-spacing: 0;
+    font-weight: 650;
+    color: var(--nv-policy-text, #1d2722);
+  }
+
+  .nv-policy-page__body h2 {
+    position: relative;
+    font-size: var(--nv-policy-heading-size, 25px);
+    line-height: 1.22;
+    margin-top: 2.8rem;
+    margin-bottom: 1rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--nv-policy-border, #d8d2c4) 78%, transparent);
+    font-weight: 650;
+    color: var(--nv-policy-text, #1d2722);
+  }
+
+  .nv-policy-page__body h2::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 68px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--nv-policy-accent, #c8942f), transparent);
+  }
+
+  .nv-policy-page__body h3 {
+    font-size: calc(var(--nv-policy-body-size, 16px) + 2px);
+    line-height: 1.3;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    font-weight: 650;
+    color: var(--nv-policy-text, #1f2a24);
+  }
+
+  .nv-policy-page__body p {
+    margin-top: 0;
+    margin-bottom: 1.22rem;
+    max-width: 84ch;
+  }
+
+  .nv-policy-page__body ul,
+  .nv-policy-page__body ol {
+    margin-top: 0.4rem;
+    margin-bottom: 1.4rem;
+    padding-left: 1.2rem;
+    max-width: 84ch;
+  }
+
+  .nv-policy-page__body li {
+    margin-bottom: 0.68rem;
+    padding-left: 0.42rem;
+  }
+
+  .nv-policy-page__body li::marker {
+    color: var(--nv-policy-accent, #c8942f);
+  }
+
+  .nv-policy-page__body strong {
+    font-weight: 700;
+    color: var(--nv-policy-text, #1b241f);
+  }
+
+  .nv-policy-page__body a {
+    color: var(--nv-policy-accent, #1b5a43);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--nv-policy-accent, #1b5a43) 30%, transparent);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .nv-policy-page__body a:hover {
+    color: var(--nv-policy-text, #123d2e);
+    border-bottom-color: color-mix(in srgb, var(--nv-policy-accent, #1b5a43) 58%, transparent);
+  }
+
+  .nv-policy-page__footer-cta {
+    margin-top: 2.6rem;
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+    border-radius: var(--nv-policy-radius, 28px);
+    border: 1px solid color-mix(in srgb, var(--nv-policy-border, #d8d2c4) 82%, transparent);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--nv-policy-surface, #ffffff) 94%, transparent), color-mix(in srgb, var(--nv-policy-surface-soft, #f8f4eb) 88%, transparent));
+    box-shadow: 0 18px 52px rgba(31, 42, 36, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .nv-policy-page__footer-cta-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+    line-height: 1.24;
+    font-weight: 650;
+    color: var(--nv-policy-text, #1d2722);
+  }
+
+  .nv-policy-page__footer-cta-text {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.68;
+    color: var(--nv-policy-muted, #66756c);
+  }
+
+  .nv-policy-page__footer-cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.8rem;
+    padding: 0 2rem;
+    border-radius: 999px;
+    background: var(--nv-policy-text, #184d3b);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    width: fit-content;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .nv-policy-page__footer-cta-button:hover {
+    background: color-mix(in srgb, var(--nv-policy-text, #123d2e) 88%, #000 12%);
+    transform: translateY(-1px);
+  }
+
+  @media screen and (min-width: 990px) {
+    .nv-policy-page__body-wrap {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 3rem;
+    }
+
+    .nv-policy-page__footer-cta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nv-policy-page__footer-cta-content {
+      max-width: 70%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .nv-policy-page {
+      padding: max(52px, calc(var(--nv-policy-section-padding-top, 72px) * 0.72)) 0 max(52px, calc(var(--nv-policy-section-padding-bottom, 84px) * 0.68));
+    }
+
+    .nv-policy-page__inner {
+      padding-inline: var(--nv-policy-side-padding-mobile, 24px);
+    }
+
+    .nv-policy-page__header {
+      width: 100%;
+      max-width: none;
+      margin-bottom: 1.15rem;
+      padding: clamp(0.55rem, 3vw, 0.9rem) 0 clamp(0.9rem, 4vw, 1.15rem);
+    }
+
+    .nv-policy-page__eyebrow {
+      margin-bottom: 0.7rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+    }
+
+    .nv-policy-page__title {
+      max-width: 100%;
+      font-size: clamp(1.95rem, 8.4vw, var(--nv-policy-title-mobile-size, 34px));
+      line-height: 1.05;
+    }
+
+    .nv-policy-page__body {
+      padding: var(--nv-policy-card-padding-mobile, 26px);
+      border-radius: max(18px, calc(var(--nv-policy-radius, 28px) - 8px));
+      font-size: var(--nv-policy-body-mobile-size, 15px);
+      line-height: 1.7;
+    }
+
+    .nv-policy-page__body h1 {
+      font-size: var(--nv-policy-title-mobile-size, 34px);
+      line-height: 1.1;
+    }
+
+    .nv-policy-page__body h2 {
+      font-size: max(20px, calc(var(--nv-policy-heading-size, 25px) - 3px));
+      margin-top: 2.1rem;
+      padding-top: 1.4rem;
+    }
+
+    .nv-policy-page__body h3 {
+      font-size: max(16px, var(--nv-policy-body-mobile-size, 15px));
+    }
+
+    .nv-policy-page__intro {
+      font-size: var(--nv-policy-body-mobile-size, 15px);
+    }
+
+    .nv-policy-page__footer-cta-title {
+      font-size: 1.4rem;
+    }
+
+    .nv-policy-page__footer-cta-text {
+      font-size: 1rem;
+    }
+
+    .nv-policy-page__footer-cta {
+      padding: 1.45rem;
+      border-radius: max(18px, calc(var(--nv-policy-radius, 28px) - 8px));
+    }
+
+    .nv-policy-page__footer-cta-button {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Privacy policy",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Custom title"
+    },
+    {
+      "type": "richtext",
+      "id": "hero_text",
+      "label": "Intro text"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "default": "narrow",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "wide", "label": "Wide" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Premium design"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#fbfaf6"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Content surface",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "surface_soft_color",
+      "label": "Soft surface accent",
+      "default": "#f7f1e7"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1b3026"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#65736b"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#c99838"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#ddd7c9"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Desktop title size",
+      "min": 34,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "title_mobile_size",
+      "label": "Mobile title size",
+      "min": 26,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Desktop body text size",
+      "min": 14,
+      "max": 19,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "body_mobile_size",
+      "label": "Mobile body text size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Section heading size",
+      "min": 20,
+      "max": 34,
+      "step": 1,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 720,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1160
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Desktop side padding",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "side_padding_mobile",
+      "label": "Mobile side padding",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Desktop card padding",
+      "min": 32,
+      "max": 88,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Mobile card padding",
+      "min": 18,
+      "max": 38,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top spacing",
+      "min": 36,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom spacing",
+      "min": 44,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 84
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_cta",
+      "label": "Show bottom CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_heading",
+      "label": "Bottom CTA heading",
+      "default": "Need more help with your order?"
+    },
+    {
+      "type": "textarea",
+      "id": "bottom_cta_text",
+      "label": "Bottom CTA text",
+      "default": "Our support team is here to help with order questions, delivery issues, and policy guidance."
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_button_label",
+      "label": "Bottom CTA button label",
+      "default": "Contact Support"
+    },
+    {
+      "type": "url",
+      "id": "bottom_cta_button_link",
+      "label": "Bottom CTA button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main privacy policy"
+    }
+  ]
+}
+{% endschema %}

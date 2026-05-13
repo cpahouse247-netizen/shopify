@@ -1,0 +1,28 @@
+{%- comment -%}
+  NutraVora GA4 Base Tag
+  Replace G-XXXXXXXXXX with your Measurement ID
+  Only include this if NOT using Shopify's Google channel
+  to avoid duplicate gtag loading.
+{%- endcomment -%}
+
+{%- assign nv_ga4_id = 'G-XXXXXXXXXX' -%}
+
+{%- if nv_ga4_id != 'G-XXXXXXXXXX' -%}
+  {%- comment -%}theme-check-disable RemoteAsset{%- endcomment -%}
+  <!-- NutraVora GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ nv_ga4_id }}"></script>
+  {%- comment -%}theme-check-enable RemoteAsset{%- endcomment -%}
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ nv_ga4_id }}', {
+      send_page_view: true,
+      cookie_flags: 'SameSite=None;Secure',
+      custom_map: {
+        'dimension1': 'amazon_cta_location',
+        'dimension2': 'is_maas_link'
+      }
+    });
+  </script>
+{%- endif -%}

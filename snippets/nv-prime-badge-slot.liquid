@@ -1,0 +1,53 @@
+{% comment %}
+  NutraVora Prime / delivery badge slot.
+
+  Use this as the clean insertion zone for merchant-console or app-provided
+  Prime / Buy with Prime badge markup.
+
+  Inputs:
+  - product: Product object
+  - template_override: optional conversion mode override
+  - label: optional fallback label
+  - class: optional wrapper class
+{% endcomment %}
+{%- liquid
+  assign resolved_template_override = template_override | strip
+  assign wrapper_class = class | default: 'nv-prime-badge-slot'
+  assign render_slot = false
+-%}
+
+{%- capture resolved_mode -%}{% render 'nv-conversion-context', product: product, field: 'mode', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_mode = resolved_mode | strip -%}
+{%- capture primary_kind -%}{% render 'nv-conversion-context', product: product, field: 'primary_kind', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign primary_kind = primary_kind | strip -%}
+{%- capture buy_with_prime_enabled -%}{% render 'nv-conversion-context', product: product, field: 'buy_with_prime_enabled', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign buy_with_prime_enabled = buy_with_prime_enabled | strip -%}
+
+{%- liquid
+  if buy_with_prime_enabled == 'true'
+    assign render_slot = true
+  endif
+
+  assign fallback_label = label
+  if fallback_label == blank
+    if resolved_mode == 'amazon_attribution'
+      assign fallback_label = 'Prime delivery available'
+    elsif resolved_mode == 'buy_with_prime' or primary_kind == 'buy_with_prime' or buy_with_prime_enabled == 'true'
+      assign fallback_label = 'Buy with Prime eligible'
+    elsif resolved_mode == 'hybrid'
+      assign fallback_label = 'Prime-ready buying options'
+    else
+      assign fallback_label = 'Trusted delivery options'
+    endif
+  endif
+-%}
+
+{%- if render_slot -%}
+<div class="{{ wrapper_class }}" data-nv-prime-badge-slot data-nv-mode="{{ resolved_mode }}">
+  {% comment %}
+    Merchant-console Prime / Buy with Prime checkmark markup can be inserted
+    inside this element by an app, script, or integration.
+  {% endcomment %}
+  <span class="nv-prime-badge-slot__fallback">{{ fallback_label }}</span>
+</div>
+{%- endif -%}

@@ -1,0 +1,510 @@
+{% liquid
+  assign heading_alignment = section.settings.heading_alignment | default: 'center'
+  assign faq_count = 0
+  for block in section.blocks
+    if block.type == 'faq_item' and block.settings.question != blank and block.settings.answer != blank
+      assign faq_count = faq_count | plus: 1
+    endif
+  endfor
+%}
+
+{% if faq_count > 0 %}
+  <section
+    id="nv-pdp-faq-{{ section.id }}"
+    class="nv-pdp-faq nv-pdp-faq--{{ heading_alignment }}"
+    style="
+      --nv-pdp-faq-max: {{ section.settings.content_max_width }}px;
+      --nv-pdp-faq-pad-top: {{ section.settings.section_padding_top }}px;
+      --nv-pdp-faq-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+      --nv-pdp-faq-bg: {{ section.settings.background_color }};
+      --nv-pdp-faq-heading: {{ section.settings.heading_color }};
+      --nv-pdp-faq-text: {{ section.settings.text_color }};
+      --nv-pdp-faq-divider: {{ section.settings.divider_color }};
+      --nv-pdp-faq-heading-size: {{ section.settings.heading_font_size }}px;
+      --nv-pdp-faq-heading-weight: {{ section.settings.heading_font_weight }};
+      --nv-pdp-faq-subheading-size: {{ section.settings.subheading_font_size }}px;
+      --nv-pdp-faq-question-size: {{ section.settings.question_font_size }}px;
+      --nv-pdp-faq-answer-size: {{ section.settings.answer_font_size }}px;
+      --nv-pdp-faq-icon-size: {{ section.settings.icon_size }}px;
+    "
+  >
+    <div class="nv-pdp-faq__container">
+      {% if section.settings.eyebrow_text != blank or section.settings.section_heading != blank or section.settings.section_subheading != blank %}
+        <header class="nv-pdp-faq__header">
+          {% if section.settings.eyebrow_text != blank %}
+            <p class="nv-pdp-faq__eyebrow">{{ section.settings.eyebrow_text }}</p>
+          {% endif %}
+          {% if section.settings.section_heading != blank %}
+            <h2 class="nv-pdp-faq__heading">{{ section.settings.section_heading }}</h2>
+          {% endif %}
+          {% if section.settings.section_subheading != blank %}
+            <div class="nv-pdp-faq__subheading rte">{{ section.settings.section_subheading }}</div>
+          {% endif %}
+        </header>
+      {% endif %}
+
+      <div class="nv-pdp-faq__items" role="list">
+        {% assign opened_item = false %}
+        {% for block in section.blocks %}
+          {% if block.type == 'faq_item' and block.settings.question != blank and block.settings.answer != blank %}
+            {% assign answer_id = 'nv-pdp-faq-answer-' | append: section.id | append: '-' | append: block.id %}
+            {% assign should_open = false %}
+            {% if block.settings.open_by_default %}
+              {% assign should_open = true %}
+            {% elsif section.settings.open_first_item and opened_item == false %}
+              {% assign should_open = true %}
+            {% endif %}
+            {% if should_open %}
+              {% assign opened_item = true %}
+            {% endif %}
+
+            <div class="nv-pdp-faq__item{% if should_open %} is-open{% endif %}" {{ block.shopify_attributes }}>
+              <button
+                type="button"
+                class="nv-pdp-faq__trigger"
+                aria-expanded="{% if should_open %}true{% else %}false{% endif %}"
+                aria-controls="{{ answer_id }}"
+              >
+                <span class="nv-pdp-faq__question">{{ block.settings.question }}</span>
+                <span class="nv-pdp-faq__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" focusable="false">
+                    <path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+                  </svg>
+                </span>
+              </button>
+              <div
+                id="{{ answer_id }}"
+                class="nv-pdp-faq__answer"
+                {% unless should_open %}hidden{% endunless %}
+              >
+                <div class="nv-pdp-faq__answer-inner rte">
+                  {{ block.settings.answer }}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #nv-pdp-faq-{{ section.id }}{
+      background:var(--nv-pdp-faq-bg, #E7EEE6);
+      color:var(--nv-pdp-faq-text, #2F3B34);
+      padding-top:var(--nv-pdp-faq-pad-top, 72px);
+      padding-bottom:var(--nv-pdp-faq-pad-bottom, 72px);
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__container{
+      width:min(calc(100% - 48px), var(--nv-pdp-faq-max, 1040px));
+      margin:0 auto;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__header{
+      display:grid;
+      gap:10px;
+      margin-bottom:34px;
+    }
+    #nv-pdp-faq-{{ section.id }}.nv-pdp-faq--center .nv-pdp-faq__header{
+      text-align:center;
+    }
+    #nv-pdp-faq-{{ section.id }}.nv-pdp-faq--left .nv-pdp-faq__header{
+      text-align:left;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__eyebrow{
+      margin:0;
+      color:rgba(49,92,74,.76);
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__heading{
+      margin:0;
+      color:var(--nv-pdp-faq-heading, #1F3A2F);
+      font-size:clamp(30px, 4vw, var(--nv-pdp-faq-heading-size, 44px));
+      line-height:1.06;
+      font-weight:var(--nv-pdp-faq-heading-weight, 600);
+      letter-spacing:-0.04em;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__subheading{
+      margin:0;
+      max-width:58ch;
+      color:rgba(47,59,52,.74);
+      font-size:var(--nv-pdp-faq-subheading-size, 15px);
+      line-height:1.72;
+    }
+    #nv-pdp-faq-{{ section.id }}.nv-pdp-faq--center .nv-pdp-faq__subheading{
+      margin-left:auto;
+      margin-right:auto;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__items{
+      border-top:1px solid var(--nv-pdp-faq-divider, rgba(87,104,94,.28));
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__item{
+      border-bottom:1px solid var(--nv-pdp-faq-divider, rgba(87,104,94,.28));
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__trigger{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:22px 0;
+      border:0;
+      background:transparent;
+      color:inherit;
+      text-align:left;
+      cursor:pointer;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__question{
+      font-size:var(--nv-pdp-faq-question-size, 18px);
+      font-weight:600;
+      line-height:1.45;
+      letter-spacing:-0.01em;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__icon{
+      flex:0 0 auto;
+      width:calc(var(--nv-pdp-faq-icon-size, 18px) + 8px);
+      height:calc(var(--nv-pdp-faq-icon-size, 18px) + 8px);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:#315C4A;
+      transition:transform .22s ease, color .22s ease;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__icon svg{
+      width:var(--nv-pdp-faq-icon-size, 18px);
+      height:var(--nv-pdp-faq-icon-size, 18px);
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__item.is-open .nv-pdp-faq__icon{
+      transform:rotate(180deg);
+      color:#1F3A2F;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__answer{
+      height:0;
+      overflow:hidden;
+      opacity:0;
+      transition:height .26s ease, opacity .2s ease;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__answer-inner{
+      padding:0 0 22px;
+      color:rgba(47,59,52,.78);
+      font-size:var(--nv-pdp-faq-answer-size, 15px);
+      line-height:1.75;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__answer-inner p:first-child{
+      margin-top:0;
+    }
+    #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__answer-inner p:last-child{
+      margin-bottom:0;
+    }
+
+    @media (max-width: 749px){
+      #nv-pdp-faq-{{ section.id }}{
+        padding-top:max(52px, calc(var(--nv-pdp-faq-pad-top, 72px) - 18px));
+        padding-bottom:max(52px, calc(var(--nv-pdp-faq-pad-bottom, 72px) - 18px));
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__container{
+        width:min(calc(100% - 28px), var(--nv-pdp-faq-max, 1040px));
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__header{
+        margin-bottom:24px;
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__heading{
+        font-size:clamp(24px, 7vw, 34px);
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__subheading{
+        font-size:14px;
+        line-height:1.65;
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__trigger{
+        gap:14px;
+        padding:18px 0;
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__question{
+        font-size:min(var(--nv-pdp-faq-question-size, 18px), 16px);
+      }
+      #nv-pdp-faq-{{ section.id }} .nv-pdp-faq__answer-inner{
+        padding-bottom:18px;
+        font-size:min(var(--nv-pdp-faq-answer-size, 15px), 14px);
+      }
+    }
+  </style>
+
+  <script>
+    (() => {
+      const section = document.getElementById('nv-pdp-faq-{{ section.id }}');
+      if (!section) return;
+
+      const items = Array.from(section.querySelectorAll('.nv-pdp-faq__item'));
+      if (!items.length) return;
+
+      const closeItem = (item) => {
+        const button = item.querySelector('.nv-pdp-faq__trigger');
+        const answer = item.querySelector('.nv-pdp-faq__answer');
+        if (!button || !answer) return;
+
+        item.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+        answer.style.height = `${answer.scrollHeight}px`;
+
+        requestAnimationFrame(() => {
+          answer.style.height = '0px';
+          answer.style.opacity = '0';
+        });
+
+        window.setTimeout(() => {
+          if (!item.classList.contains('is-open')) {
+            answer.hidden = true;
+          }
+        }, 260);
+      };
+
+      const openItem = (item) => {
+        const button = item.querySelector('.nv-pdp-faq__trigger');
+        const answer = item.querySelector('.nv-pdp-faq__answer');
+        if (!button || !answer) return;
+
+        items.forEach((otherItem) => {
+          if (otherItem !== item) closeItem(otherItem);
+        });
+
+        item.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+        answer.hidden = false;
+        answer.style.height = '0px';
+        answer.style.opacity = '0';
+
+        requestAnimationFrame(() => {
+          answer.style.height = `${answer.scrollHeight}px`;
+          answer.style.opacity = '1';
+        });
+
+        window.setTimeout(() => {
+          if (item.classList.contains('is-open')) {
+            answer.style.height = 'auto';
+          }
+        }, 260);
+      };
+
+      items.forEach((item) => {
+        const button = item.querySelector('.nv-pdp-faq__trigger');
+        const answer = item.querySelector('.nv-pdp-faq__answer');
+        if (!button || !answer) return;
+
+        if (item.classList.contains('is-open')) {
+          button.setAttribute('aria-expanded', 'true');
+          answer.hidden = false;
+          answer.style.height = 'auto';
+          answer.style.opacity = '1';
+        } else {
+          button.setAttribute('aria-expanded', 'false');
+          answer.hidden = true;
+          answer.style.height = '0px';
+          answer.style.opacity = '0';
+        }
+
+        button.addEventListener('click', () => {
+          if (item.classList.contains('is-open')) {
+            closeItem(item);
+          } else {
+            openItem(item);
+          }
+        });
+      });
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "PDP FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "Support"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Discover More in Our FAQ"
+    },
+    {
+      "type": "richtext",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "<p>Helpful answers about shipping, orders, and product support presented in a clear, premium format.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 900,
+      "max": 1200,
+      "step": 20,
+      "default": 1040,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#E7EEE6"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2F3B34"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#B8C6B8"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "question_font_size",
+      "label": "Question font size",
+      "min": 16,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "answer_font_size",
+      "label": "Answer font size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "label": "Open first item by default",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Use this answer area to add product-specific support information, policy details, or order guidance.</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDP FAQ",
+      "blocks": [
+        { "type": "faq_item" },
+        { "type": "faq_item" },
+        { "type": "faq_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

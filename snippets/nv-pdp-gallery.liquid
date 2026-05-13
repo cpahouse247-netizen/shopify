@@ -1,0 +1,143 @@
+{%- liquid
+  assign resolved_featured_media = current_variant.featured_media | default: featured_media | default: product.featured_media | default: product.media.first
+-%}
+
+<div class="nv-pdp-hero__gallery-col nv-pdp-gallery nv-pdp-gallery--square">
+  <div class="nv-pdp-gallery__frame" id="nvPremiumMediaGallery-{{ section_id }}">
+    <div class="nv-pdp-gallery__stage nv-pdp-gallery__stage--premium">
+      {% if product.media.size > 1 %}
+        <button type="button" class="nv-pdp-gallery__control nv-pdp-gallery__control--prev" data-media-nav="prev" aria-label="Previous media">
+          <span aria-hidden="true">‹</span>
+        </button>
+      {% endif %}
+
+      <div class="nv-pdp-gallery__media">
+        <div class="nv-pdp-gallery__media-item" aria-live="polite">
+          {% if resolved_featured_media != blank and resolved_featured_media.preview_image %}
+            <button
+              type="button"
+              class="nv-pdp-gallery__media-button"
+              data-gallery-open
+              aria-label="Open larger image view for {{ product.title | escape }}"
+            >
+              <img
+                id="nvPremiumFeaturedImage-{{ section_id }}"
+                src="{{ resolved_featured_media.preview_image | image_url: width: 1600 }}"
+                alt="{{ resolved_featured_media.alt | default: product.title | escape }}"
+                loading="eager"
+                width="{{ resolved_featured_media.preview_image.width }}"
+                height="{{ resolved_featured_media.preview_image.height }}"
+              >
+            </button>
+            <button
+              type="button"
+              class="nv-pdp-gallery__zoom-trigger"
+              data-gallery-open
+              aria-label="Zoom image"
+            >
+              <span aria-hidden="true">+</span>
+            </button>
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'nv-pdp-gallery__placeholder' }}
+          {% endif %}
+        </div>
+      </div>
+
+      {% if product.media.size > 1 %}
+        <button type="button" class="nv-pdp-gallery__control nv-pdp-gallery__control--next" data-media-nav="next" aria-label="Next media">
+          <span aria-hidden="true">›</span>
+        </button>
+      {% endif %}
+    </div>
+
+    {% if product.media.size > 1 %}
+      <div class="nv-pdp-gallery__thumbs" data-media-thumbs>
+        {% for media in product.media %}
+          <button
+            type="button"
+            class="nv-pdp-gallery__thumb{% if media.id == resolved_featured_media.id %} is-active{% endif %}"
+            data-media-thumb
+            data-media-index="{{ forloop.index0 }}"
+            data-media-src="{{ media.preview_image | image_url: width: 1600 }}"
+            data-media-alt="{{ media.alt | default: product.title | escape }}"
+            aria-label="Show media {{ forloop.index }} for {{ product.title | escape }}"
+          >
+            {% if media.preview_image %}
+              {{ media.preview_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: product.title }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'nv-pdp-gallery__placeholder-thumb' }}
+            {% endif %}
+          </button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if resolved_featured_media != blank and resolved_featured_media.preview_image %}
+    <dialog class="nv-pdp-gallery__modal" data-gallery-modal aria-label="Expanded product image">
+      <div class="nv-pdp-gallery__modal-inner">
+        <button type="button" class="nv-pdp-gallery__modal-close" data-gallery-close aria-label="Close enlarged image view">×</button>
+        <img
+          class="nv-pdp-gallery__modal-image"
+          data-gallery-modal-image
+          src="{{ resolved_featured_media.preview_image | image_url: width: 2200 }}"
+          alt="{{ resolved_featured_media.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="{{ resolved_featured_media.preview_image.width }}"
+          height="{{ resolved_featured_media.preview_image.height }}"
+        >
+      </div>
+    </dialog>
+    <script>
+      (function() {
+        var gallery = document.getElementById('nvPremiumMediaGallery-{{ section_id }}');
+        if (!gallery) return;
+
+        var dialog = gallery.parentElement.querySelector('[data-gallery-modal]');
+        var modalImage = dialog ? dialog.querySelector('[data-gallery-modal-image]') : null;
+        var featuredImage = gallery.querySelector('#nvPremiumFeaturedImage-{{ section_id }}');
+        var openers = gallery.querySelectorAll('[data-gallery-open]');
+        var closers = dialog ? dialog.querySelectorAll('[data-gallery-close]') : [];
+
+        function syncModalImage() {
+          if (!dialog || !modalImage || !featuredImage) return;
+          modalImage.src = featuredImage.currentSrc || featuredImage.src;
+          modalImage.alt = featuredImage.alt || '{{ product.title | escape }}';
+        }
+
+        function openDialog() {
+          if (!dialog) return;
+          syncModalImage();
+          if (typeof dialog.showModal === 'function') {
+            dialog.showModal();
+          } else {
+            dialog.setAttribute('open', 'open');
+          }
+        }
+
+        function closeDialog() {
+          if (!dialog) return;
+          if (typeof dialog.close === 'function') {
+            dialog.close();
+          } else {
+            dialog.removeAttribute('open');
+          }
+        }
+
+        openers.forEach(function(opener) {
+          opener.addEventListener('click', openDialog);
+        });
+
+        closers.forEach(function(closer) {
+          closer.addEventListener('click', closeDialog);
+        });
+
+        if (dialog) {
+          dialog.addEventListener('click', function(event) {
+            if (event.target === dialog) closeDialog();
+          });
+        }
+      })();
+    </script>
+  {% endif %}
+</div>

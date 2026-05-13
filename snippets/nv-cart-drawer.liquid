@@ -1,0 +1,304 @@
+{% comment %}
+  Premium NutraVora cart drawer.
+
+  The drawer keeps a regular cart form for checkout fallback, while theme.js
+  progressively enhances quantity, remove, and add-to-cart interactions with
+  Shopify's Ajax cart endpoints.
+{% endcomment %}
+{%- assign free_shipping_threshold = settings.cart_drawer_free_shipping_threshold | default: 0 | times: 100 -%}
+{%- assign cart_total = cart.total_price | default: 0 -%}
+{%- assign progress_percent = 0 -%}
+{%- if free_shipping_threshold > 0 -%}
+  {%- assign progress_percent = cart_total | times: 100 | divided_by: free_shipping_threshold -%}
+  {%- if progress_percent > 100 -%}
+    {%- assign progress_percent = 100 -%}
+  {%- endif -%}
+{%- endif -%}
+{%- capture cart_state -%}{% render 'nv-cart-fulfillment-state', field: 'state' %}{%- endcapture -%}
+{%- assign cart_state = cart_state | strip -%}
+
+<div
+  class="nv-cart-drawer-shell"
+  data-nv-cart-drawer
+  data-cart-url="{{ routes.cart_url }}"
+  data-cart-add-url="{{ routes.cart_add_url }}.js"
+  data-cart-change-url="{{ routes.cart_change_url }}.js"
+  data-cart-json-url="{{ routes.cart_url }}.js"
+  data-product-recommendations-url="{{ routes.product_recommendations_url }}.json"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+  data-free-shipping-threshold="{{ free_shipping_threshold }}"
+  aria-hidden="true"
+>
+  <div class="nv-cart-drawer__overlay" data-nv-cart-drawer-close></div>
+
+  <aside class="nv-cart-drawer" role="dialog" aria-modal="true" aria-labelledby="NvCartDrawerTitle" tabindex="-1">
+    <div class="nv-cart-drawer__header">
+      <div>
+        <p class="nv-cart-drawer__eyebrow">NutraVora Basket</p>
+        <h2 id="NvCartDrawerTitle">Shopping Basket (<span data-nv-cart-count>{{ cart.item_count }}</span>)</h2>
+      </div>
+      <button type="button" class="nv-cart-drawer__close" data-nv-cart-drawer-close aria-label="Close cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m6.75 6.75 10.5 10.5m0-10.5-10.5 10.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="nv-cart-drawer__body" data-nv-cart-body>
+      {% if free_shipping_threshold > 0 %}
+        <div class="nv-cart-drawer__shipping" data-nv-cart-shipping>
+          <p data-nv-cart-shipping-text>
+            {% if cart_total >= free_shipping_threshold %}
+              Your order qualifies for free shipping.
+            {% else %}
+              You're {{ free_shipping_threshold | minus: cart_total | money }} away from free shipping.
+            {% endif %}
+          </p>
+          <div class="nv-cart-drawer__progress" aria-hidden="true">
+            <span data-nv-cart-shipping-progress style="width: {{ progress_percent }}%;"></span>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="nv-cart-drawer__items" data-nv-cart-items aria-live="polite">
+        {% if cart.item_count > 0 %}
+          {% for item in cart.items %}
+            <article class="nv-cart-drawer__item" data-cart-line="{{ forloop.index }}" data-cart-key="{{ item.key }}">
+              <a href="{{ item.url }}" class="nv-cart-drawer__media" aria-label="{{ item.product.title | escape }}">
+                {% if item.image %}
+                  {{
+                    item.image
+                    | image_url: width: 220
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '96,144,180,220',
+                      class: 'nv-cart-drawer__image',
+                      alt: item.product.title
+                  }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'nv-cart-drawer__image nv-cart-drawer__image--placeholder' }}
+                {% endif %}
+              </a>
+
+              <div class="nv-cart-drawer__content">
+                <div class="nv-cart-drawer__line-top">
+                  <div class="nv-cart-drawer__text">
+                    <a class="nv-cart-drawer__title" href="{{ item.url }}">{{ item.product.title }}</a>
+                    {% unless item.product.has_only_default_variant %}
+                      <p class="nv-cart-drawer__variant">{{ item.variant.title }}</p>
+                    {% endunless %}
+                    {% if item.selling_plan_allocation != blank %}
+                      <p class="nv-cart-drawer__variant">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                    {% endif %}
+                  </div>
+                  <button type="button" class="nv-cart-drawer__remove" data-cart-remove data-line="{{ forloop.index }}" aria-label="Remove {{ item.product.title | escape }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M9 6.75V5.5c0-.55.45-1 1-1h4c.55 0 1 .45 1 1v1.25m-8.25 0h10.5m-9.5 0 .62 11.25c.04.83.73 1.5 1.56 1.5h4.14c.83 0 1.52-.67 1.56-1.5l.62-11.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="nv-cart-drawer__price-row">
+                  {% if item.original_line_price != item.final_line_price %}
+                    <span class="nv-cart-drawer__compare">{{ item.original_line_price | money }}</span>
+                    <span class="nv-cart-drawer__saving">Save {{ item.original_line_price | minus: item.final_line_price | money }}</span>
+                  {% endif %}
+                  <strong>{{ item.final_line_price | money }}</strong>
+                </div>
+
+                <div class="nv-cart-drawer__signals">
+                  <div class="nv-cart-drawer__prime-tag">
+                    {% render 'nv-prime-tag-drawer', item: item %}
+                  </div>
+                  {% render 'nv-cart-line-messaging', item: item, context: 'drawer' %}
+                </div>
+
+                <div class="nv-cart-drawer__line-bottom">
+                  <div class="nv-cart-drawer__qty" data-cart-stepper>
+                    <button type="button" data-cart-qty-change="-1" data-line="{{ forloop.index }}" aria-label="Decrease quantity for {{ item.product.title | escape }}">
+                      <span aria-hidden="true">-</span>
+                    </button>
+                    <input
+                      class="cart-qty-input"
+                      value="{{ item.quantity }}"
+                      type="number"
+                      min="0"
+                      inputmode="numeric"
+                      data-cart-qty-input
+                      data-line="{{ forloop.index }}"
+                      aria-label="Quantity for {{ item.product.title | escape }}"
+                    >
+                    <button type="button" data-cart-qty-change="1" data-line="{{ forloop.index }}" aria-label="Increase quantity for {{ item.product.title | escape }}">
+                      <span aria-hidden="true">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        {% else %}
+          <div class="nv-cart-drawer__empty" data-nv-cart-empty>
+            <h3>Your cart is empty</h3>
+            <p>Choose a clinical wellness formula to start your NutraVora routine.</p>
+            <a class="btn" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if settings.enable_cart_drawer_upsells %}
+        {%- assign upsell_collection = settings.cart_drawer_upsell_collection | default: collections.all -%}
+        {% if upsell_collection != blank and upsell_collection.products_count > 0 %}
+          <div class="nv-cart-drawer__upsells" data-nv-cart-upsells>
+            <div class="nv-cart-drawer__upsells-head">
+              <span>Customers also bought</span>
+            </div>
+            <div class="nv-cart-drawer__upsell-carousel" data-nv-cart-upsell-carousel>
+              <button type="button" class="nv-cart-drawer__upsell-nav nv-cart-drawer__upsell-nav--prev" data-nv-cart-upsell-prev aria-label="Previous recommendation">
+                <span aria-hidden="true">‹</span>
+              </button>
+              <div class="nv-cart-drawer__upsell-track" data-nv-cart-upsell-track tabindex="0" aria-label="Customers also bought">
+                {% for product in upsell_collection.products limit: 8 %}
+                  {%- assign upsell_variant = product.selected_or_first_available_variant -%}
+                  {% if upsell_variant != blank %}
+                    <article class="nv-cart-drawer__upsell" data-upsell-product-id="{{ product.id }}">
+                      <a href="{{ product.url }}" class="nv-cart-drawer__upsell-media" aria-label="{{ product.title | escape }}">
+                        {% if product.featured_image %}
+                          {{
+                            product.featured_image
+                            | image_url: width: 160
+                            | image_tag:
+                              loading: 'lazy',
+                              widths: '96,128,160',
+                              class: 'nv-cart-drawer__upsell-image',
+                              alt: product.title
+                          }}
+                        {% else %}
+                          {{ 'product-1' | placeholder_svg_tag: 'nv-cart-drawer__upsell-image nv-cart-drawer__upsell-image--placeholder' }}
+                        {% endif %}
+                      </a>
+                      <div class="nv-cart-drawer__upsell-info">
+                        <a href="{{ product.url }}">{{ product.title }}</a>
+                        <div class="nv-cart-drawer__upsell-price">
+                          {% if upsell_variant.compare_at_price > upsell_variant.price %}
+                            <s>{{ upsell_variant.compare_at_price | money }}</s>
+                          {% endif %}
+                          <span>{{ upsell_variant.price | money }}</span>
+                        </div>
+                        <div class="nv-cart-drawer__upsell-rating" aria-label="Product reviews">
+                          <div class="areviews_product_item areviews_stars{{ product.id }}" data-product-id="{{ product.id }}"></div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="nv-cart-drawer__upsell-add"
+                        data-nv-drawer-upsell-add
+                        data-variant-id="{{ upsell_variant.id }}"
+                        {% unless upsell_variant.available %}disabled aria-disabled="true"{% endunless %}
+                      >
+                        + Add
+                      </button>
+                    </article>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <button type="button" class="nv-cart-drawer__upsell-nav nv-cart-drawer__upsell-nav--next" data-nv-cart-upsell-next aria-label="Next recommendation">
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <form action="{{ routes.cart_url }}" method="post" class="nv-cart-drawer__footer" data-nv-cart-footer>
+      <div class="nv-cart-drawer__discounts" data-nv-cart-discounts>
+        {% if cart.total_discount > 0 %}
+          {%- assign discount_title_index = '' -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            {%- assign discount_title = discount.title | default: 'Discounts' | strip -%}
+            {%- capture discount_marker -%}||{{ discount_title }}||{%- endcapture -%}
+            {%- unless discount_title_index contains discount_marker -%}
+              {%- assign discount_title_index = discount_title_index | append: discount_marker -%}
+            {%- endunless -%}
+          {%- endfor -%}
+          {%- for item in cart.items -%}
+            {%- for allocation in item.line_level_discount_allocations -%}
+              {%- assign discount_title = allocation.discount_application.title | default: 'Discounts' | strip -%}
+              {%- capture discount_marker -%}||{{ discount_title }}||{%- endcapture -%}
+              {%- unless discount_title_index contains discount_marker -%}
+                {%- assign discount_title_index = discount_title_index | append: discount_marker -%}
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endfor -%}
+
+          {%- assign discount_titles = discount_title_index | split: '||' -%}
+          {%- assign rendered_discount_rows = 0 -%}
+          {%- for discount_title in discount_titles -%}
+            {%- assign discount_title = discount_title | strip -%}
+            {%- if discount_title != blank -%}
+              {%- assign discount_amount = 0 -%}
+              {%- for discount in cart.cart_level_discount_applications -%}
+                {%- assign current_title = discount.title | default: 'Discounts' | strip -%}
+                {%- if current_title == discount_title -%}
+                  {%- assign discount_amount = discount_amount | plus: discount.total_allocated_amount -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- for item in cart.items -%}
+                {%- for allocation in item.line_level_discount_allocations -%}
+                  {%- assign current_title = allocation.discount_application.title | default: 'Discounts' | strip -%}
+                  {%- if current_title == discount_title -%}
+                    {%- assign discount_amount = discount_amount | plus: allocation.amount -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+              {%- if discount_amount > 0 -%}
+                {%- assign rendered_discount_rows = rendered_discount_rows | plus: 1 -%}
+                <div class="nv-cart-drawer__discount-row">
+                  <span><small>Discounts</small>{{ discount_title }}</span>
+                  <strong>-{{ discount_amount | money }}</strong>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {% if rendered_discount_rows == 0 %}
+            <div class="nv-cart-drawer__discount-row">
+              <span><small>Discounts</small>Applied savings</span>
+              <strong>-{{ cart.total_discount | money }}</strong>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="nv-cart-drawer__subtotal">
+        <span>Subtotal</span>
+        <strong data-nv-cart-subtotal>{{ cart.total_price | money }}</strong>
+      </div>
+      <p class="nv-cart-drawer__note">Taxes, shipping, and final delivery details are confirmed at checkout.</p>
+
+      {% unless cart_state == 'amazon_only' %}
+        <button class="btn nv-cart-drawer__checkout" name="checkout" {% if cart.item_count == 0 %}disabled aria-disabled="true"{% endif %}>
+          <span>Checkout</span>
+          <span class="nv-cart-drawer__checkout-separator" aria-hidden="true">•</span>
+          <span data-nv-cart-checkout-total>{{ cart.total_price | money }}</span>
+        </button>
+      {% endunless %}
+
+      {% if shop.enabled_payment_types.size > 0 %}
+        <ul class="nv-cart-drawer__payments" aria-label="Supported payment methods">
+          {% for type in shop.enabled_payment_types limit: 6 %}
+            <li>{{ type | payment_type_svg_tag: class: 'nv-cart-drawer__payment-icon' }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="nv-cart-drawer__payments" aria-label="Supported payment methods">
+          <span>Visa</span>
+          <span>Mastercard</span>
+          <span>Amex</span>
+          <span>Shop Pay</span>
+        </div>
+      {% endif %}
+    </form>
+  </aside>
+</div>

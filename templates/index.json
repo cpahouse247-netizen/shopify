@@ -1,0 +1,901 @@
+{
+  "sections": {
+    "hero-banner": {
+      "type": "nv-image-hero-banner",
+      "settings": {
+        "show_overlay_content": true,
+        "eyebrow_text": "NutraVora Essentials",
+        "heading": "Premium Herbal Supplements for Daily Wellness",
+        "subheading": "Clean-label formulas, third-party tested, and designed for consistent daily use.",
+        "promo_label": "",
+        "primary_button_label": "Shop on Amazon →",
+        "primary_button_link": "https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294",
+        "desktop_banner_image": "shopify://shop_images/nutravora-hero-banner.jpg",
+        "mobile_banner_image": "shopify://shop_images/nutravora-hero-banner-mobile.jpg",
+        "image_alt_text": "Promotional banner",
+        "banner_link": "",
+        "image_size_mode": "fixed_height",
+        "banner_height_desktop": 620,
+        "banner_height_mobile": 480,
+        "image_fit": "cover",
+        "image_position": "center center",
+        "overlay_opacity": 35,
+        "overlay_content_alignment": "center",
+        "overlay_text_alignment": "left",
+        "section_max_width": 1280,
+        "border_radius": 0,
+        "section_padding_top": 0,
+        "section_padding_bottom": 0,
+        "section_padding_top_mobile": 52,
+        "section_padding_bottom_mobile": 20,
+        "content_max_width": 560,
+        "heading_font_size": 48,
+        "subheading_font_size": 16,
+        "badge_font_size": 11,
+        "button_font_size": 14,
+        "overlay_text_color": "#ffffff",
+        "overlay_accent_color": "#c8a96b",
+        "amazon_cta_url": "https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294",
+        "secondary_button_label": "Explore Formulas",
+        "secondary_button_link": "/collections/all"
+      }
+    },
+    "nv_trust_icons_CyqRyz": {
+      "type": "nv-trust-icons",
+      "blocks": {
+        "trust_item_xWCrgT": {
+          "type": "trust_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Carefully_Selected_Ingredients_2.svg",
+            "icon_alt": "Trust icon",
+            "title": "Clean Ingredient Sourcing",
+            "body": "Ingredients selected for clarity, quality, and everyday routine use.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "trust_item_BYVcnW": {
+          "type": "trust_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Non-GMO_Gluten-Free_Approach_4.svg",
+            "icon_alt": "Trust icon",
+            "title": "Third-Party Lab Tested",
+            "body": "Formulas reviewed with independent testing standards and clean-label expectations.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "trust_item_Lgn4Kr": {
+          "type": "trust_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Clear_Product_Labeling_2.svg",
+            "icon_alt": "Trust icon",
+            "title": "GMP Certified Facility",
+            "body": "Manufacturing standards and clear product details support confident daily use.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        }
+      },
+      "block_order": [
+        "trust_item_xWCrgT",
+        "trust_item_BYVcnW",
+        "trust_item_Lgn4Kr"
+      ],
+      "name": "NV Trust Icons",
+      "settings": {
+        "show_heading": true,
+        "section_heading": "Why NutraVora",
+        "section_subheading": "A concise quality promise: clean sourcing, third-party testing, and daily-use formats built for consistency.",
+        "heading_alignment": "center",
+        "background_color": "#FFFFFF",
+        "icon_circle_background_color": "#f0f5f0",
+        "icon_circle_border_color": "#315c4a",
+        "title_color": "#1f3a2f",
+        "body_color": "#315c4a",
+        "columns_desktop": "3",
+        "columns_mobile": "1",
+        "section_padding_top": 56,
+        "section_padding_bottom": 56,
+        "content_max_width": 1180,
+        "icon_circle_size": 74,
+        "icon_image_max_width": 58,
+        "heading_font_size": 32,
+        "title_font_size": 16,
+        "body_font_size": 13,
+        "card_background_color": "#FFFFFF",
+        "card_border_color": "#e8ede8",
+        "card_border_radius": 20,
+        "card_padding": 32,
+        "card_shadow_opacity": 5
+      }
+    },
+    "best_sellers": {
+      "type": "nv-home-best-sellers",
+      "blocks": {
+        "tab_1": {
+          "type": "tab",
+          "settings": {
+            "label": "All Products",
+            "collection": "all-collections",
+            "products_limit": 4,
+            "empty_state_text": "Assign a collection to this tab to show products."
+          }
+        },
+        "tab_2": {
+          "type": "tab",
+          "settings": {
+            "label": "Top Rated",
+            "collection": "top-selling",
+            "products_limit": 4,
+            "empty_state_text": "Assign a collection to this tab to show products."
+          }
+        },
+        "tab_3": {
+          "type": "tab",
+          "settings": {
+            "label": "New Formulas",
+            "collection": "new-arrivals",
+            "products_limit": 4,
+            "empty_state_text": "Assign a collection to this tab to show products."
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3"
+      ],
+      "settings": {
+        "heading": "Our Best-Selling Formulas",
+        "subtext": "Customer-favorite formulas shoppers return to for everyday wellness routines.",
+        "content_max_width": 1200,
+        "heading_alignment": "center",
+        "subheading_alignment": "center",
+        "heading_font_size": 34,
+        "subheading_font_size": 15,
+        "tab_font_size": 13,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "background_tone": "cream",
+        "products_per_row_desktop": "4",
+        "products_per_row_mobile": "2",
+        "show_price": true,
+        "show_compare_at_price": true,
+        "show_sale_badge": true,
+        "show_sold_out_badge": true,
+        "show_prime_note": true,
+        "show_prime_tag_on_cards": true,
+        "show_delivery_tag_on_cards": true,
+        "prime_tag_position": "under_price",
+        "show_divider": true,
+        "grid_gap": 20,
+        "card_background_color": "#FFFFFF",
+        "card_border_color": "#D9DED8",
+        "card_border_radius": 20,
+        "card_padding": 20,
+        "card_gap": 12,
+        "card_shadow_opacity": 6,
+        "image_stage_color": "#F0F5F0",
+        "image_stage_radius": 20,
+        "image_area_height": 260,
+        "image_fit": "contain",
+        "card_title_font_size": 14,
+        "card_price_font_size": 18,
+        "card_compare_price_font_size": 13,
+        "card_meta_font_size": 12
+      }
+    },
+    "scrolling_bar": {
+      "type": "nv-scrolling-features-bar",
+      "blocks": {
+        "feature_phrase_eUVcAU": {
+          "type": "feature_phrase",
+          "settings": {
+            "text": "Lab Tested",
+            "separator_type": "icon",
+            "separator_text": "✓"
+          }
+        },
+        "feature_phrase_W3RmFc": {
+          "type": "feature_phrase",
+          "settings": {
+            "text": "Non-GMO",
+            "separator_type": "icon",
+            "separator_text": "✓"
+          }
+        },
+        "feature_item_1": {
+          "type": "feature_phrase",
+          "settings": {
+            "text": "Prime Delivery",
+            "separator_type": "icon",
+            "separator_text": "✓"
+          }
+        },
+        "feature_item_2": {
+          "type": "feature_phrase",
+          "settings": {
+            "text": "300-Count Supply",
+            "separator_type": "icon",
+            "separator_text": "✓"
+          }
+        }
+      },
+      "block_order": [
+        "feature_phrase_eUVcAU",
+        "feature_phrase_W3RmFc",
+        "feature_item_1",
+        "feature_item_2"
+      ],
+      "settings": {
+        "background_color": "#1f3a2f",
+        "text_color": "#ffffff",
+        "separator_color": "#ffffff",
+        "font_size": 12,
+        "font_weight": "600",
+        "text_transform": "uppercase",
+        "letter_spacing": 6,
+        "vertical_padding": 8,
+        "item_spacing": 36,
+        "scroll_speed": 54,
+        "pause_on_hover": true,
+        "content_max_width": 1600,
+        "divider_top": true,
+        "divider_bottom": true,
+        "section_padding_top": 0,
+        "section_padding_bottom": 0
+      }
+    },
+    "featured_spotlight": {
+      "type": "nv-featured-spotlight",
+      "blocks": {
+        "feature_1": {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "Dual-botanical immune formula in easy softgels"
+          }
+        },
+        "feature_2": {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "Non-GMO, gluten-free, third-party tested"
+          }
+        },
+        "feature_3": {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "300-softgel pouch — ~10 month supply"
+          }
+        },
+        "spec_1": {
+          "type": "spec_row",
+          "settings": {
+            "label": "Format",
+            "value": "Capsules or softgels"
+          }
+        },
+        "spec_2": {
+          "type": "spec_row",
+          "settings": {
+            "label": "Positioning",
+            "value": "Daily wellness support"
+          }
+        },
+        "spec_3": {
+          "type": "spec_row",
+          "settings": {
+            "label": "Supply",
+            "value": "300 Softgels"
+          }
+        },
+        "spec_4": {
+          "type": "spec_row",
+          "settings": {
+            "label": "Best for",
+            "value": "Supports immune, respiratory and gut balance."
+          }
+        }
+      },
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "spec_1",
+        "spec_2",
+        "spec_3",
+        "spec_4"
+      ],
+      "settings": {
+        "featured_product": "nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels",
+        "heading_font_family": "sans-serif",
+        "body_font_family": "inherit",
+        "eyebrow": "Formula Spotlight",
+        "heading_override": "Oil of Oregano with Black Seed Oil",
+        "description_override": "<p>An editorial look at a hero daily formula: dual botanicals, a generous 300-softgel format, and a clean routine built for immune and respiratory wellness support.</p>",
+        "secondary_image": "shopify://shop_images/oregano-back.jpg",
+        "show_price": true,
+        "show_availability": true,
+        "background_tone": "white",
+        "container_max_width": 1160,
+        "content_max_width": 460,
+        "title_max_width": 50,
+        "eyebrow_font_size": 11,
+        "heading_font_size": 28,
+        "body_font_size": 15,
+        "bullet_font_size": 14,
+        "spec_label_font_size": 10,
+        "spec_value_font_size": 15,
+        "button_font_size": 13,
+        "image_layout": "balanced",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "content_gap": 16,
+        "primary_button_label": "View Formula Details",
+        "primary_button_link": "/collections/all",
+        "secondary_button_label": "Buy on Amazon →",
+        "secondary_button_link": "{{ section.settings.featured_product.metafields.custom.amazon_attribution_link.value }}"
+      }
+    },
+    "how_it_works": {
+      "type": "nv-how-it-works",
+      "blocks": {
+        "feature_item_1": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🌿",
+            "title": "Clean Ingredient Sourcing",
+            "body": "We select each ingredient for verified purity, potency, and bioavailability.",
+            "position": "left"
+          }
+        },
+        "feature_item_2": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🔬",
+            "title": "Third-Party Lab Testing",
+            "body": "Every batch is independently tested before it reaches you.",
+            "position": "left"
+          }
+        },
+        "feature_item_3": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "📋",
+            "title": "Transparent Labeling",
+            "body": "Clear ingredient lists with no hidden fillers or proprietary blends.",
+            "position": "left"
+          }
+        },
+        "feature_item_4": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🏭",
+            "title": "GMP Certified Facility",
+            "body": "Manufactured in a facility that meets Good Manufacturing Practice standards.",
+            "position": "right"
+          }
+        },
+        "feature_item_5": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "💊",
+            "title": "300-Count Supply Format",
+            "body": "300-count pouches designed for consistent long-term daily use.",
+            "position": "right"
+          }
+        },
+        "feature_item_6": {
+          "type": "feature_item",
+          "settings": {
+            "icon": "🛡️",
+            "title": "30-Day Satisfaction Guarantee",
+            "body": "30-day guarantee. Not satisfied? We'll make it right.",
+            "position": "right"
+          }
+        }
+      },
+      "block_order": [
+        "feature_item_1",
+        "feature_item_2",
+        "feature_item_3",
+        "feature_item_4",
+        "feature_item_5",
+        "feature_item_6"
+      ],
+      "settings": {
+        "eyebrow": "How We Build Each Formula",
+        "heading": "From Source to Softgel",
+        "subheading": "The essential checkpoints behind each formula, simplified for quick understanding.",
+        "center_image": "shopify://shop_images/IMG_5497.png",
+        "cert_badge_text": "GMP Certified Facility",
+        "show_bottom_cta": false,
+        "cta_label": "Shop All Products",
+        "cta_url": "shopify://collections/all",
+        "background_style": "white",
+        "layout_style": "split"
+      }
+    },
+    "quality_timeline": {
+      "type": "nv-quality-timeline",
+      "blocks": {
+        "timeline_1": {
+          "type": "timeline_step",
+          "settings": {
+            "step_label": "Step 01",
+            "icon": "🌿",
+            "title": "Clean Ingredient Sourcing",
+            "body": "Each ingredient is selected from verified suppliers with documented purity and potency standards.",
+            "card_label": "Verified Suppliers"
+          }
+        },
+        "timeline_2": {
+          "type": "timeline_step",
+          "settings": {
+            "step_label": "Step 02",
+            "icon": "🔬",
+            "title": "Independent Lab Testing",
+            "body": "Every batch is independently tested by accredited labs before production begins.",
+            "card_label": "Independent Lab Verified"
+          }
+        },
+        "timeline_3": {
+          "type": "timeline_step",
+          "settings": {
+            "step_label": "Step 03",
+            "icon": "🏭",
+            "title": "GMP-Certified Manufacturing",
+            "body": "Produced in a GMP-certified facility under strict quality control protocols.",
+            "card_label": "GMP Certified Facility"
+          }
+        },
+        "timeline_4": {
+          "type": "timeline_step",
+          "settings": {
+            "step_label": "Step 04",
+            "icon": "✅",
+            "title": "Final Quality Assurance",
+            "body": "Each finished product undergoes a final review before it reaches your door.",
+            "card_label": "Quality Assured"
+          }
+        }
+      },
+      "block_order": [
+        "timeline_1",
+        "timeline_2",
+        "timeline_3",
+        "timeline_4"
+      ],
+      "settings": {
+        "background_style": "dark",
+        "eyebrow": "Authority Checkpoints",
+        "heading": "Quality Standard",
+        "subheading": "A calmer look at the sourcing, testing, manufacturing, and final review standards behind every NutraVora pouch.",
+        "show_bottom_cta": true,
+        "cta_label": "View Formulas"
+      }
+    },
+    "reviews_grid": {
+      "type": "nv-reviews-grid",
+      "blocks": {
+        "review_item_HknfRH": {
+          "type": "review_item",
+          "settings": {
+            "reviewer_name": "Beverly Morten",
+            "reviewer_avatar": "shopify://shop_images/IMG_5702.jpg",
+            "star_rating": 5,
+            "review_text": "One for me and one for my daughter. They work fine and I can see the difference in my system. I am glad I found out about this. Thank you so much.",
+            "linked_product_text": "Oil of oregano with black seed oil",
+            "linked_product_url": "",
+            "featured_product": "nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels",
+            "use_product_picker_data": true,
+            "show_verified_badge": true,
+            "verified_badge_label": "Verified Amazon Purchase"
+          }
+        },
+        "review_item_dpVVnK": {
+          "type": "review_item",
+          "settings": {
+            "reviewer_name": "Critik",
+            "reviewer_avatar": "shopify://shop_images/IMG_5701.jpg",
+            "star_rating": 5,
+            "review_text": "Easy to swallow. No bad aftertaste. They even smell good. Great value.\nRecommended",
+            "linked_product_text": "Omega3 Fish oil",
+            "linked_product_url": "",
+            "featured_product": "nutravora-triple-strength-omega-3-fish-oil-4200-mg-per-serving-with-1300-mg-epa-850-mg-dha-lemon-flavor-burpless-formula-wild-caught-non-gmo-gluten-free-300-softgels",
+            "use_product_picker_data": true,
+            "show_verified_badge": true,
+            "verified_badge_label": "Verified Amazon Purchase"
+          }
+        },
+        "review_item_hd4CJT": {
+          "type": "review_item",
+          "settings": {
+            "reviewer_name": "TheWebWalker",
+            "reviewer_avatar": "shopify://shop_images/IMG_5700.jpg",
+            "star_rating": 5,
+            "review_text": "My husband takes these daily and is very happy with them. They are tasteless and easy to digest.",
+            "linked_product_text": "Pumpkin seed oil with saw palmetto",
+            "linked_product_url": "shopify://products/nutravora-pumpkin-seed-oil-saw-palmetto-300-softgels",
+            "featured_product": "nutravora-pumpkin-seed-oil-saw-palmetto-300-softgels",
+            "use_product_picker_data": true,
+            "show_verified_badge": true,
+            "verified_badge_label": "Verified Amazon Purchase"
+          }
+        },
+        "review_item_PcWg8k": {
+          "type": "review_item",
+          "settings": {
+            "reviewer_name": "Otheo",
+            "star_rating": 5,
+            "review_text": "Easy to swallow, doesn't cause reflux, no after taste. No side effects on my stomach.",
+            "linked_product_text": "Oil of oregano with black seed oil",
+            "linked_product_url": "shopify://products/nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels",
+            "featured_product": "nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels",
+            "use_product_picker_data": true,
+            "show_verified_badge": true,
+            "verified_badge_label": "Verified Amazon Purchase"
+          }
+        }
+      },
+      "block_order": [
+        "review_item_HknfRH",
+        "review_item_dpVVnK",
+        "review_item_hd4CJT",
+        "review_item_PcWg8k"
+      ],
+      "settings": {
+        "section_heading": "Trusted by Real Customers",
+        "section_subheading": "Selected customer notes from everyday supplement routines.",
+        "heading_alignment": "center",
+        "section_background_color": "#F0F5F0",
+        "card_background_color": "#FFFFFF",
+        "card_text_color": "#1F3A2F",
+        "card_divider_color": "#D9DED8",
+        "star_color": "#C8A96B",
+        "reviewer_name_color": "#0E5A3A",
+        "linked_product_color": "#315C4A",
+        "heading_font_size": 34,
+        "subheading_font_size": 15,
+        "card_name_font_size": 16,
+        "card_body_font_size": 14,
+        "linked_product_font_size": 14,
+        "columns_desktop": "3",
+        "columns_mobile": "1",
+        "reviews_to_show_initial": 3,
+        "enable_show_more": true,
+        "show_more_label": "Show More",
+        "show_less_label": "Show Less",
+        "show_avatars": true,
+        "show_star_rating": true,
+        "show_linked_product": true,
+        "section_padding_top": 72,
+        "section_padding_bottom": 72,
+        "content_max_width": 1240,
+        "card_border_color": "#e8ede8",
+        "card_border_radius": 20,
+        "card_padding": 28,
+        "card_shadow_opacity": 8,
+        "show_aggregate_bar": true,
+        "aggregate_rating": "4.8",
+        "aggregate_review_count": "221+ Amazon Reviews"
+      }
+    },
+    "faq": {
+      "type": "nv-home-faq",
+      "blocks": {
+        "faq_item_CAcPp4": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Where can I buy NutraVora products?",
+            "answer": "<p>You can shop directly on our website or visit our official Amazon store. Many NutraVora products are Prime-eligible on Amazon for fast, trusted fulfillment.</p>"
+          }
+        },
+        "faq_item_EHLzME": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Are NutraVora supplements non-GMO and gluten-free?",
+            "answer": "<p>Many NutraVora formulas follow a non-GMO, gluten-free approach. Product-specific details are listed on each product page, including ingredients, usage, and important information.</p>"
+          }
+        },
+        "faq_item_Q9fMBg": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How do I choose the right NutraVora formula?",
+            "answer": "<p>Start with the product that best matches your daily wellness goal. Our collection includes formulas for immune support, men’s wellness, heart and brain support, and bone and wellness support.</p>"
+          }
+        },
+        "faq_item_fCdmBM": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does one pouch last?",
+            "answer": "<p>This depends on the product and suggested serving size. Many NutraVora formulas are designed as long-supply pouches to support a consistent daily routine.</p>"
+          }
+        },
+        "faq_item_TacBmR": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I take these supplements with other medications?",
+            "answer": "<p>If you are pregnant, nursing, taking medication, or have a medical condition, consult a healthcare professional before using any dietary supplement.</p>"
+          }
+        },
+        "faq_item_fnUAp8": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How can I contact NutraVora support?",
+            "answer": "<p>You can reach us at <a>support@nutravora.com</a> for product questions, order support, and general inquiries.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_item_CAcPp4",
+        "faq_item_EHLzME",
+        "faq_item_Q9fMBg",
+        "faq_item_fCdmBM",
+        "faq_item_TacBmR",
+        "faq_item_fnUAp8"
+      ],
+      "settings": {
+        "label": "Answers",
+        "heading": "Common Questions",
+        "subheading": "<p>Clear answers about formulas, daily use, Amazon ordering, and support.</p>",
+        "text_alignment": "center",
+        "max_width": 900,
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "background_color": "#FAF8F2",
+        "text_color": "#181A17",
+        "question_font_size": 15,
+        "answer_font_size": 14,
+        "accent_color": "#315C4A",
+        "surface_color": "#FFFFFF",
+        "border_color": "#D9DED8",
+        "border_radius": 20,
+        "shadow_opacity": 5,
+        "label_font_size": 11,
+        "heading_font_size": 34,
+        "subheading_font_size": 15
+      }
+    },
+    "blog_editorial": {
+      "type": "nv-blog-editorial",
+      "settings": {
+        "section_heading": "Wellness Guides",
+        "section_subheading": "Short reads on ingredients, daily routines, and supplement standards.",
+        "show_decorative_divider": true,
+        "blog_source": "wellness-guides",
+        "posts_to_show": 3,
+        "columns_desktop": "3",
+        "columns_mobile": "1",
+        "show_date_badge": true,
+        "show_category_tag": true,
+        "show_meta_line": true,
+        "show_excerpt": true,
+        "show_continue_reading": true,
+        "continue_reading_label": "Continue reading",
+        "background_color": "#ffffff",
+        "heading_alignment": "center",
+        "content_alignment": "left",
+        "heading_font_size": 34,
+        "subheading_font_size": 14,
+        "card_title_font_size": 16,
+        "card_excerpt_font_size": 13,
+        "section_padding_top": 72,
+        "section_padding_bottom": 72,
+        "content_max_width": 1180,
+        "card_image_ratio": "4 / 3",
+        "card_meta_font_size": 12,
+        "card_link_font_size": 13,
+        "card_background_color": "#FFFFFF",
+        "card_border_color": "#D9DED8",
+        "card_border_radius": 20,
+        "card_padding": 20,
+        "card_shadow_opacity": 6,
+        "card_image_radius": 16
+      }
+    },
+    "final_cta": {
+      "type": "nv-final-cta",
+      "settings": {
+        "eyebrow_text": "Ready to Start?",
+        "heading": "Premium Supplements. Prime Delivery.",
+        "body_text": "<p>Clean-label daily formulas, generous supply formats, and trusted Amazon fulfillment when you are ready to order.</p>",
+        "primary_button_label": "Shop on Amazon →",
+        "primary_button_link": "https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294",
+        "secondary_button_label": "Browse All Products",
+        "secondary_button_link": "shopify://collections/all",
+        "show_trust_note": true,
+        "trust_note": "Official NutraVora product listings. Prime-enabled where available.",
+        "layout_style": "centered",
+        "text_alignment": "center",
+        "button_style_variant": "solid",
+        "background_color": "#1f3a2f",
+        "text_color": "#ffffff",
+        "content_max_width": 720,
+        "heading_font_size": 38,
+        "body_font_size": 14,
+        "button_font_size": 13,
+        "section_padding_top": 80,
+        "section_padding_bottom": 80,
+        "border_radius": 24,
+        "overlay_opacity": 25,
+        "border_color": "rgba(255,255,255,0.12)",
+        "accent_color": "#C8A96B",
+        "shadow_opacity": 9,
+        "panel_padding": 72
+      }
+    },
+    "service_features": {
+      "type": "nv-service-features",
+      "blocks": {
+        "feature_item_1": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Fast_fulfillment.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Prime-Eligible Shipping",
+            "body": "Prime-enabled listings are available on Amazon.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_2": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Secure_payment.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Secure Amazon Checkout",
+            "body": "Order through trusted checkout experiences.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_3": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Quality_assurance.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Third-Party Tested",
+            "body": "Formula standards presented clearly.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_4": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Easy_support.svg",
+            "icon_alt": "Customer support icon",
+            "title": "Responsive Support",
+            "body": "Questions answered by the NutraVora team.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        }
+      },
+      "block_order": [
+        "feature_item_1",
+        "feature_item_2",
+        "feature_item_3",
+        "feature_item_4"
+      ],
+      "settings": {
+        "show_heading": true,
+        "section_heading": "Shopping Support",
+        "section_subheading": "The quiet details that make ordering simple.",
+        "background_color": "#FFFFFF",
+        "content_max_width": 1280,
+        "columns_desktop": "4",
+        "columns_mobile": "2",
+        "item_alignment": "left",
+        "icon_position": "top",
+        "title_color": "#181a17",
+        "body_color": "#5e625d",
+        "icon_color": "#315c4a",
+        "heading_font_size": 28,
+        "subheading_font_size": 15,
+        "item_title_font_size": 14,
+        "item_body_font_size": 13,
+        "section_padding_top": 36,
+        "section_padding_bottom": 36,
+        "item_gap": 14,
+        "icon_size": 30,
+        "icon_wrapper_size": 46,
+        "card_background_color": "#FFFFFF",
+        "card_border_color": "#D9DED8",
+        "card_border_radius": 16,
+        "card_padding": 18,
+        "card_shadow_opacity": 2,
+        "icon_background_color": "#FFFFFF",
+        "icon_border_color": "#D9DED8"
+      }
+    },
+    "health_goals": {
+      "type": "nv-health-goals",
+      "blocks": {
+        "goal_immune": {
+          "type": "goal",
+          "settings": {
+            "icon": "🛡️",
+            "title": "Immune Support",
+            "description": "Defend your body naturally",
+            "link": "/collections/all"
+          }
+        },
+        "goal_mens": {
+          "type": "goal",
+          "settings": {
+            "icon": "💪",
+            "title": "Men's Health",
+            "description": "Prostate and vitality support",
+            "link": "/collections/all"
+          }
+        },
+        "goal_heart": {
+          "type": "goal",
+          "settings": {
+            "icon": "❤️",
+            "title": "Heart & Circulation",
+            "description": "Support daily cardiovascular wellness",
+            "link": "/collections/all"
+          }
+        },
+        "goal_daily": {
+          "type": "goal",
+          "settings": {
+            "icon": "🌿",
+            "title": "Daily Wellness",
+            "description": "Build a simple supplement routine",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "goal_immune",
+        "goal_mens",
+        "goal_heart",
+        "goal_daily"
+      ],
+      "settings": {
+        "heading": "Find Your Formula",
+        "subheading": "Choose by wellness goal, then move into the formula that fits your daily routine.",
+        "background_color": "#F0F5F0",
+        "text_color": "#181A17",
+        "muted_text_color": "#5E625D",
+        "accent_color": "#315C4A",
+        "content_max_width": 1180,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "card_background_color": "#FFFFFF",
+        "card_border_color": "#D9DED8",
+        "card_border_radius": 20,
+        "card_padding": 24,
+        "card_shadow_opacity": 6,
+        "heading_font_size": 36,
+        "subheading_font_size": 15,
+        "tile_title_font_size": 20,
+        "tile_description_font_size": 13,
+        "icon_font_size": 28,
+        "icon_box_size": 52
+      }
+    }
+  },
+  "order": [
+    "hero-banner",
+    "scrolling_bar",
+    "nv_trust_icons_CyqRyz",
+    "health_goals",
+    "best_sellers",
+    "featured_spotlight",
+    "how_it_works",
+    "quality_timeline",
+    "reviews_grid",
+    "faq",
+    "blog_editorial",
+    "final_cta",
+    "service_features"
+  ]
+}

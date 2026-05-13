@@ -1,0 +1,19 @@
+{%- liquid
+  assign section_heading = product.metafields.custom.dietary_disclaimer_heading.value | default: product.metafields.custom.dietary_disclaimer_heading | strip
+  assign disclaimer_body = product.metafields.custom.dietary_disclaimer.value | default: product.metafields.custom.dietary_disclaimer | strip
+-%}
+
+{%- if section_heading != blank and disclaimer_body != blank -%}
+  <section class="nv-dietary-disclaimer" aria-labelledby="nvDietaryDisclaimerHeading-{{ product.id }}">
+    <div class="nv-dietary-disclaimer__header">
+      <h2 id="nvDietaryDisclaimerHeading-{{ product.id }}" class="nv-dietary-disclaimer__title">{{ section_heading }}</h2>
+      <div class="nv-dietary-disclaimer__rule">
+        <span class="nv-dietary-disclaimer__accent"></span>
+      </div>
+    </div>
+
+    <div class="nv-dietary-disclaimer__body rte">
+      {{ disclaimer_body | newline_to_br }}
+    </div>
+  </section>
+{%- endif -%}

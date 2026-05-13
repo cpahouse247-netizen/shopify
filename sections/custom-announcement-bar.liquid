@@ -1,0 +1,108 @@
+{% if section.settings.show_announcement_bar %}
+  <section class="custom-announcement-bar">
+    <div
+      class="announcement-bar"
+      style="
+        --ann-bg-1: {{ section.settings.announcement_background_color }};
+        --ann-bg-2: {{ section.settings.announcement_background_color }};
+        --ann-text: {{ section.settings.announcement_text_color }};
+        --ann-size: {{ section.settings.announcement_font_size }}px;
+        --ann-transform: {{ section.settings.announcement_text_transform }};
+        --ann-pad-top: {{ section.settings.announcement_bar_padding_top }}px;
+        --ann-pad-bottom: {{ section.settings.announcement_bar_padding_bottom }}px;
+      "
+    >
+      {% if section.settings.announcement_link != blank %}
+        <a href="{{ section.settings.announcement_link }}" class="announcement-text announcement-text--link">
+          {{ section.settings.announcement_text }}
+        </a>
+      {% else %}
+        <div class="announcement-text" role="status" aria-live="polite">
+          {{ section.settings.announcement_text }}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement_bar",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Official NutraVora store on Amazon • Prime shipping • Lab tested"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    },
+    {
+      "type": "color",
+      "id": "announcement_background_color",
+      "label": "Background color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "color",
+      "id": "announcement_text_color",
+      "label": "Text color",
+      "default": "#F7FBF8"
+    },
+    {
+      "type": "range",
+      "id": "announcement_font_size",
+      "label": "Font size",
+      "min": 9,
+      "max": 15,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "announcement_text_transform",
+      "label": "Text transform",
+      "default": "uppercase",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "announcement_bar_padding_top",
+      "label": "Announcement bar padding (top)",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 6,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "announcement_bar_padding_bottom",
+      "label": "Announcement bar padding (bottom)",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 6,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Bar"
+    }
+  ]
+}
+{% endschema %}

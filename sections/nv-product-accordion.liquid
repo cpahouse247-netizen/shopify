@@ -1,0 +1,434 @@
+{% comment %}Section: NutraVora Product Accordion{% endcomment %}
+<section
+  class="section nv-product-accordion nv-product-accordion--align-{{ section.settings.text_alignment }}"
+  style="
+    --nv-product-accordion-max: {{ section.settings.content_max_width }}px;
+    --nv-product-accordion-content-max: {{ section.settings.section_content_max_width }}px;
+    --nv-product-accordion-pad-top: {{ section.settings.section_padding_top }}px;
+    --nv-product-accordion-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-product-accordion-bg: {{ section.settings.background_color }};
+    --nv-product-accordion-heading: {{ section.settings.heading_color }};
+    --nv-product-accordion-heading-size: {{ section.settings.section_heading_font_size }}px;
+    --nv-product-accordion-heading-weight: {{ section.settings.section_heading_font_weight }};
+    --nv-product-accordion-heading-line-height: {{ section.settings.section_heading_line_height }};
+    --nv-product-accordion-heading-max: {{ section.settings.section_heading_max_width }}px;
+    --nv-product-accordion-text: {{ section.settings.text_color }};
+    --nv-product-accordion-divider: {{ section.settings.divider_color }};
+    --nv-product-accordion-question-size: {{ section.settings.question_font_size }}px;
+    --nv-product-accordion-question-weight: {{ section.settings.accordion_title_font_weight }};
+    --nv-product-accordion-intro-size: {{ section.settings.section_intro_font_size }}px;
+    --nv-product-accordion-answer-size: {{ section.settings.answer_font_size }}px;
+    --nv-product-accordion-answer-line-height: {{ section.settings.accordion_body_line_height }};
+    --nv-product-accordion-row-pad: {{ section.settings.accordion_row_padding }}px;
+    --nv-product-accordion-icon-size: {{ section.settings.icon_size }}px;
+  "
+>
+  <div class="container nv-product-accordion__container">
+    <div class="nv-product-accordion__inner">
+      {% if section.settings.eyebrow_text != blank or section.settings.section_heading != blank or section.settings.section_subheading != blank %}
+        <header class="nv-product-accordion__head">
+          {% if section.settings.eyebrow_text != blank %}
+            <p class="eyebrow nv-product-accordion__eyebrow">{{ section.settings.eyebrow_text }}</p>
+          {% endif %}
+          {% if section.settings.section_heading != blank %}
+            <h2 class="nv-product-accordion__heading">{{ section.settings.section_heading }}</h2>
+          {% endif %}
+          {% if section.settings.section_subheading != blank %}
+            <p class="nv-product-accordion__subheading">{{ section.settings.section_subheading }}</p>
+          {% endif %}
+        </header>
+      {% endif %}
+
+      {% liquid
+        assign has_product_description = false
+        if product.description != blank
+          assign has_product_description = true
+        endif
+
+        assign mf_supplement_facts = product.metafields.custom.supplement_facts
+        assign mf_suggested_use = product.metafields.custom.suggested_use
+        assign mf_safety_storage = product.metafields.custom.safety_storage
+        assign mf_product_specifications = product.metafields.custom.product_specifications
+        assign mf_standards_quality = product.metafields.custom.standards_quality
+
+        assign has_supplement_facts = false
+        if mf_supplement_facts != blank and mf_supplement_facts.value != blank
+          assign has_supplement_facts = true
+        endif
+
+        assign has_suggested_use = false
+        if mf_suggested_use != blank and mf_suggested_use.value != blank
+          assign has_suggested_use = true
+        endif
+
+        assign has_safety_storage = false
+        if mf_safety_storage != blank and mf_safety_storage.value != blank
+          assign has_safety_storage = true
+        endif
+
+        assign has_product_specifications = false
+        if mf_product_specifications != blank and mf_product_specifications.value != blank
+          assign has_product_specifications = true
+        endif
+
+        assign has_standards_quality = false
+        if mf_standards_quality != blank and mf_standards_quality.value != blank
+          assign has_standards_quality = true
+        endif
+
+        assign has_any_items = false
+        if has_product_description or has_supplement_facts or has_suggested_use or has_safety_storage or has_product_specifications or has_standards_quality
+          assign has_any_items = true
+        endif
+      %}
+
+      {% if has_any_items %}
+        <div class="nv-product-accordion__items" role="list">
+          {% if has_product_description %}
+            <details class="nv-product-accordion__item" {% if section.settings.default_open_first_item %}open{% endif %}>
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">{{ section.settings.product_description_item_title }}</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {{ product.description }}
+              </div>
+            </details>
+          {% endif %}
+
+          {% if has_supplement_facts %}
+            <details class="nv-product-accordion__item" {% if section.settings.default_open_first_item and has_product_description == false %}open{% endif %}>
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">Supplement Facts</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {% if mf_supplement_facts.type == 'rich_text_field' %}
+                  {{ mf_supplement_facts | metafield_tag }}
+                {% else %}
+                  {{ mf_supplement_facts.value | newline_to_br }}
+                {% endif %}
+              </div>
+            </details>
+          {% endif %}
+
+          {% if has_suggested_use %}
+            <details class="nv-product-accordion__item">
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">Suggested Use</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {% if mf_suggested_use.type == 'rich_text_field' %}
+                  {{ mf_suggested_use | metafield_tag }}
+                {% else %}
+                  {{ mf_suggested_use.value | newline_to_br }}
+                {% endif %}
+              </div>
+            </details>
+          {% endif %}
+
+          {% if has_safety_storage %}
+            <details class="nv-product-accordion__item">
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">Safety &amp; Storage</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {% if mf_safety_storage.type == 'rich_text_field' %}
+                  {{ mf_safety_storage | metafield_tag }}
+                {% else %}
+                  {{ mf_safety_storage.value | newline_to_br }}
+                {% endif %}
+              </div>
+            </details>
+          {% endif %}
+
+          {% if has_product_specifications %}
+            <details class="nv-product-accordion__item">
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">Product Specifications</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {% if mf_product_specifications.type == 'rich_text_field' %}
+                  {{ mf_product_specifications | metafield_tag }}
+                {% else %}
+                  {{ mf_product_specifications.value | newline_to_br }}
+                {% endif %}
+              </div>
+            </details>
+          {% endif %}
+
+          {% if has_standards_quality %}
+            <details class="nv-product-accordion__item">
+              <summary class="nv-product-accordion__summary">
+                <span class="nv-product-accordion__summary-title">Standards &amp; Quality</span>
+                <span class="nv-product-accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="nv-product-accordion__content rte">
+                {% if mf_standards_quality.type == 'rich_text_field' %}
+                  {{ mf_standards_quality | metafield_tag }}
+                {% else %}
+                  {{ mf_standards_quality.value | newline_to_br }}
+                {% endif %}
+              </div>
+            </details>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product accordion",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "Product details"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Supplement Facts & Product Information"
+    },
+    {
+      "type": "text",
+      "id": "product_description_item_title",
+      "label": "Product description item title",
+      "default": "Product Information"
+    },
+    {
+      "type": "text",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "Clear, structured product details presented in a premium format."
+    },
+    {
+      "type": "range",
+      "id": "section_heading_font_size",
+      "label": "Heading font size",
+      "min": 24,
+      "max": 52,
+      "step": 2,
+      "default": 38,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_intro_font_size",
+      "label": "Intro font size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_font_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "section_heading_line_height",
+      "label": "Heading line height",
+      "min": 1.0,
+      "max": 1.4,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "section_heading_max_width",
+      "label": "Heading max width",
+      "min": 360,
+      "max": 980,
+      "step": 20,
+      "default": 760,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 720,
+      "max": 1280,
+      "step": 20,
+      "default": 980,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_content_max_width",
+      "label": "Section content max width",
+      "min": 680,
+      "max": 1080,
+      "step": 20,
+      "default": 860,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4B524C"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "question_font_size",
+      "label": "Question font size",
+      "min": 15,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "accordion_title_font_weight",
+      "label": "Accordion title font weight",
+      "options": [
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "answer_font_size",
+      "label": "Answer font size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "accordion_body_line_height",
+      "label": "Accordion body line height",
+      "min": 1.4,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.7
+    },
+    {
+      "type": "range",
+      "id": "accordion_row_padding",
+      "label": "Accordion row padding",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "default_open_first_item",
+      "label": "Open first item by default",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product accordion"
+    }
+  ]
+}
+{% endschema %}

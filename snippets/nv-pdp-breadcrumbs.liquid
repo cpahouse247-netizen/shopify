@@ -1,0 +1,24 @@
+{%- liquid
+  assign breadcrumb_collection = collection
+  if breadcrumb_collection == blank and product.collections.size > 0
+    assign breadcrumb_collection = product.collections.first
+  endif
+-%}
+
+<nav class="nv-pdp-breadcrumbs" aria-label="Breadcrumb">
+  <ol class="nv-pdp-breadcrumbs__list">
+    <li class="nv-pdp-breadcrumbs__item">
+      <a class="nv-pdp-breadcrumbs__link" href="{{ routes.root_url }}">Home</a>
+    </li>
+    <li class="nv-pdp-breadcrumbs__separator" aria-hidden="true">/</li>
+    <li class="nv-pdp-breadcrumbs__item">
+      {% if breadcrumb_collection != blank %}
+        <a class="nv-pdp-breadcrumbs__link" href="{{ breadcrumb_collection.url }}">{{ breadcrumb_collection.title }}</a>
+      {% else %}
+        <a class="nv-pdp-breadcrumbs__link" href="{{ routes.collections_url }}">Products</a>
+      {% endif %}
+    </li>
+    <li class="nv-pdp-breadcrumbs__separator" aria-hidden="true">/</li>
+    <li class="nv-pdp-breadcrumbs__item nv-pdp-breadcrumbs__current" aria-current="page">{{ product.title }}</li>
+  </ol>
+</nav>

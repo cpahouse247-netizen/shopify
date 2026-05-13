@@ -1,0 +1,258 @@
+{%- liquid
+  assign repeat_count = 3
+  if section.blocks.size <= 2
+    assign repeat_count = 5
+  elsif section.blocks.size <= 4
+    assign repeat_count = 4
+  endif
+-%}
+
+<section
+  class="section nv-scrolling-features-bar{% if section.settings.pause_on_hover %} nv-scrolling-features-bar--pause{% endif %}"
+  style="
+    --section-padding-top: {{ section.settings.section_padding_top }}px;
+    --section-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-scrolling-features-bg: {{ section.settings.background_color }};
+    --nv-scrolling-features-text: {{ section.settings.text_color }};
+    --nv-scrolling-features-separator: {{ section.settings.separator_color }};
+    --nv-scrolling-features-font-size: {{ section.settings.font_size }}px;
+    --nv-scrolling-features-font-weight: {{ section.settings.font_weight }};
+    --nv-scrolling-features-text-transform: {{ section.settings.text_transform }};
+    --nv-scrolling-features-letter-spacing: {{ section.settings.letter_spacing | times: 0.01 }}em;
+    --nv-scrolling-features-vertical-padding: {{ section.settings.vertical_padding }}px;
+    --nv-scrolling-features-item-gap: {{ section.settings.item_spacing }}px;
+    --nv-scrolling-features-speed: {{ section.settings.scroll_speed }}s;
+    --nv-scrolling-features-max-width: {{ section.settings.content_max_width }}px;
+  "
+>
+  {% if section.settings.divider_top %}
+    <div class="nv-scrolling-features-bar__divider nv-scrolling-features-bar__divider--top" aria-hidden="true"></div>
+  {% endif %}
+
+  <div class="container nv-scrolling-features-bar__inner">
+    <div class="nv-scrolling-features-bar__viewport">
+      <div class="nv-scrolling-features-bar__track">
+        {% for clone_index in (1..2) %}
+          <div class="nv-scrolling-features-bar__group" {% if clone_index == 2 %}aria-hidden="true"{% endif %}>
+            {% for _i in (1..repeat_count) %}
+              {% for block in section.blocks %}
+                <span class="nv-scrolling-features-bar__item" {{ block.shopify_attributes }}>
+                  <span class="nv-scrolling-features-bar__text">{{ block.settings.text }}</span>
+                  {% if block.settings.separator_type != 'none' %}
+                    <span class="nv-scrolling-features-bar__separator" aria-hidden="true">
+                      {% if block.settings.separator_type == 'image' and block.settings.separator_image != blank %}
+                        {{ block.settings.separator_image | image_url: width: 80 | image_tag: loading: 'lazy', class: 'nv-scrolling-features-bar__separator-image', sizes: '14px' }}
+                      {% elsif block.settings.separator_type == 'text' and block.settings.separator_text != blank %}
+                        {{ block.settings.separator_text }}
+                      {% else %}
+                        <span class="nv-scrolling-features-bar__separator-dot"></span>
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </span>
+              {% endfor %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if section.settings.divider_bottom %}
+    <div class="nv-scrolling-features-bar__divider nv-scrolling-features-bar__divider--bottom" aria-hidden="true"></div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "NV Scrolling Features",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#0F1113"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "separator_color",
+      "label": "Separator color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "default": "600",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "default": "uppercase",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 6,
+      "unit": "em"
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item spacing",
+      "min": 16,
+      "max": 72,
+      "step": 4,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "default": 28,
+      "unit": "s"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 1000,
+      "max": 1800,
+      "step": 20,
+      "default": 1600,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "divider_bottom",
+      "label": "Show bottom divider",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature_phrase",
+      "name": "Feature phrase",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Clean ingredients"
+        },
+        {
+          "type": "select",
+          "id": "separator_type",
+          "label": "Separator style",
+          "default": "icon",
+          "options": [
+            { "value": "icon", "label": "Default icon" },
+            { "value": "text", "label": "Text" },
+            { "value": "image", "label": "Image" },
+            { "value": "none", "label": "None" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "separator_text",
+          "label": "Separator text",
+          "default": "✓"
+        },
+        {
+          "type": "image_picker",
+          "id": "separator_image",
+          "label": "Separator image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Scrolling Features",
+      "blocks": [
+        { "type": "feature_phrase", "settings": { "text": "Clean ingredients" } },
+        { "type": "feature_phrase", "settings": { "text": "Lab tested standards" } },
+        { "type": "feature_phrase", "settings": { "text": "Transparent sourcing" } },
+        { "type": "feature_phrase", "settings": { "text": "Premium formulation" } },
+        { "type": "feature_phrase", "settings": { "text": "Fulfillment clarity" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

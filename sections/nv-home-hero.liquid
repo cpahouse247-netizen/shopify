@@ -1,0 +1,407 @@
+{% assign trust_limit = section.settings.trust_points_limit | default: 3 %}
+
+<section
+  class="section nv-home-hero nv-home-hero--{{ section.settings.text_alignment }} nv-home-hero--height-{{ section.settings.hero_height_mode }} nv-home-hero--trust-{{ section.settings.trust_points_style }} nv-home-hero--content-{{ section.settings.content_vertical_alignment }}"
+  style="
+    --nv-home-hero-bg: {{ section.settings.background }};
+    --nv-home-hero-content-width: {{ section.settings.content_max_width }}px;
+    --nv-home-hero-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-home-hero-body-size: {{ section.settings.body_font_size }}px;
+    --nv-home-hero-button-size: {{ section.settings.button_font_size }}px;
+    --nv-home-hero-pad-top: {{ section.settings.section_padding_top }}px;
+    --nv-home-hero-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-home-hero-radius: {{ section.settings.hero_border_radius }}px;
+    --nv-home-hero-min-height-desktop: {{ section.settings.hero_min_height_desktop }}px;
+    --nv-home-hero-min-height-mobile: {{ section.settings.hero_min_height_mobile }}px;
+    --nv-home-hero-image-max-height-desktop: {{ section.settings.image_max_height_desktop }}px;
+    --nv-home-hero-image-max-height-mobile: {{ section.settings.image_max_height_mobile }}px;
+  "
+>
+  <div class="container container--wide">
+    <div class="nv-home-hero__shell">
+      <div class="nv-home-hero__content">
+        {% if section.settings.eyebrow != blank %}
+          <p class="nv-home-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        <h1 class="nv-home-hero__title">{{ section.settings.title }}</h1>
+
+        {% if section.settings.subtext != blank %}
+          <div class="nv-home-hero__sub rte">{{ section.settings.subtext }}</div>
+        {% endif %}
+
+        <div class="nv-home-hero__cta-area">
+          <div class="nv-home-hero__cta">
+            {% if section.settings.primary_button_label != blank and section.settings.primary_button_link != blank %}
+              <a href="{{ section.settings.primary_button_link }}" class="btn nv-home-hero__button nv-home-hero__button--primary">
+                {{ section.settings.primary_button_label }}
+              </a>
+            {% elsif section.settings.hero_product != blank %}
+              {% render 'nv-product-cta-stack',
+                product: section.settings.hero_product,
+                template_override: section.settings.conversion_mode_override,
+                class: 'nv-product-cta-stack nv-product-cta-stack--hero',
+                show_secondary_amazon: false,
+                show_amazon_disclosure: false
+              %}
+            {% else %}
+              {% render 'nv-amazon-cta',
+                wrapper_class: 'nv-home-hero__cta-slot',
+                show_disclosure: false
+              %}
+            {% endif %}
+          </div>
+
+          {% if section.settings.secondary_button_label != blank and section.settings.secondary_button_link != blank %}
+            <div class="nv-home-hero__cta-secondary">
+              <a href="{{ section.settings.secondary_button_link }}" class="nv-home-hero__text-link">
+                {{ section.settings.secondary_button_label }}
+              </a>
+            </div>
+          {% endif %}
+
+          {% if section.settings.show_buy_with_prime_area %}
+            <div class="nv-home-hero__prime">
+              {% if section.settings.hero_product != blank %}
+                {% render 'nv-product-cta-stack',
+                  product: section.settings.hero_product,
+                  template_override: 'buy_with_prime',
+                  class: 'nv-product-cta-stack nv-product-cta-stack--hero-support',
+                  show_secondary_amazon: false,
+                  show_amazon_disclosure: false
+                %}
+              {% else %}
+                {% render 'nv-amazon-cta',
+                  wrapper_class: 'nv-home-hero__cta-slot nv-home-hero__cta-slot--support',
+                  show_disclosure: false
+                %}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.microcopy != blank %}
+          <p class="nv-home-hero__microcopy">{{ section.settings.microcopy }}</p>
+        {% endif %}
+
+        {% if section.settings.show_trust_points and section.settings.trust_points_style != 'hidden' and section.blocks.size > 0 %}
+          <div class="nv-home-hero__signals nv-home-hero__signals--{{ section.settings.trust_points_style }}">
+            {% for block in section.blocks limit: trust_limit %}
+              <div class="nv-home-hero__signal" {{ block.shopify_attributes }}>
+                <strong>{{ block.settings.title }}</strong>
+                {% if block.settings.text != blank %}
+                  <span>{{ block.settings.text }}</span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="nv-home-hero__media">
+        <div class="nv-home-hero__media-frame">
+          <div class="nv-home-hero__media-glow" aria-hidden="true"></div>
+          {% if section.settings.image != blank %}
+            <img
+              src="{{ section.settings.image | image_url: width: 1400 }}"
+              alt="{{ section.settings.image.alt | escape }}"
+              class="nv-home-hero__media-image nv-home-hero__media-image--desktop"
+              loading="eager"
+            >
+            {% if section.settings.mobile_image != blank %}
+              <img
+                src="{{ section.settings.mobile_image | image_url: width: 900 }}"
+                alt="{{ section.settings.mobile_image.alt | default: section.settings.image.alt | escape }}"
+                class="nv-home-hero__media-image nv-home-hero__media-image--mobile"
+                loading="eager"
+              >
+            {% endif %}
+          {% else %}
+            <img src="{{ 'hero_wide.png' | asset_url }}" alt="NutraVora premium wellness collection" class="nv-home-hero__media-image nv-home-hero__media-image--desktop" loading="eager">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Home Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Clinically clean wellness"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Premium supplements formulated for trust, clarity, and everyday consistency."
+    },
+    {
+      "type": "richtext",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "<p>NutraVora combines transparent sourcing, rigorously selected ingredients, and a premium fulfillment experience across Amazon and Buy with Prime-enabled products.</p>"
+    },
+    {
+      "type": "product",
+      "id": "hero_product",
+      "label": "Hero product"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "label": "Primary button label",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Secondary button label",
+      "default": "Visit Amazon Store"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_with_prime_area",
+      "label": "Show Buy with Prime support area",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_points",
+      "label": "Show trust points",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "conversion_mode_override",
+      "label": "CTA mode override",
+      "default": "",
+      "options": [
+        { "value": "", "label": "Use product/theme defaults" },
+        { "value": "amazon_attribution", "label": "Amazon attribution" },
+        { "value": "buy_with_prime", "label": "Buy with Prime" },
+        { "value": "hybrid", "label": "Hybrid" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "microcopy",
+      "label": "Microcopy",
+      "default": "Official NutraVora product listings. Prime-enabled where available."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile hero image"
+    },
+    {
+      "type": "text",
+      "id": "background",
+      "label": "Background gradient",
+      "default": "linear-gradient(135deg, #315C4A 0%, #8FAE95 52%, #F7F4EE 100%)"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "content_vertical_alignment",
+      "label": "Content vertical alignment",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_height_mode",
+      "label": "Hero height mode",
+      "default": "compact",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "tall", "label": "Tall" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "hero_min_height_desktop",
+      "label": "Hero min height desktop",
+      "min": 420,
+      "max": 760,
+      "step": 20,
+      "default": 520,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_min_height_mobile",
+      "label": "Hero min height mobile",
+      "min": 320,
+      "max": 680,
+      "step": 20,
+      "default": 440,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 420,
+      "max": 620,
+      "step": 10,
+      "default": 500,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "trust_points_style",
+      "label": "Trust points style",
+      "default": "compact_pills",
+      "options": [
+        { "value": "compact_pills", "label": "Compact pills" },
+        { "value": "inline_list", "label": "Inline list" },
+        { "value": "hidden", "label": "Hidden" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "trust_points_limit",
+      "label": "Trust points limit",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 34,
+      "max": 60,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 13,
+      "max": 16,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_desktop",
+      "label": "Image max height desktop",
+      "min": 360,
+      "max": 700,
+      "step": 20,
+      "default": 500,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_mobile",
+      "label": "Image max height mobile",
+      "min": 240,
+      "max": 520,
+      "step": 20,
+      "default": 340,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_border_radius",
+      "label": "Hero border radius",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "signal",
+      "name": "Signal",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "GMP Manufactured" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Produced in quality-audited facilities" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "NV Home Hero",
+      "blocks": [
+        { "type": "signal", "settings": { "title": "Prime-ready", "text": "Fast trusted fulfillment" } },
+        { "type": "signal", "settings": { "title": "Lab tested", "text": "Purity and potency focused" } },
+        { "type": "signal", "settings": { "title": "Clean formulas", "text": "No unnecessary fillers" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

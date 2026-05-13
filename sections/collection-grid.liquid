@@ -1,0 +1,476 @@
+{% liquid
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+  assign has_active_filters = false
+  for filter in collection.filters
+    if filter.active_values.size > 0
+      assign has_active_filters = true
+    endif
+  endfor
+  assign card_class = 'product-card product-card--premium product-card--catalog'
+  if section.settings.card_surface_style == 'soft'
+    assign card_class = card_class | append: ' product-card--surface-soft'
+  elsif section.settings.card_surface_style == 'minimal'
+    assign card_class = card_class | append: ' product-card--surface-minimal'
+  endif
+  if section.settings.card_hover_style == 'lift'
+    assign card_class = card_class | append: ' product-card--hover-lift'
+  elsif section.settings.card_hover_style == 'zoom_only'
+    assign card_class = card_class | append: ' product-card--hover-zoom'
+  else
+    assign card_class = card_class | append: ' product-card--hover-none'
+  endif
+%}
+
+{% comment %}Section: Collection Grid{% endcomment %}
+<section
+  class="section nv-collection nv-collection--align-{{ section.settings.card_alignment }}"
+  style="
+    --nv-collection-bg: {{ section.settings.section_background_color }};
+    --nv-collection-max-width: {{ section.settings.content_max_width }}px;
+    --nv-collection-pad-top: {{ section.settings.section_padding_top }}px;
+    --nv-collection-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-collection-heading-size: {{ section.settings.collection_heading_font_size }}px;
+    --nv-collection-description-size: {{ section.settings.collection_description_font_size }}px;
+    --nv-collection-toolbar-size: {{ section.settings.toolbar_font_size }}px;
+    --nv-collection-grid-gap: {{ section.settings.grid_gap }}px;
+    --nv-collection-card-radius: {{ section.settings.card_border_radius }}px;
+    --nv-collection-card-padding: {{ section.settings.card_padding }}px;
+    --nv-collection-card-gap-internal: {{ section.settings.card_gap }}px;
+    --nv-collection-title-size: {{ section.settings.title_font_size }}px;
+    --nv-collection-price-size: {{ section.settings.price_font_size }}px;
+    --nv-collection-compare-price-size: {{ section.settings.compare_price_font_size }}px;
+    --nv-collection-meta-size: {{ section.settings.meta_font_size }}px;
+    --nv-collection-card-media-height: {{ section.settings.image_area_height }}px;
+    --nv-collection-card-fit: {{ section.settings.image_fit }};
+  "
+>
+  <div class="container container--wide nv-collection__container">
+    <nav class="nv-breadcrumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{ routes.collections_url }}">Collections</a>
+      <span aria-hidden="true">/</span>
+      <span>{{ collection.title }}</span>
+    </nav>
+
+    <div class="nv-collection__hero">
+      <div class="nv-collection__hero-copy">
+        <p class="nv-collection__eyebrow">NutraVora Catalog</p>
+        <h1 class="nv-collection__title">{{ collection.title }}</h1>
+        {% if collection.description != blank %}
+          <div class="rte nv-collection__description">{{ collection.description }}</div>
+        {% endif %}
+      </div>
+
+      <div class="nv-collection__hero-meta">
+        <span class="nv-collection__meta-pill">{{ collection.products_count }} formulas</span>
+      </div>
+    </div>
+
+    <form class="nv-collection__utility" method="get">
+      <div class="nv-collection__utility-primary">
+        {% if collection.filters.size > 0 %}
+          <details class="nv-collection__filters">
+            <summary>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 7h16M7 12h10M10 17h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+              </svg>
+              <span>Filter</span>
+            </summary>
+            <div class="nv-collection__filters-panel">
+              {% for filter in collection.filters %}
+                <div class="nv-collection__filter-group">
+                  <p class="nv-collection__filter-label">{{ filter.label }}</p>
+
+                  {% case filter.type %}
+                    {% when 'list', 'boolean' %}
+                      <div class="nv-collection__filter-values">
+                        {% for value in filter.values %}
+                          <label class="nv-collection__filter-chip">
+                            <input
+                              type="checkbox"
+                              name="{{ value.param_name }}"
+                              value="{{ value.value }}"
+                              {% if value.active %}checked{% endif %}
+                              {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                            >
+                            <span>{{ value.label }}</span>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    {% when 'price_range' %}
+                      <div class="nv-collection__price-range">
+                        <label>
+                          <span>Min</span>
+                          <input
+                            type="number"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                            placeholder="0"
+                          >
+                        </label>
+                        <label>
+                          <span>Max</span>
+                          <input
+                            type="number"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                            placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                          >
+                        </label>
+                      </div>
+                  {% endcase %}
+                </div>
+              {% endfor %}
+
+              <div class="nv-collection__filter-actions">
+                <button class="btn" type="submit">Apply</button>
+                <a class="btn btn--ghost" href="{{ collection.url }}">Reset</a>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+      </div>
+
+      <div class="nv-collection__utility-sort">
+        <label for="SortBy">Sort by</label>
+        <div class="nv-collection__sort-select">
+          <select id="SortBy" name="sort_by" onchange="this.form.submit()">
+            {% for option in collection.sort_options %}
+              <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>{{ option.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+
+    {% if has_active_filters %}
+      <div class="nv-collection__active-filters">
+        {% for filter in collection.filters %}
+          {% for value in filter.active_values %}
+            <a href="{{ value.url_to_remove }}" class="nv-collection__active-filter">{{ value.label }}</a>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div
+      class="product-grid nv-collection__grid"
+      style="
+        --product-grid-desktop: {{ section.settings.products_per_row_desktop }};
+        --product-grid-mobile: {{ section.settings.products_per_row_mobile }};
+      "
+    >
+      {% for product in collection.products %}
+        {% render 'nv-product-card',
+          product: product,
+          card_class: card_class,
+          show_price: section.settings.show_price,
+          show_compare_at_price: section.settings.show_compare_price,
+          show_sale_badge: section.settings.show_sale_badge,
+          show_sold_out_badge: section.settings.show_sold_out_badge,
+          show_prime_note: section.settings.show_prime_note,
+          show_prime_tag_on_cards: section.settings.show_prime_tag_on_cards,
+          show_delivery_tag_on_cards: section.settings.show_delivery_tag_on_cards,
+          prime_tag_position: section.settings.prime_tag_position,
+          show_vendor: true,
+          card_border_radius: section.settings.card_border_radius,
+          card_padding: section.settings.card_padding,
+          card_gap: section.settings.card_gap,
+          image_area_height: section.settings.image_area_height,
+          image_fit: section.settings.image_fit,
+          title_font_size: section.settings.title_font_size,
+          price_font_size: section.settings.price_font_size,
+          compare_price_font_size: section.settings.compare_price_font_size,
+          meta_font_size: section.settings.meta_font_size
+        %}
+      {% else %}
+        <div class="surface-panel nv-collection__empty">
+          <h2>No products found</h2>
+          <p>Try adjusting your filters or browse a different NutraVora collection.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Collection grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "collection_heading_font_size",
+      "label": "Collection heading font size",
+      "min": 28,
+      "max": 56,
+      "step": 2,
+      "default": 42,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "collection_description_font_size",
+      "label": "Collection description font size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "toolbar_font_size",
+      "label": "Toolbar font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 1080,
+      "max": 1480,
+      "step": 20,
+      "default": 1320,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "Products per row desktop",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Products per row mobile",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Card alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card content gap",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_area_height",
+      "label": "Image area height",
+      "min": 220,
+      "max": 360,
+      "step": 10,
+      "default": 280,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_out_badge",
+      "label": "Show sold out badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Show compare-at price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_note",
+      "label": "Show Prime note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_tag_on_cards",
+      "label": "Show Prime tag on cards",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery_tag_on_cards",
+      "label": "Show delivery tag on cards",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "prime_tag_position",
+      "label": "Prime tag position",
+      "default": "under_price",
+      "options": [
+        { "value": "under_image", "label": "Under image" },
+        { "value": "under_price", "label": "Under price" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Price font size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "compare_price_font_size",
+      "label": "Compare price font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "meta_font_size",
+      "label": "Meta font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_hover_style",
+      "label": "Card hover style",
+      "default": "lift",
+      "options": [
+        { "value": "lift", "label": "Lift" },
+        { "value": "zoom_only", "label": "Image zoom only" },
+        { "value": "none", "label": "None" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "default": "contain",
+      "options": [
+        { "value": "contain", "label": "Contain" },
+        { "value": "cover", "label": "Cover" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "card_surface_style",
+      "label": "Card surface style",
+      "default": "soft",
+      "options": [
+        { "value": "soft", "label": "Soft" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "minimal", "label": "Minimal" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection grid"
+    }
+  ]
+}
+{% endschema %}

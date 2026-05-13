@@ -1,0 +1,136 @@
+{%- liquid
+  assign primary_url = section.settings.primary_cta_url | default: 'https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294'
+  assign secondary_url = section.settings.secondary_cta_url | default: '/collections/all'
+-%}
+
+<section class="nv-lp-final-cta nv-lp-section" style="--lp-final-bg: {{ section.settings.background_color }}; --lp-final-text: {{ section.settings.text_color }};">
+  <div class="nv-lp-inner">
+    <div class="nv-lp-final-cta__panel">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="nv-eyebrow nv-lp-final-cta__eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.body != blank -%}
+        <p>{{ section.settings.body }}</p>
+      {%- endif -%}
+      <div class="nv-lp-final-cta__actions">
+        {%- if section.settings.primary_cta_label != blank -%}
+          <a href="{{ primary_url }}" target="_blank" rel="noopener noreferrer" class="nv-btn nv-btn--amazon nv-btn--lg nv-btn--pulse">
+            {{ section.settings.primary_cta_label | remove: '→' | strip }} <span class="nv-btn__amazon-arrow">→</span>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.secondary_cta_label != blank -%}
+          <a href="{{ secondary_url }}" class="nv-lp-final-cta__secondary nv-btn nv-btn--outline-white nv-btn--lg">
+            {{ section.settings.secondary_cta_label }}
+          </a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_trust_icons -%}
+        <div class="nv-lp-final-cta__trust">
+          <span>Non-GMO</span>
+          <span>Lab Tested</span>
+          <span>Prime</span>
+          <span>Guarantee</span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-lp-final-cta {
+    background: var(--lp-final-bg);
+    color: var(--lp-final-text);
+  }
+
+  .nv-lp-final-cta__panel {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .nv-lp-final-cta__eyebrow {
+    color: var(--nv-gold-light);
+  }
+
+  .nv-lp-final-cta h2 {
+    font-family: var(--nv-font-heading);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: var(--nv-weight-regular);
+    line-height: var(--nv-leading-tight);
+    color: var(--lp-final-text);
+    margin: var(--nv-space-3) 0 var(--nv-space-4);
+  }
+
+  .nv-lp-final-cta p {
+    color: rgba(255, 255, 255, 0.78);
+    line-height: var(--nv-leading-relaxed);
+    margin: 0 auto var(--nv-space-6);
+    max-width: 520px;
+  }
+
+  .nv-lp-final-cta__actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--nv-space-3);
+  }
+
+  .nv-lp-final-cta__secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: var(--nv-radius-lg);
+    border: 2px solid rgba(255, 255, 255, 0.62);
+    color: var(--lp-final-text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: var(--nv-weight-semibold);
+  }
+
+  .nv-lp-final-cta__trust {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--nv-space-3);
+    margin-top: var(--nv-space-6);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: var(--nv-text-xs);
+    font-weight: var(--nv-weight-semibold);
+    letter-spacing: var(--nv-tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .nv-lp-final-cta__trust span::before {
+    content: "✓ ";
+    color: var(--nv-gold-light);
+  }
+
+  @media (max-width: 640px) {
+    .nv-lp-final-cta__actions a {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP Final CTA",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Ready to Start?" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Premium Supplements. Prime Delivery." },
+    { "type": "text", "id": "body", "label": "Body", "default": "Join thousands of daily wellness routines. Shop NutraVora on Amazon today." },
+    { "type": "text", "id": "primary_cta_label", "label": "Primary CTA label", "default": "Shop on Amazon →" },
+    { "type": "url", "id": "primary_cta_url", "label": "Primary CTA URL" },
+    { "type": "text", "id": "secondary_cta_label", "label": "Secondary CTA label", "default": "Browse All Products" },
+    { "type": "url", "id": "secondary_cta_url", "label": "Secondary CTA URL", "default": "/collections/all" },
+    { "type": "checkbox", "id": "show_trust_icons", "label": "Show trust icons", "default": true },
+    { "type": "color", "id": "background_color", "label": "Background color", "default": "#1f3a2f" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" }
+  ],
+  "presets": [
+    { "name": "LP Final CTA" }
+  ]
+}
+{% endschema %}

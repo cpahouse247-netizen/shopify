@@ -1,0 +1,472 @@
+<section
+  class="section nv-contact-page"
+  style="
+    --nv-contact-bg: {{ section.settings.background_color }};
+    --nv-contact-text: {{ section.settings.text_color }};
+    --nv-contact-heading-color: {{ section.settings.heading_color }};
+    --nv-contact-border: {{ section.settings.border_color }};
+    --nv-contact-max-width: {{ section.settings.content_max_width }}px;
+    --nv-contact-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-contact-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-contact-card-radius: {{ section.settings.card_radius }}px;
+    --nv-contact-card-gap: {{ section.settings.card_gap }}px;
+    --nv-contact-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-contact-intro-size: {{ section.settings.intro_font_size }}px;
+    --nv-contact-body-size: {{ section.settings.body_font_size }}px;
+    --nv-contact-info-title-size: {{ section.settings.info_title_font_size }}px;
+    --nv-contact-info-body-size: {{ section.settings.info_body_font_size }}px;
+    --nv-contact-form-heading-size: {{ section.settings.form_heading_font_size }}px;
+    --nv-contact-input-radius: {{ section.settings.input_radius }}px;
+    --nv-contact-input-padding: {{ section.settings.input_padding }}px;
+    --nv-contact-button-size: {{ section.settings.button_font_size }}px;
+  "
+>
+  <div class="container nv-contact-page__inner">
+    <div class="nv-contact-page__hero nv-contact-page__hero--{{ section.settings.heading_alignment }}">
+      {% if section.settings.eyebrow_text != blank %}
+        <p class="nv-contact-page__eyebrow">{{ section.settings.eyebrow_text }}</p>
+      {% endif %}
+      {% if section.settings.page_heading != blank %}
+        <h1 class="nv-contact-page__heading">{{ section.settings.page_heading }}</h1>
+      {% endif %}
+      {% if section.settings.page_intro != blank %}
+        <div class="nv-contact-page__intro rte">
+          {{ section.settings.page_intro }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="nv-contact-page__layout">
+      <div class="nv-contact-page__info-column">
+        {% assign info_blocks = section.blocks | where: 'type', 'contact_info_item' %}
+        {% if info_blocks.size > 0 %}
+          <div class="nv-contact-page__info-grid">
+            {% for block in info_blocks %}
+              <article class="nv-contact-page__info-card" {{ block.shopify_attributes }}>
+                {% if block.settings.icon != blank %}
+                  <div class="nv-contact-page__info-icon">
+                    {{ block.settings.icon | image_url: width: 72 | image_tag: loading: 'lazy', widths: '36,48,72', alt: block.settings.title }}
+                  </div>
+                {% endif %}
+                {% if block.settings.title != blank %}
+                  <h2 class="nv-contact-page__info-title">{{ block.settings.title }}</h2>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <div class="nv-contact-page__info-text rte">{{ block.settings.text }}</div>
+                {% endif %}
+                {% if block.settings.link != blank and block.settings.link_label != blank %}
+                  <a class="nv-contact-page__info-link" href="{{ block.settings.link }}">{{ block.settings.link_label }}</a>
+                {% endif %}
+              </article>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% assign link_blocks = section.blocks | where: 'type', 'support_link_item' %}
+        {% if link_blocks.size > 0 %}
+          <div class="nv-contact-page__quick-links">
+            <h2 class="nv-contact-page__quick-links-title">{{ section.settings.quick_links_heading }}</h2>
+            <div class="nv-contact-page__quick-links-list">
+              {% for block in link_blocks %}
+                {% if block.settings.label != blank and block.settings.url != blank %}
+                  <a class="nv-contact-page__quick-link" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+                    {{ block.settings.label }}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% assign reassurance_blocks = section.blocks | where: 'type', 'reassurance_item' %}
+        {% if reassurance_blocks.size > 0 %}
+          <div class="nv-contact-page__reassurance">
+            {% for block in reassurance_blocks %}
+              {% if block.settings.text != blank %}
+                <div class="nv-contact-page__reassurance-item" {{ block.shopify_attributes }}>
+                  <span class="nv-contact-page__reassurance-dot" aria-hidden="true"></span>
+                  <span>{{ block.settings.text }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="nv-contact-page__form-column">
+        <div class="nv-contact-page__form-shell">
+          {% if section.settings.form_heading != blank %}
+            <h2 class="nv-contact-page__form-heading">{{ section.settings.form_heading }}</h2>
+          {% endif %}
+          {% if section.settings.form_intro != blank %}
+            <div class="nv-contact-page__form-intro rte">{{ section.settings.form_intro }}</div>
+          {% endif %}
+
+          {% form 'contact', class: 'nv-contact-page__form' %}
+            {% if form.posted_successfully? %}
+              <div class="nv-contact-page__form-status nv-contact-page__form-status--success" tabindex="-1" autofocus>
+                Thanks. Your message has been sent.
+              </div>
+            {% elsif form.errors %}
+              <div class="nv-contact-page__form-status nv-contact-page__form-status--error" tabindex="-1" autofocus>
+                {{ form.errors | default_errors }}
+              </div>
+            {% endif %}
+
+            <div class="nv-contact-page__form-grid">
+              <label class="nv-contact-page__field">
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="contact[name]"
+                  value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                  autocomplete="name"
+                  required
+                >
+              </label>
+
+              <label class="nv-contact-page__field">
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="contact[email]"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  autocomplete="email"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  required
+                >
+              </label>
+
+              <label class="nv-contact-page__field">
+                <span>Order number</span>
+                <input
+                  type="text"
+                  name="contact[Order number]"
+                  value="{{ form['Order number'] }}"
+                >
+              </label>
+
+              <label class="nv-contact-page__field">
+                <span>Subject</span>
+                <input
+                  type="text"
+                  name="contact[Subject]"
+                  value="{{ form.Subject }}"
+                >
+              </label>
+
+              <label class="nv-contact-page__field nv-contact-page__field--full">
+                <span>Message</span>
+                <textarea
+                  rows="7"
+                  name="contact[body]"
+                  required
+                >{{ form.body }}</textarea>
+              </label>
+            </div>
+
+            <button type="submit" class="nv-contact-page__submit">
+              {{ section.settings.submit_button_label }}
+            </button>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Contact page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "Customer support"
+    },
+    {
+      "type": "text",
+      "id": "page_heading",
+      "label": "Page heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "richtext",
+      "id": "page_intro",
+      "label": "Page intro",
+      "default": "<p>We’re here to help with product questions, order support, and general inquiries.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Send us a message"
+    },
+    {
+      "type": "richtext",
+      "id": "form_intro",
+      "label": "Form intro",
+      "default": "<p>Use the form below and our team will get back to you as soon as possible.</p>"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_label",
+      "label": "Submit button label",
+      "default": "Send message"
+    },
+    {
+      "type": "text",
+      "id": "quick_links_heading",
+      "label": "Quick links heading",
+      "default": "Quick help"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "default": 1220,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 88,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F7F4EE"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#181A17"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 28,
+      "max": 64,
+      "step": 1,
+      "default": 42,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "intro_font_size",
+      "label": "Intro font size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 17,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "info_title_font_size",
+      "label": "Info title font size",
+      "min": 15,
+      "max": 26,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "info_body_font_size",
+      "label": "Info body font size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "form_heading_font_size",
+      "label": "Form heading font size",
+      "min": 20,
+      "max": 36,
+      "step": 1,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "input_radius",
+      "label": "Input radius",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "input_padding",
+      "label": "Input padding",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "contact_info_item",
+      "name": "Contact info item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Email"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>support@nutravora.com</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Email support"
+        }
+      ]
+    },
+    {
+      "type": "support_link_item",
+      "name": "Support link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "FAQ"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        }
+      ]
+    },
+    {
+      "type": "reassurance_item",
+      "name": "Reassurance item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Fast, thoughtful support"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 14,
+  "presets": [
+    {
+      "name": "Contact page"
+    }
+  ]
+}
+{% endschema %}

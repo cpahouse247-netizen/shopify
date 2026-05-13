@@ -1,0 +1,86 @@
+<section class="nv-lp-trust-bar" style="--lp-trust-bg: {{ section.settings.background_color }}; --lp-trust-text: {{ section.settings.text_color }};">
+  <div class="nv-lp-trust-bar__inner">
+    {%- for i in (1..4) -%}
+      {%- assign key = 'item_' | append: i | append: '_label' -%}
+      {%- assign label = section.settings[key] -%}
+      {%- if label != blank -%}
+        <div class="nv-lp-trust-bar__item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+          <span>{{ label }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  .nv-lp-trust-bar {
+    background: var(--lp-trust-bg);
+    color: var(--lp-trust-text);
+    padding: 14px 24px;
+  }
+
+  .nv-lp-trust-bar__inner {
+    max-width: var(--nv-content-width);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .nv-lp-trust-bar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: var(--nv-weight-semibold);
+    letter-spacing: 0.03em;
+    position: relative;
+  }
+
+  .nv-lp-trust-bar__item:not(:last-child)::after {
+    content: "|";
+    color: rgba(255, 255, 255, 0.35);
+    position: absolute;
+    right: -18px;
+  }
+
+  .nv-lp-trust-bar__item svg {
+    width: 15px;
+    height: 15px;
+    color: var(--nv-gold-light);
+  }
+
+  @media (max-width: 768px) {
+    .nv-lp-trust-bar__inner {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 18px;
+    }
+
+    .nv-lp-trust-bar__item:not(:last-child)::after {
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP Trust Bar",
+  "settings": [
+    { "type": "color", "id": "background_color", "label": "Background color", "default": "#1f3a2f" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "text", "id": "item_1_label", "label": "Trust item 1", "default": "Non-GMO Formula" },
+    { "type": "text", "id": "item_2_label", "label": "Trust item 2", "default": "Lab Tested" },
+    { "type": "text", "id": "item_3_label", "label": "Trust item 3", "default": "Gluten-Free" },
+    { "type": "text", "id": "item_4_label", "label": "Trust item 4", "default": "30-Day Guarantee" }
+  ],
+  "presets": [
+    { "name": "LP Trust Bar" }
+  ]
+}
+{% endschema %}

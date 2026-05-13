@@ -1,0 +1,314 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product-premium",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {
+            "show_vendor": true,
+            "vendor_override": ""
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "show_title": true,
+            "subheadline_fallback": "",
+            "title_tag": "h1"
+          }
+        },
+        "product_rating": {
+          "type": "product_rating",
+          "settings": {
+            "show_review_count": true,
+            "show_review_label": true,
+            "empty_state": "hide"
+          }
+        },
+        "product_meta_row": {
+          "type": "product_meta_row",
+          "settings": {
+            "show_sku": true,
+            "show_type": true,
+            "sku_label": "SKU",
+            "type_label": "Type"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_compare_at": true,
+            "show_sale_badge": true,
+            "sale_badge_label": "Sale"
+          }
+        },
+        "certification_badges_nv_01": {
+          "type": "certification_badges",
+          "settings": {
+            "show_non_gmo": true,
+            "show_gluten_free": true,
+            "show_lab_tested": true,
+            "show_gmp": true,
+            "badge_bg_color": "#f0f5f0",
+            "badge_border_color": "#d9ded8",
+            "badge_text_color": "#315c4a"
+          }
+        },
+        "supply_value_callout_nv_01": {
+          "type": "supply_value_callout",
+          "settings": {
+            "show_block": true,
+            "use_metafield": true,
+            "fallback_text": "300 Softgels — ~10 Month Supply",
+            "show_value_icon": true,
+            "callout_style": "pill"
+          }
+        },
+        "shipping_line": {
+          "type": "shipping_line",
+          "settings": {
+            "fallback_text": "Fast Prime delivery available on Amazon",
+            "style": "pill"
+          }
+        },
+        "inventory_status_iBQUpd": {
+          "type": "inventory_status",
+          "settings": {
+            "low_stock_threshold": 5,
+            "show_icon": true,
+            "in_stock_text": "In stock",
+            "low_stock_text": "Low stock",
+            "out_of_stock_text": "Out of stock"
+          }
+        },
+        "features_list": {
+          "type": "features_list",
+          "settings": {
+            "heading": "Features & Benefits",
+            "fallback_list": "",
+            "max_items_desktop": 5,
+            "max_items_mobile": 4
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "style": "dropdown",
+            "hide_if_single_variant": true
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {
+            "label": "Quantity",
+            "min_quantity": 1
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "sold_out_label": "Sold out",
+            "add_to_cart_label": "Add to cart"
+          }
+        },
+        "amazon_buy_button_DRMp8z": {
+          "type": "amazon_buy_button",
+          "settings": {
+            "button_label": "Buy on Amazon",
+            "open_in_new_tab": true,
+            "show_icon": true
+          }
+        },
+        "amazon_trust_note_nv_01": {
+          "type": "amazon_trust_note",
+          "settings": {
+            "show_block": true,
+            "note_line_1": "Why Amazon? Prime shipping, trusted checkout & easy returns.",
+            "note_line_2": "Official NutraVora store · Prime-eligible · Secure payment",
+            "show_prime_badge": true,
+            "show_secure_icon": true
+          }
+        },
+        "buy_with_shop": {
+          "type": "buy_with_shop",
+          "settings": {
+            "show_when_available": true
+          }
+        },
+        "safe_checkout": {
+          "type": "safe_checkout",
+          "settings": {
+            "label": "Guarantee safe checkout"
+          }
+        },
+        "money_back_guarantee_nv_01": {
+          "type": "money_back_guarantee",
+          "settings": {
+            "guarantee_title": "30-Day Satisfaction Guarantee",
+            "guarantee_body": "Not satisfied? Contact us and we'll make it right.",
+            "show_shield_icon": true,
+            "background_color": "#f0f5f0",
+            "border_color": "#315c4a",
+            "text_color": "#1f3a2f"
+          }
+        },
+        "payment_icons": {
+          "type": "payment_icons",
+          "settings": {
+            "max_icons": 8
+          }
+        },
+        "trust_strip": {
+          "type": "trust_strip",
+          "settings": {
+            "fallback_items": "",
+            "max_items": 3
+          }
+        },
+        "bundle_module": {
+          "type": "bundle_module",
+          "settings": {
+            "heading": "Frequently bought together",
+            "hide_if_empty": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "show_facebook": false,
+            "show_x": false,
+            "show_pinterest": false,
+            "show_email": true
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "product_rating",
+        "price",
+        "certification_badges_nv_01",
+        "supply_value_callout_nv_01",
+        "shipping_line",
+        "inventory_status_iBQUpd",
+        "features_list",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "amazon_buy_button_DRMp8z",
+        "amazon_trust_note_nv_01",
+        "buy_with_shop",
+        "safe_checkout",
+        "money_back_guarantee_nv_01",
+        "payment_icons",
+        "trust_strip",
+        "bundle_module",
+        "product_meta_row",
+        "share"
+      ],
+      "settings": {
+        "show_breadcrumbs": true,
+        "cta_mode": "buy_with_prime",
+        "buybox_sticky": true,
+        "buybox_max_width": 620,
+        "buybox_layout_density": "comfortable",
+        "buybox_title_size": 34,
+        "buybox_body_size": 14,
+        "buybox_button_radius": 18,
+        "buybox_button_spacing": 12,
+        "amazon_fallback_link": "",
+        "show_payment_areas": true,
+        "show_share_area": true,
+        "show_bundle_area": true,
+        "hero_subheadline_fallback": "",
+        "hero_spotlight_fallback": "",
+        "hero_trust_badges_fallback": ""
+      }
+    },
+    "nv_service_features_ryakRx": {
+      "type": "nv-service-features",
+      "blocks": {
+        "feature_item_r3nfnk": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Fast_fulfillment.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Fast fulfillment",
+            "body": "Prime-enabled listings available on Amazon for fast, reliable delivery to your door.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_d9XcaK": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Secure_payment.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Secure payment",
+            "body": "Shop directly through our site or purchase through our official Amazon store using trusted checkout experiences.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_zkbDRx": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Quality_assurance.svg",
+            "icon_alt": "Service feature icon",
+            "title": "Quality assurance",
+            "body": "We focus on clear product presentation, careful formula standards, and dependable customer support.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        },
+        "feature_item_4Ebeid": {
+          "type": "feature_item",
+          "settings": {
+            "icon_image": "shopify://shop_images/Easy_support.svg",
+            "icon_alt": "Customer support icon",
+            "title": "Easy support",
+            "body": "Have a question? Our team is ready to help. Reach us at support@nutravora.com for fast, friendly support.",
+            "link": "",
+            "link_label": "Learn more"
+          }
+        }
+      },
+      "block_order": [
+        "feature_item_r3nfnk",
+        "feature_item_d9XcaK",
+        "feature_item_zkbDRx",
+        "feature_item_4Ebeid"
+      ],
+      "name": "NV Service Features",
+      "settings": {
+        "show_heading": true,
+        "section_heading": "Why Shop NutraVora",
+        "section_subheading": "Use this section to highlight support, fulfillment, and quality reassurance.",
+        "background_color": "#f5f7f5",
+        "content_max_width": 1280,
+        "columns_desktop": "4",
+        "columns_mobile": "2",
+        "item_alignment": "left",
+        "icon_position": "top",
+        "title_color": "#181a17",
+        "body_color": "#5e625d",
+        "icon_color": "#315c4a",
+        "heading_font_size": 30,
+        "subheading_font_size": 15,
+        "item_title_font_size": 14,
+        "item_body_font_size": 13,
+        "section_padding_top": 36,
+        "section_padding_bottom": 36,
+        "item_gap": 20,
+        "icon_size": 56,
+        "icon_wrapper_size": 56
+      }
+    }
+  },
+  "order": [
+    "main",
+    "nv_service_features_ryakRx"
+  ]
+}

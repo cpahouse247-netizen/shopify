@@ -1,0 +1,73 @@
+/* ============================================
+   NutraVora Critical CSS
+   Inlined styles for above-the-fold content
+   Prevents render-blocking for LCP elements
+   ============================================ */
+
+/* Prevent FOUC (Flash of Unstyled Content) */
+.nv-fonts-loading h1,
+.nv-fonts-loading h2,
+.nv-fonts-loading h3,
+.nv-fonts-loading .nv-hero-heading,
+.nv-fonts-loading .nv-section-heading {
+  font-family: Georgia, serif;
+}
+
+.nv-fonts-loaded h1,
+.nv-fonts-loaded h2,
+.nv-fonts-loaded h3,
+.nv-fonts-loaded .nv-hero-heading,
+.nv-fonts-loaded .nv-section-heading {
+  font-family: var(--nv-font-heading);
+}
+
+/* Reserve space for hero to prevent CLS */
+.nv-lp-hero,
+.nv-image-hero-banner,
+[class*="nv-image-hero"] {
+  background-color: var(--nv-green-dark, #1f3a2f);
+}
+
+/* Reserve space for product images */
+.nv-product-card__image-wrapper {
+  background-color: var(--nv-cream-warm, #faf8f2);
+}
+
+/* Reserve space for sticky ATC */
+.nv-sticky-atc {
+  contain: layout style;
+}
+
+/* Prevent review widget CLS */
+[data-areviews-widget],
+.areviews-widget,
+.nv-pdp-areviews [class*="areviews"],
+.nv-pdp-areviews__widget {
+  min-height: 200px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Image aspect ratio placeholders */
+.nv-product-card__image-wrapper {
+  aspect-ratio: 4 / 5;
+  contain: strict;
+}
+
+@media (max-width: 768px) {
+  .nv-product-card__image-wrapper {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* Scrolling bar height reservation */
+.nv-scrolling-features-bar,
+[class*="nv-scrolling"] {
+  contain: layout;
+}
+
+/* Font loading class */
+html {
+  font-display: swap;
+}

@@ -1,0 +1,1301 @@
+{{ 'product-marketplace.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = current_variant.featured_media | default: product.featured_media | default: product.media.first
+  assign product_form_id = 'nv-premium-product-form-' | append: section.id
+  assign conversion_mode_override = section.settings.cta_mode | strip
+
+  case section.settings.buybox_layout_density
+    when 'compact'
+      assign buybox_block_spacing = 14
+      assign buybox_form_spacing = 12
+    when 'airy'
+      assign buybox_block_spacing = 20
+      assign buybox_form_spacing = 16
+    else
+      assign buybox_block_spacing = 16
+      assign buybox_form_spacing = 14
+  endcase
+
+  assign amazon_fallback_link = section.settings.amazon_fallback_link | strip
+  # NutraVora Amazon URL Resolver
+  assign nv_amazon_url = product.metafields.custom.amazon_attribution_link.value | default: product.metafields.custom.amazon_attribution_link | strip
+  if nv_amazon_url == blank
+    assign nv_amazon_url = amazon_fallback_link
+  endif
+  if nv_amazon_url == blank
+    assign nv_amazon_url = settings.amazon_store_url | strip
+  endif
+  assign nv_has_amazon = false
+  if nv_amazon_url != blank
+    assign nv_has_amazon = true
+  endif
+
+  assign hero_subheadline_fallback = section.settings.hero_subheadline_fallback | default: 'Premium daily wellness formula' | strip
+  assign hero_spotlight_fallback = section.settings.hero_spotlight_fallback | default: 'A clean-label formula designed for consistent daily use.' | strip
+  assign hero_trust_badges_fallback = section.settings.hero_trust_badges_fallback | default: 'Non-GMO | Gluten-Free | Lab Tested' | strip
+
+  assign hero_subheadline = product.metafields.custom.hero_subheadline.value | default: product.metafields.custom.hero_subheadline | default: hero_subheadline_fallback | strip
+
+  assign spotlight_lines = blank
+  assign spotlight_source = product.metafields.custom.hero_spotlight_bullets.value | default: product.metafields.custom.hero_spotlight_bullets
+  if spotlight_source != blank
+    assign spotlight_source = spotlight_source | metafield_tag | strip_html | newline_to_br | split: '<br />'
+    assign spotlight_lines = spotlight_source
+  elsif hero_spotlight_fallback != blank
+    assign spotlight_lines = hero_spotlight_fallback | newline_to_br | split: '<br />'
+  endif
+
+  assign trust_badge_lines = blank
+  assign trust_badges_source = product.metafields.custom.hero_trust_badges.value | default: product.metafields.custom.hero_trust_badges
+  if trust_badges_source != blank
+    assign trust_badges_source = trust_badges_source | metafield_tag | strip_html | newline_to_br | split: '<br />'
+    assign trust_badge_lines = trust_badges_source
+  elsif hero_trust_badges_fallback != blank
+    assign trust_badge_lines = hero_trust_badges_fallback | split: '|'
+  endif
+
+  assign product_rating_value = 0
+  assign product_rating_count = blank
+  if product.metafields.reviews.rating.value != blank
+    assign rating_object = product.metafields.reviews.rating.value
+    assign product_rating_value = rating_object.rating | default: rating_object
+  elsif product.metafields.custom.rating != blank
+    assign product_rating_value = product.metafields.custom.rating.value | default: product.metafields.custom.rating
+  endif
+  if product.metafields.reviews.rating_count.value != blank
+    assign product_rating_count = product.metafields.reviews.rating_count.value
+  elsif product.metafields.reviews.rating_count != blank
+    assign product_rating_count = product.metafields.reviews.rating_count
+  endif
+
+  assign recommendation_text = product.metafields.custom.recommendation_text.value | default: product.metafields.custom.recommendation_text | strip
+  assign bought_text = product.metafields.custom.bought_count_text.value | default: product.metafields.custom.bought_count_text | strip
+  assign fulfillment_note = product.metafields.custom.fulfillment_note.value | default: product.metafields.custom.fulfillment_note | default: product.metafields.custom.imported_note.value | default: product.metafields.custom.imported_note | default: product.metafields.custom.import_note.value | default: product.metafields.custom.import_note | strip
+  assign item_number = product.metafields.custom.item_number.value | default: product.metafields.custom.item_number | strip
+  assign nv_supply_label = product.metafields.custom.supply_label.value | default: product.metafields.custom.supply_label | default: settings.default_supply_label | strip
+  assign nv_product_rating_data = product.metafields.custom.rating.value | default: product.metafields.custom.rating | default: product_rating_value | default: settings.default_rating | default: '4.8' | strip
+  assign nv_product_review_count_data = product.metafields.custom.review_count.value | default: product.metafields.custom.review_count | default: product_rating_count | default: settings.default_review_count | default: '221+' | strip
+  if nv_product_rating_data == blank or nv_product_rating_data == '0'
+    assign nv_product_rating_data = settings.default_rating | default: '4.8' | strip
+  endif
+  if nv_product_review_count_data == blank
+    assign nv_product_review_count_data = settings.default_review_count | default: '221+' | strip
+  endif
+
+-%}
+
+<script>
+  window.__nv_product_data = {
+    id: {{ product.id | json }},
+    title: {{ product.title | json }},
+    vendor: {{ product.vendor | json }},
+    type: {{ product.type | json }},
+    price: {{ product.selected_or_first_available_variant.price | json }},
+    sku: {{ product.selected_or_first_available_variant.sku | json }},
+    handle: {{ product.handle | json }},
+    available: {{ product.available | json }},
+    amazon_url: {{ nv_amazon_url | json }}
+  };
+</script>
+
+<section
+  id="MainProductPremium-{{ section.id }}"
+  class="section nv-pdp nv-pdp--premium{% unless section.settings.buybox_sticky %} nv-pdp--buybox-static{% endunless %}"
+  data-section-id="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-nv-product-id="{{ product.id }}"
+  data-nv-product-handle="{{ product.handle }}"
+  data-nv-supply-label="{{ nv_supply_label | escape }}"
+  data-nv-product-rating="{{ nv_product_rating_data | escape }}"
+  data-nv-product-review-count="{{ nv_product_review_count_data | escape }}"
+  data-nv-has-amazon="{{ nv_has_amazon }}"
+  style="
+    --nv-buybox-max-width: {{ section.settings.buybox_max_width }}px;
+    --nv-buybox-title-size: {{ section.settings.buybox_title_size }}px;
+    --nv-buybox-body-size: {{ section.settings.buybox_body_size }}px;
+    --nv-buybox-button-radius: {{ section.settings.buybox_button_radius }}px;
+    --nv-buybox-button-gap: {{ section.settings.buybox_button_spacing }}px;
+    --nv-buybox-block-spacing: {{ buybox_block_spacing }}px;
+    --nv-buybox-form-spacing: {{ buybox_form_spacing }}px;
+  "
+>
+  <div class="container container--wide nv-pdp__container">
+    {% if section.settings.show_breadcrumbs %}
+      {% render 'nv-pdp-breadcrumbs', product: product, collection: collection %}
+    {% endif %}
+
+    <div class="nv-pdp-hero nv-pdp-hero--editorial">
+      {% render 'nv-pdp-gallery',
+        product: product,
+        current_variant: current_variant,
+        featured_media: featured_media,
+        section_id: section.id
+      %}
+
+      {% render 'nv-pdp-buybox',
+        product: product,
+        current_variant: current_variant,
+        product_form_id: product_form_id,
+        template_override: conversion_mode_override,
+        review_rating: product_rating_value,
+        review_count: product_rating_count,
+        recommendation_text: recommendation_text,
+        bought_count_text: bought_text,
+        item_number: item_number,
+        hero_subheadline: hero_subheadline,
+        hero_spotlight_lines: spotlight_lines,
+        hero_trust_badge_lines: trust_badge_lines,
+        fulfillment_note: fulfillment_note,
+        amazon_fallback_link: nv_amazon_url,
+        section: section
+      %}
+    </div>
+
+    {% render 'nv-pdp-standout-metafields', product: product %}
+    {% render 'nv-pdp-product-details-metafields', product: product %}
+    {% render 'nv-pdp-important-info-metafields', product: product %}
+    {% render 'nv-pdp-who-should-buy-metafields', product: product %}
+    {% render 'nv-pdp-dietary-disclaimer-metafields', product: product %}
+    {% render 'nv-pdp-qa-metafields', product: product %}
+    {% render 'nv-pdp-editorial-summary-metafields', product: product %}
+    {% render 'nv-pdp-related-products', product: product %}
+
+    <section class="nv-pdp-areviews" data-nv-areviews-section>
+      <div id="Areviewsapp" class="nv-pdp-areviews__widget page-full">
+        <div
+          id="az_reviews"
+          class="az_reviews AReviewsApp"
+          data-product_id="{{ product.id }}"
+          data-product-id="{{ product.id }}"
+          data-product-handle="{{ product.handle | escape }}"
+        ></div>
+      </div>
+    </section>
+  </div>
+
+  {% render 'nv-product-sticky-cta', product: product, template_override: conversion_mode_override, product_form_id: product_form_id %}
+  {%- if nv_has_amazon -%}
+    <div
+      class="nv-mobile-amazon-bar"
+      aria-hidden="true"
+      style="
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 16px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        background: var(--nv-white);
+        border-top: 1px solid var(--nv-border-light);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+        z-index: calc(var(--nv-z-sticky) - 1);
+      "
+    >
+      <a href="{{ nv_amazon_url }}" target="_blank" rel="noopener noreferrer" class="nv-btn nv-btn--amazon nv-btn--full nv-btn--lg">
+        Buy on Amazon — Prime Eligible →
+      </a>
+    </div>
+  {%- endif -%}
+</section>
+
+<style>
+  #MainProductPremium-{{ section.id }} .nv-pdp-buybox__block--share {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #d9ded8;
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust {
+    padding: var(--nv-space-4);
+    background: #f8f9fa;
+    border: 1px solid var(--nv-border-light);
+    border-radius: var(--nv-radius-md);
+    margin-top: var(--nv-space-2);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust__header {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-3);
+    margin-bottom: var(--nv-space-2);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust__prime-badge {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust__secure {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: var(--nv-weight-semibold);
+    color: var(--nv-green-primary);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust__line-1 {
+    font-size: 12px;
+    font-weight: var(--nv-weight-medium);
+    color: var(--nv-text-secondary);
+    margin: 0 0 3px;
+    line-height: var(--nv-leading-snug);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-amazon-trust__line-2 {
+    font-size: 11px;
+    color: var(--nv-text-subtle);
+    margin: 0;
+    line-height: var(--nv-leading-snug);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-supply-callout {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: var(--nv-weight-semibold);
+    color: var(--nv-green-primary);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-supply-callout--pill {
+    padding: 5px 14px;
+    background: var(--nv-green-surface);
+    border: 1px solid var(--nv-border-brand);
+    border-radius: var(--nv-radius-full);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-supply-callout--banner {
+    width: 100%;
+    padding: 8px 14px;
+    background: var(--nv-green-surface);
+    border-radius: var(--nv-radius-sm);
+    border-left: 3px solid var(--nv-green-primary);
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-supply-callout svg {
+    fill: var(--nv-green-primary);
+    stroke: none;
+    flex-shrink: 0;
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-shipping-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: var(--nv-weight-medium);
+    color: var(--nv-green-primary);
+    padding: 6px 0;
+  }
+
+  #MainProductPremium-{{ section.id }} .nv-shipping-line svg {
+    flex-shrink: 0;
+    stroke: var(--nv-green-primary);
+  }
+</style>
+
+<script>
+  (function() {
+    const sectionRoot = document.getElementById('MainProductPremium-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    const gallery = document.getElementById('nvPremiumMediaGallery-{{ section.id }}');
+    const featuredImage = document.getElementById('nvPremiumFeaturedImage-{{ section.id }}');
+    if (gallery && featuredImage) {
+      const thumbs = Array.from(gallery.querySelectorAll('[data-media-thumb]'));
+      const prev = gallery.querySelector('[data-media-nav="prev"]');
+      const next = gallery.querySelector('[data-media-nav="next"]');
+      let activeIndex = Math.max(thumbs.findIndex((thumb) => thumb.classList.contains('is-active')), 0);
+
+      const setActive = (index) => {
+        const thumb = thumbs[index];
+        if (!thumb) return;
+        const src = thumb.getAttribute('data-media-src');
+        const alt = thumb.getAttribute('data-media-alt');
+        if (src) featuredImage.src = src;
+        if (alt) featuredImage.alt = alt;
+        thumbs.forEach((item) => item.classList.remove('is-active'));
+        thumb.classList.add('is-active');
+        activeIndex = index;
+        thumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      };
+
+      thumbs.forEach((thumb, index) => {
+        thumb.addEventListener('click', () => setActive(index));
+      });
+
+      if (prev) {
+        prev.addEventListener('click', () => {
+          setActive(activeIndex <= 0 ? thumbs.length - 1 : activeIndex - 1);
+        });
+      }
+
+      if (next) {
+        next.addEventListener('click', () => {
+          setActive(activeIndex >= thumbs.length - 1 ? 0 : activeIndex + 1);
+        });
+      }
+    }
+
+    sectionRoot.querySelectorAll('[data-qty-control]').forEach((control) => {
+      const input = control.querySelector('input[type="number"]');
+      if (!input) return;
+      control.querySelectorAll('[data-qty-change]').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (button.disabled || input.disabled) return;
+          const delta = Number(button.getAttribute('data-qty-change') || '0');
+          const currentValue = Number(input.value || '1');
+          const nextValue = Math.max(1, currentValue + delta);
+          input.value = String(nextValue);
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      });
+    });
+
+    const variantSelect = sectionRoot.querySelector('#PremiumProductVariant-{{ section.id }}');
+    if (variantSelect) {
+      variantSelect.addEventListener('change', (event) => {
+        const variantId = event.target.value;
+        if (!variantId) return;
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('variant', variantId);
+        window.location.href = nextUrl.toString();
+      });
+    }
+
+    sectionRoot.querySelectorAll('[data-nv-areviews-scroll]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const reviews = sectionRoot.querySelector('[data-nv-areviews-section]');
+        if (reviews) reviews.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      button.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        const reviews = sectionRoot.querySelector('[data-nv-areviews-section]');
+        if (reviews) reviews.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const areviewsStars = sectionRoot.querySelector('.areviews_header_stars');
+    const ratingFallback = sectionRoot.querySelector('[data-nv-rating-fallback]');
+    if (areviewsStars && ratingFallback) {
+      const syncRatingFallback = () => {
+        const hasRenderedStars = areviewsStars.textContent.trim() !== '' || areviewsStars.children.length > 0;
+        ratingFallback.hidden = hasRenderedStars;
+      };
+      syncRatingFallback();
+      new MutationObserver(syncRatingFallback).observe(areviewsStars, { childList: true, subtree: true, characterData: true });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Main Product Premium",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "cta_mode",
+      "label": "CTA mode",
+      "default": "hybrid",
+      "options": [
+        { "value": "shopify", "label": "Shopify only" },
+        { "value": "amazon", "label": "Amazon first" },
+        { "value": "buy_with_prime", "label": "Buy with Prime" },
+        { "value": "hybrid", "label": "Hybrid" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "buybox_sticky",
+      "label": "Enable sticky buy box on desktop",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "buybox_max_width",
+      "label": "Buy box max width",
+      "min": 420,
+      "max": 760,
+      "step": 10,
+      "unit": "px",
+      "default": 620
+    },
+    {
+      "type": "select",
+      "id": "buybox_layout_density",
+      "label": "Buy box spacing",
+      "default": "comfortable",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "comfortable", "label": "Comfortable" },
+        { "value": "airy", "label": "Airy" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "buybox_title_size",
+      "label": "Buy box title size",
+      "min": 24,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "buybox_body_size",
+      "label": "Buy box body size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "buybox_button_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "buybox_button_spacing",
+      "label": "Button spacing",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "url",
+      "id": "amazon_fallback_link",
+      "label": "Amazon fallback link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_areas",
+      "label": "Show payment areas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_area",
+      "label": "Show share area",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bundle_area",
+      "label": "Show bundle area",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_subheadline_fallback",
+      "label": "Hero subheadline fallback",
+      "default": "Premium daily wellness formula"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_spotlight_fallback",
+      "label": "Hero spotlight bullets fallback",
+      "info": "One bullet per line.",
+      "default": "A clean-label formula designed for consistent daily use."
+    },
+    {
+      "type": "textarea",
+      "id": "hero_trust_badges_fallback",
+      "label": "Hero trust badges fallback",
+      "info": "Separate badges with a vertical bar.",
+      "default": "Non-GMO | Gluten-Free | Lab Tested"
+    },
+    {
+      "type": "text",
+      "id": "trust_strip_fallback_1_label",
+      "label": "Trust item 1",
+      "default": "30-Day Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "trust_strip_fallback_2_label",
+      "label": "Trust item 2",
+      "default": "Non-GMO Formula"
+    },
+    {
+      "type": "text",
+      "id": "trust_strip_fallback_3_label",
+      "label": "Trust item 3",
+      "default": "Lab Tested Standards"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show vendor",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "vendor_override",
+          "label": "Vendor override"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_title",
+          "label": "Show title",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "subheadline_fallback",
+          "label": "Subheadline fallback"
+        },
+        {
+          "type": "select",
+          "id": "title_tag",
+          "label": "Title tag",
+          "default": "h1",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "product_rating",
+      "name": "Product rating",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_review_count",
+          "label": "Show review count",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_review_label",
+          "label": "Show review label",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "empty_state",
+          "label": "If no rating exists",
+          "default": "hide",
+          "options": [
+            { "value": "hide", "label": "Hide" },
+            { "value": "show_placeholder", "label": "Show placeholder" }
+          ]
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "product_meta_row",
+      "name": "Product meta row",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_sku",
+          "label": "Show SKU",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_type",
+          "label": "Show type",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "sku_label",
+          "label": "SKU label",
+          "default": "SKU"
+        },
+        {
+          "type": "text",
+          "id": "type_label",
+          "label": "Type label",
+          "default": "Type"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_compare_at",
+          "label": "Show compare-at price",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_sale_badge",
+          "label": "Show sale badge",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "sale_badge_label",
+          "label": "Sale badge label",
+          "default": "Sale"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "certification_badges",
+      "name": "Certification Badges",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_non_gmo",
+          "label": "Show Non-GMO badge",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gluten_free",
+          "label": "Show Gluten-Free badge",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_lab_tested",
+          "label": "Show Lab Tested badge",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gmp",
+          "label": "Show GMP Facility badge",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "badge_bg_color",
+          "label": "Badge background",
+          "default": "#f0f5f0"
+        },
+        {
+          "type": "color",
+          "id": "badge_border_color",
+          "label": "Badge border",
+          "default": "#d9ded8"
+        },
+        {
+          "type": "color",
+          "id": "badge_text_color",
+          "label": "Badge text",
+          "default": "#315c4a"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "supply_value_callout",
+      "name": "Supply Value Callout",
+      "settings": [
+        {
+          "id": "show_block",
+          "type": "checkbox",
+          "label": "Show supply callout",
+          "default": true
+        },
+        {
+          "id": "use_metafield",
+          "type": "checkbox",
+          "label": "Use product metafield (custom.supply_label)",
+          "default": true,
+          "info": "Falls back to manual text if metafield is empty"
+        },
+        {
+          "id": "fallback_text",
+          "type": "text",
+          "label": "Fallback supply text",
+          "default": "300 Softgels — ~10 Month Supply"
+        },
+        {
+          "id": "show_value_icon",
+          "type": "checkbox",
+          "label": "Show value icon",
+          "default": true
+        },
+        {
+          "id": "callout_style",
+          "type": "select",
+          "label": "Style",
+          "options": [
+            { "value": "pill", "label": "Pill badge" },
+            { "value": "banner", "label": "Banner strip" }
+          ],
+          "default": "pill"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "shipping_line",
+      "name": "Shipping line",
+      "settings": [
+        {
+          "type": "text",
+          "id": "fallback_text",
+          "label": "Fallback text",
+          "default": "Fast Prime delivery available on Amazon"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "default": "pill",
+          "options": [
+            { "value": "pill", "label": "Pill" },
+            { "value": "inline", "label": "Inline" }
+          ]
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "inventory_status",
+      "name": "Inventory status",
+      "settings": [
+        {
+          "type": "range",
+          "id": "low_stock_threshold",
+          "label": "Low stock threshold",
+          "min": 1,
+          "max": 25,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show status icon",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "in_stock_text",
+          "label": "In stock text",
+          "default": "In stock"
+        },
+        {
+          "type": "text",
+          "id": "low_stock_text",
+          "label": "Low stock text",
+          "default": "Low stock"
+        },
+        {
+          "type": "text",
+          "id": "out_of_stock_text",
+          "label": "Out of stock text",
+          "default": "Out of stock"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "payment_message",
+      "name": "Payment message",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "fallback_text",
+          "label": "Fallback text",
+          "default": "Pay over time for eligible orders with supported payment options."
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "features_list",
+      "name": "Features list",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Features & Benefits"
+        },
+        {
+          "type": "textarea",
+          "id": "fallback_list",
+          "label": "Fallback list",
+          "info": "One bullet per line."
+        },
+        {
+          "type": "range",
+          "id": "max_items_desktop",
+          "label": "Desktop item limit",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "range",
+          "id": "max_items_mobile",
+          "label": "Mobile item limit",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "default": 2
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Body"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom liquid",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom liquid"
+        }
+      ]
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "default": "dropdown",
+          "options": [
+            { "value": "dropdown", "label": "Dropdown" },
+            { "value": "pills", "label": "Pills" }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_if_single_variant",
+          "label": "Hide when only one variant exists",
+          "default": true
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity selector",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Quantity"
+        },
+        {
+          "type": "number",
+          "id": "min_quantity",
+          "label": "Minimum quantity",
+          "default": 1
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show dynamic checkout",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "sold_out_label",
+          "label": "Sold out label",
+          "default": "Sold out"
+        },
+        {
+          "type": "text",
+          "id": "add_to_cart_label",
+          "label": "Add to cart label",
+          "default": "Add to cart"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "amazon_buy_button",
+      "name": "Amazon buy button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Buy on Amazon"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open in new tab",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show Amazon icon",
+          "default": false
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "amazon_trust_note",
+      "name": "Amazon Trust Note",
+      "settings": [
+        {
+          "id": "show_block",
+          "type": "checkbox",
+          "label": "Show Amazon trust note",
+          "default": true
+        },
+        {
+          "id": "note_line_1",
+          "type": "text",
+          "label": "Line 1",
+          "default": "Why Amazon? Prime shipping, trusted checkout & easy returns."
+        },
+        {
+          "id": "note_line_2",
+          "type": "text",
+          "label": "Line 2",
+          "default": "Official NutraVora store · Prime-eligible · Secure payment"
+        },
+        {
+          "id": "show_prime_badge",
+          "type": "checkbox",
+          "label": "Show Prime badge",
+          "default": true
+        },
+        {
+          "id": "show_secure_icon",
+          "type": "checkbox",
+          "label": "Show secure icon",
+          "default": true
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "buy_with_shop",
+      "name": "Buy with Shop",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_when_available",
+          "label": "Show when available",
+          "default": true
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "external_cta",
+      "name": "External CTA",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "prefer_prime",
+          "label": "Prefer Buy with Prime",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "fallback_label",
+          "label": "Fallback label",
+          "default": "Buy on Amazon"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "more_payment_options",
+      "name": "More payment options",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "More payment options"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "safe_checkout",
+      "name": "Safe checkout",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Guarantee safe checkout"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "money_back_guarantee",
+      "name": "Money-Back Guarantee",
+      "settings": [
+        {
+          "type": "text",
+          "id": "guarantee_title",
+          "label": "Title",
+          "default": "30-Day Satisfaction Guarantee"
+        },
+        {
+          "type": "text",
+          "id": "guarantee_body",
+          "label": "Body text",
+          "default": "Not satisfied? Contact us and we'll make it right."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_shield_icon",
+          "label": "Show shield icon",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background",
+          "default": "#f0f5f0"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border color",
+          "default": "#315c4a"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#1f3a2f"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "payment_icons",
+      "name": "Payment icons",
+      "settings": [
+        {
+          "type": "range",
+          "id": "max_icons",
+          "label": "Maximum icons",
+          "min": 4,
+          "max": 12,
+          "step": 1,
+          "default": 8
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "trust_strip",
+      "name": "Trust strip",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "fallback_items",
+          "label": "Fallback items",
+          "info": "One trust item per line."
+        },
+        {
+          "type": "range",
+          "id": "max_items",
+          "label": "Maximum items",
+          "min": 2,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "bundle_module",
+      "name": "Bundle module",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Frequently bought together"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_if_empty",
+          "label": "Hide when empty",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "savings_label",
+          "label": "Savings badge label",
+          "default": "Bundle & Save"
+        },
+        {
+          "type": "text",
+          "id": "bundle_trust_note",
+          "label": "Bundle trust note",
+          "default": "Free shipping on Amazon Prime eligible bundles"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_amazon_bundle_cta",
+          "label": "Show Amazon bundle CTA",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "amazon_bundle_label",
+          "label": "Amazon bundle button label",
+          "default": "Buy Bundle on Amazon →"
+        }
+      ],
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_facebook",
+          "label": "Show Facebook",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_x",
+          "label": "Show X / Twitter",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_pinterest",
+          "label": "Show Pinterest",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_email",
+          "label": "Show email share",
+          "default": true
+        }
+      ],
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Product Premium",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "product_rating" },
+        { "type": "product_meta_row" },
+        { "type": "price" },
+        { "type": "certification_badges" },
+        { "type": "supply_value_callout" },
+        { "type": "shipping_line" },
+        { "type": "inventory_status" },
+        { "type": "payment_message" },
+        { "type": "features_list" },
+        { "type": "text" },
+        { "type": "custom_liquid" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" },
+        { "type": "amazon_buy_button" },
+        { "type": "amazon_trust_note" },
+        { "type": "buy_with_shop" },
+        { "type": "more_payment_options" },
+        { "type": "safe_checkout" },
+        { "type": "money_back_guarantee" },
+        { "type": "payment_icons" },
+        { "type": "trust_strip" },
+        { "type": "bundle_module" },
+        { "type": "share" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,43 @@
+<section class="section section--tight nv-home-trust-bar">
+  <div class="container">
+    <div class="nv-home-trust-bar__grid">
+      {% for block in section.blocks %}
+        <div class="nv-home-trust-bar__item" {{ block.shopify_attributes }}>
+          <span class="nv-home-trust-bar__icon" aria-hidden="true"></span>
+          <strong>{{ block.settings.title }}</strong>
+          {% if block.settings.text != blank %}
+            <span>{{ block.settings.text }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "NV Home Trust Bar",
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Fulfilled with trusted speed" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Amazon fulfillment or Prime-enabled checkout depending on product." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "NV Home Trust Bar",
+      "blocks": [
+        { "type": "item", "settings": { "title": "Official brand listings", "text": "Trusted Amazon destination paths where enabled" } },
+        { "type": "item", "settings": { "title": "Prime-enabled products", "text": "Buy with Prime support on selected products" } },
+        { "type": "item", "settings": { "title": "Science-forward formulas", "text": "Clear ingredients and clean positioning" } },
+        { "type": "item", "settings": { "title": "Transparent standards", "text": "Legitimacy without overclaiming" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

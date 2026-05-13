@@ -1,0 +1,83 @@
+{% comment %}
+  NutraVora robots.txt
+  Controls search engine crawl behavior
+  Premium Supplement Brand - v1.0
+{% endcomment %}
+
+# NutraVora Robots.txt
+# Generated: {{ 'now' | date: '%Y-%m-%d' }}
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /account
+Disallow: /search?
+Disallow: /*?*sort_by=
+Disallow: /*?*view=
+Disallow: /policies/
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /account
+Disallow: /search?
+Crawl-delay: 2
+
+User-agent: Slurp
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Crawl-delay: 3
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+# Default: allow all
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /account
+Disallow: /search?
+Disallow: /*?*sort_by=
+Disallow: /*?*view=
+Disallow: /cdn/
+Disallow: /s/files/
+
+# Sitemap
+Sitemap: {{ request.origin }}/sitemap.xml

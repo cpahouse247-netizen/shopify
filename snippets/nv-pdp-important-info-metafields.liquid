@@ -1,0 +1,56 @@
+{%- liquid
+  assign section_heading = product.metafields.custom.important_info_heading.value | default: product.metafields.custom.important_info_heading | strip
+  assign safety_information = product.metafields.custom.safety_information.value | default: product.metafields.custom.safety_information | strip
+  assign indications = product.metafields.custom.indications.value | default: product.metafields.custom.indications | strip
+  assign directions = product.metafields.custom.directions.value | default: product.metafields.custom.directions | strip
+  assign legal_disclaimer = product.metafields.custom.legal_disclaimer.value | default: product.metafields.custom.legal_disclaimer | strip
+
+  assign has_content = false
+  if section_heading != blank
+    assign has_content = true
+  endif
+  if safety_information != blank or indications != blank or directions != blank or legal_disclaimer != blank
+    assign has_content = true
+  endif
+-%}
+
+{%- if has_content and section_heading != blank -%}
+  <section class="nv-important-info" aria-labelledby="nvImportantInfoHeading-{{ product.id }}">
+    <div class="nv-important-info__header">
+      <h2 id="nvImportantInfoHeading-{{ product.id }}" class="nv-important-info__title">{{ section_heading }}</h2>
+      <div class="nv-important-info__rule">
+        <span class="nv-important-info__accent"></span>
+      </div>
+    </div>
+
+    <div class="nv-important-info__groups">
+      {%- if safety_information != blank -%}
+        <article class="nv-important-info__group">
+          <h3 class="nv-important-info__group-title">Safety Information</h3>
+          <div class="nv-important-info__group-body rte">{{ safety_information | newline_to_br }}</div>
+        </article>
+      {%- endif -%}
+
+      {%- if indications != blank -%}
+        <article class="nv-important-info__group">
+          <h3 class="nv-important-info__group-title">Indications</h3>
+          <div class="nv-important-info__group-body rte">{{ indications | newline_to_br }}</div>
+        </article>
+      {%- endif -%}
+
+      {%- if directions != blank -%}
+        <article class="nv-important-info__group">
+          <h3 class="nv-important-info__group-title">Directions</h3>
+          <div class="nv-important-info__group-body rte">{{ directions | newline_to_br }}</div>
+        </article>
+      {%- endif -%}
+
+      {%- if legal_disclaimer != blank -%}
+        <article class="nv-important-info__group">
+          <h3 class="nv-important-info__group-title">Legal Disclaimer</h3>
+          <div class="nv-important-info__group-body rte">{{ legal_disclaimer | newline_to_br }}</div>
+        </article>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}

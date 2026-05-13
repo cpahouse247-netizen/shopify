@@ -1,0 +1,140 @@
+{%- liquid
+  assign default_icons = '🧪|🌿|💊|📦|🔬|🛡️' | split: '|'
+  assign default_titles = 'Third-Party Tested|Clean Ingredients|High-Value Supply|Prime Eligible|Transparent Labeling|Satisfaction Guarantee' | split: '|'
+  assign default_bodies = 'Every formula verified by independent labs for purity and potency.|Non-GMO, gluten-free formulas with no unnecessary fillers.|Large-format pouches designed for consistent long-term daily use.|Fast, reliable Amazon Prime delivery on most NutraVora products.|Clear ingredient lists, suggested use, and honest product details.|30-day guarantee. Not satisfied? We will make it right.' | split: '|'
+-%}
+
+<section class="nv-lp-benefits nv-lp-section nv-lp-benefits--{{ section.settings.background }}">
+  <div class="nv-lp-inner">
+    <div class="nv-lp-header">
+      <h2 class="nv-section-heading">{{ section.settings.heading }}</h2>
+      {%- if section.settings.subheading != blank -%}
+        <p class="nv-section-subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="nv-lp-benefits__grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <article class="nv-card nv-lp-benefits__card" {{ block.shopify_attributes }}>
+            <span class="nv-lp-benefits__icon" aria-hidden="true">{{ block.settings.icon }}</span>
+            <h3 class="nv-lp-benefits__title">{{ block.settings.title }}</h3>
+            <p class="nv-lp-benefits__body">{{ block.settings.body }}</p>
+          </article>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for title in default_titles -%}
+          <article class="nv-card nv-lp-benefits__card">
+            <span class="nv-lp-benefits__icon" aria-hidden="true">{{ default_icons[forloop.index0] }}</span>
+            <h3 class="nv-lp-benefits__title">{{ title }}</h3>
+            <p class="nv-lp-benefits__body">{{ default_bodies[forloop.index0] }}</p>
+          </article>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-lp-benefits--white {
+    background: var(--nv-white);
+  }
+
+  .nv-lp-benefits--cream {
+    background: var(--nv-cream-warm);
+  }
+
+  .nv-lp-benefits--green {
+    background: var(--nv-green-surface);
+  }
+
+  .nv-lp-benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--nv-space-5);
+  }
+
+  .nv-lp-benefits__card {
+    padding: var(--nv-space-6);
+    border: 1px solid var(--nv-border-light);
+  }
+
+  .nv-lp-benefits__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--nv-radius-lg);
+    background: var(--nv-green-surface);
+    font-size: 32px;
+    margin-bottom: var(--nv-space-4);
+  }
+
+  .nv-lp-benefits__title {
+    font-size: var(--nv-text-lg);
+    margin: 0 0 var(--nv-space-2);
+    color: var(--nv-text-primary);
+  }
+
+  .nv-lp-benefits__body {
+    color: var(--nv-text-muted);
+    font-size: var(--nv-text-sm);
+    line-height: var(--nv-leading-relaxed);
+    margin: 0;
+  }
+
+  @media (max-width: 990px) {
+    .nv-lp-benefits__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nv-lp-benefits__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP Benefits",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why Choose NutraVora" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Premium quality you can see, feel, and trust." },
+    {
+      "type": "select",
+      "id": "background",
+      "label": "Background",
+      "default": "white",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "cream", "label": "Cream" },
+        { "value": "green", "label": "Green" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon", "default": "🌿" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Clean Ingredients" },
+        { "type": "text", "id": "body", "label": "Body", "default": "Non-GMO, gluten-free formulas with no unnecessary fillers." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "LP Benefits",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "🧪", "title": "Third-Party Tested", "body": "Every formula verified by independent labs for purity and potency." } },
+        { "type": "benefit", "settings": { "icon": "🌿", "title": "Clean Ingredients", "body": "Non-GMO, gluten-free formulas with no unnecessary fillers." } },
+        { "type": "benefit", "settings": { "icon": "💊", "title": "High-Value Supply", "body": "Large-format pouches designed for consistent long-term daily use." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

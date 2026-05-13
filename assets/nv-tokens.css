@@ -1,0 +1,225 @@
+/* ============================================
+   NutraVora Design Tokens
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+:root {
+
+  /* Brand Colors */
+  --nv-green-dark:       #1f3a2f;
+  --nv-green-primary:    #315c4a;
+  --nv-green-mid:        #4a7c63;
+  --nv-green-light:      #6b8f71;
+  --nv-green-pale:       #bcd19f;
+  --nv-green-surface:    #f0f5f0;
+  --nv-green-subtle:     #f5f7f5;
+
+  /* Gold / Accent */
+  --nv-gold-primary:     #c8a96b;
+  --nv-gold-dark:        #b8943a;
+  --nv-gold-light:       #e8d5a3;
+
+  /* Neutrals */
+  --nv-cream-warm:       #faf8f2;
+  --nv-cream-mid:        #f7f4ee;
+  --nv-cream-cool:       #f5f7f5;
+  --nv-white:            #ffffff;
+
+  /* Text */
+  --nv-text-primary:     #181a17;
+  --nv-text-secondary:   #3d3d3d;
+  --nv-text-muted:       #5e625d;
+  --nv-text-subtle:      #8a8e89;
+  --nv-text-inverse:     #ffffff;
+
+  /* Borders */
+  --nv-border-light:     #d9ded8;
+  --nv-border-mid:       #c4ccc2;
+  --nv-border-brand:     #315c4a;
+
+  /* Typography - Font Families */
+  --nv-font-heading: 'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', Georgia, serif;
+  --nv-font-body: 'Manrope', 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --nv-font-mono: 'DM Mono', monospace;
+
+  /* Typography - Scale */
+  --nv-text-xs:          11px;
+  --nv-text-sm:          13px;
+  --nv-text-base:        15px;
+  --nv-text-md:          17px;
+  --nv-text-lg:          20px;
+  --nv-text-xl:          24px;
+  --nv-text-2xl:         28px;
+  --nv-text-3xl:         36px;
+  --nv-text-4xl:         48px;
+  --nv-text-hero:        56px;
+
+  /* Typography - Mobile Scale */
+  --nv-text-hero-mobile: 36px;
+  --nv-text-3xl-mobile:  28px;
+  --nv-text-2xl-mobile:  24px;
+
+  /* Font Weights */
+  --nv-weight-regular:   400;
+  --nv-weight-medium:    500;
+  --nv-weight-semibold:  600;
+  --nv-weight-bold:      700;
+
+  /* Line Heights */
+  --nv-leading-tight:    1.15;
+  --nv-leading-snug:     1.35;
+  --nv-leading-normal:   1.6;
+  --nv-leading-relaxed:  1.75;
+
+  /* Letter Spacing */
+  --nv-tracking-tight:   -0.02em;
+  --nv-tracking-normal:  0;
+  --nv-tracking-wide:    0.04em;
+  --nv-tracking-wider:   0.08em;
+  --nv-tracking-widest:  0.15em;
+
+  /* Border Radius */
+  --nv-radius-xs:        4px;
+  --nv-radius-sm:        8px;
+  --nv-radius-md:        12px;
+  --nv-radius-lg:        18px;
+  --nv-radius-xl:        24px;
+  --nv-radius-2xl:       32px;
+  --nv-radius-full:      9999px;
+
+  /* Spacing */
+  --nv-space-1:          4px;
+  --nv-space-2:          8px;
+  --nv-space-3:          12px;
+  --nv-space-4:          16px;
+  --nv-space-5:          20px;
+  --nv-space-6:          24px;
+  --nv-space-8:          32px;
+  --nv-space-10:         40px;
+  --nv-space-12:         48px;
+  --nv-space-16:         64px;
+  --nv-space-20:         80px;
+  --nv-space-24:         96px;
+
+  /* Shadows */
+  --nv-shadow-xs:        0 1px 3px rgba(31, 58, 47, 0.06);
+  --nv-shadow-sm:        0 2px 8px rgba(31, 58, 47, 0.08);
+  --nv-shadow-md:        0 4px 16px rgba(31, 58, 47, 0.10);
+  --nv-shadow-lg:        0 8px 32px rgba(31, 58, 47, 0.12);
+  --nv-shadow-xl:        0 16px 48px rgba(31, 58, 47, 0.15);
+  --nv-shadow-gold:      0 4px 20px rgba(200, 169, 107, 0.20);
+
+  /* Transitions */
+  --nv-ease-default:     cubic-bezier(0.16, 1, 0.3, 1);
+  --nv-ease-in:          cubic-bezier(0.4, 0, 1, 1);
+  --nv-ease-out:         cubic-bezier(0, 0, 0.2, 1);
+  --nv-ease-bounce:      cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nv-duration-fast:    150ms;
+  --nv-duration-base:    250ms;
+  --nv-duration-slow:    400ms;
+  --nv-duration-slower:  600ms;
+
+  /* Z-Index */
+  --nv-z-base:           0;
+  --nv-z-raised:         10;
+  --nv-z-dropdown:       100;
+  --nv-z-sticky:         200;
+  --nv-z-overlay:        300;
+  --nv-z-modal:          400;
+  --nv-z-toast:          500;
+
+  /* Layout */
+  --nv-max-width:        1280px;
+  --nv-content-width:    1180px;
+  --nv-prose-width:      720px;
+  --nv-buybox-width:     620px;
+}
+
+/* Responsive Token Overrides */
+@media (max-width: 768px) {
+  :root {
+    --nv-text-hero:      var(--nv-text-hero-mobile);
+    --nv-text-3xl:       var(--nv-text-3xl-mobile);
+    --nv-text-2xl:       var(--nv-text-2xl-mobile);
+  }
+}
+
+/* Utility Classes */
+
+/* Text colors */
+.nv-text-primary   { color: var(--nv-text-primary); }
+.nv-text-muted     { color: var(--nv-text-muted); }
+.nv-text-brand     { color: var(--nv-green-primary); }
+.nv-text-gold      { color: var(--nv-gold-primary); }
+.nv-text-inverse   { color: var(--nv-text-inverse); }
+
+/* Backgrounds */
+.nv-bg-cream       { background-color: var(--nv-cream-warm); }
+.nv-bg-green       { background-color: var(--nv-green-surface); }
+.nv-bg-white       { background-color: var(--nv-white); }
+
+/* Typography */
+.nv-heading        { font-family: var(--nv-font-heading);
+                     line-height: var(--nv-leading-tight); }
+.nv-body           { font-family: var(--nv-font-body);
+                     line-height: var(--nv-leading-normal); }
+.nv-eyebrow        { font-size: var(--nv-text-xs);
+                     font-weight: var(--nv-weight-semibold);
+                     text-transform: uppercase;
+                     letter-spacing: var(--nv-tracking-widest);
+                     color: var(--nv-green-primary); }
+
+/* Badges / Pills */
+.nv-badge          { display: inline-flex; align-items: center;
+                     padding: 4px 12px;
+                     border-radius: var(--nv-radius-full);
+                     font-size: var(--nv-text-xs);
+                     font-weight: var(--nv-weight-semibold);
+                     text-transform: uppercase;
+                     letter-spacing: var(--nv-tracking-wide); }
+.nv-badge--brand   { background: var(--nv-green-surface);
+                     border: 1px solid var(--nv-border-brand);
+                     color: var(--nv-green-primary); }
+.nv-badge--gold    { background: rgba(200,169,107,0.12);
+                     border: 1px solid var(--nv-gold-primary);
+                     color: var(--nv-gold-dark); }
+.nv-badge--neutral { background: var(--nv-cream-warm);
+                     border: 1px solid var(--nv-border-light);
+                     color: var(--nv-text-muted); }
+
+/* Cards */
+.nv-card           { background: var(--nv-white);
+                     border-radius: var(--nv-radius-xl);
+                     box-shadow: var(--nv-shadow-sm);
+                     transition: box-shadow var(--nv-duration-base)
+                                 var(--nv-ease-default),
+                                 transform var(--nv-duration-base)
+                                 var(--nv-ease-default); }
+.nv-card:hover     { box-shadow: var(--nv-shadow-lg);
+                     transform: translateY(-2px); }
+
+/* Buttons */
+.nv-btn            { display: inline-flex; align-items: center;
+                     justify-content: center; gap: 8px;
+                     padding: 12px 24px;
+                     border-radius: var(--nv-radius-lg);
+                     font-size: 14px;
+                     font-weight: var(--nv-weight-semibold);
+                     letter-spacing: var(--nv-tracking-wide);
+                     transition: all var(--nv-duration-base)
+                                 var(--nv-ease-default);
+                     cursor: pointer; border: none; }
+.nv-btn--primary   { background: var(--nv-green-primary);
+                     color: var(--nv-white); }
+.nv-btn--primary:hover { background: var(--nv-green-dark);
+                     transform: translateY(-1px);
+                     box-shadow: var(--nv-shadow-md); }
+.nv-btn--amazon    { background: var(--nv-gold-primary);
+                     color: var(--nv-text-primary); }
+.nv-btn--amazon:hover { background: var(--nv-gold-dark);
+                     transform: translateY(-1px);
+                     box-shadow: var(--nv-shadow-gold); }
+.nv-btn--outline   { background: transparent;
+                     border: 2px solid var(--nv-green-primary);
+                     color: var(--nv-green-primary); }
+.nv-btn--outline:hover { background: var(--nv-green-surface); }

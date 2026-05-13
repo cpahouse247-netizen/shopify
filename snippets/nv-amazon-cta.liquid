@@ -1,0 +1,89 @@
+{% comment %}
+  NutraVora Amazon CTA renderer.
+
+  Inputs:
+  - product: Product object
+  - template_override: optional mode override
+  - label: optional CTA label override
+  - class: optional anchor class override
+  - wrapper_class: optional wrapper class override
+  - subtext: optional CTA subtext override
+  - show_subtext: optional boolean
+  - show_disclosure: optional boolean
+  - disclosure_text: optional disclosure override
+  - analytics_context: optional context label
+{% endcomment %}
+{%- liquid
+  assign resolved_template_override = template_override | strip
+  assign wrapper_class = wrapper_class | default: 'nv-cta-slot nv-cta-slot--amazon'
+  assign button_class = class | default: 'btn nv-amz-btn nv-btn nv-btn--amazon nv-btn--md'
+  assign cta_subtext = subtext | default: settings.amazon_cta_sub
+  assign render_subtext = show_subtext
+
+  if render_subtext == blank
+    assign render_subtext = settings.amazon_show_prime
+  endif
+-%}
+
+{%- capture amazon_link -%}{% render 'nv-conversion-context', product: product, field: 'amazon_link', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign amazon_link = amazon_link | strip -%}
+{%- capture amazon_available -%}{% render 'nv-conversion-context', product: product, field: 'amazon_available', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign amazon_available = amazon_available | strip -%}
+{%- capture resolved_amazon_label -%}{% render 'nv-conversion-context', product: product, field: 'amazon_label', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_amazon_label = resolved_amazon_label | strip -%}
+{%- capture amazon_new_tab -%}{% render 'nv-conversion-context', product: product, field: 'amazon_new_tab', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign amazon_new_tab = amazon_new_tab | strip -%}
+{%- capture resolved_disclosure_text -%}{% render 'nv-conversion-context', product: product, field: 'amazon_disclosure_text', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign resolved_disclosure_text = resolved_disclosure_text | strip -%}
+{%- capture missing_link_text -%}{% render 'nv-conversion-context', product: product, field: 'amazon_missing_link_text', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign missing_link_text = missing_link_text | strip -%}
+{%- assign amazon_label = label | default: resolved_amazon_label -%}
+{%- assign disclosure_text = disclosure_text | default: resolved_disclosure_text -%}
+{%- assign render_disclosure = show_disclosure -%}
+{%- if render_disclosure == blank -%}
+  {%- assign render_disclosure = false -%}
+{%- endif -%}
+{%- assign analytics_context = analytics_context | default: 'amazon-cta' -%}
+{%- capture selected_variant_id -%}{% render 'nv-conversion-context', product: product, field: 'selected_variant_id', template_override: resolved_template_override %}{%- endcapture -%}
+{%- assign selected_variant_id = selected_variant_id | strip -%}
+
+{%- if amazon_available == 'true' and amazon_link != blank -%}
+  <div class="{{ wrapper_class }}">
+    <a
+      class="{{ button_class }}"
+      href="{{ amazon_link }}"
+      {% if amazon_new_tab == 'true' %}target="_blank" rel="noopener noreferrer"{% endif %}
+      data-nv-cta="amazon"
+      data-nv-cta-mode="amazon_attribution"
+      data-nv-analytics-context="{{ analytics_context }}"
+      data-nv-external-checkout="true"
+      data-product-id="{% if product %}{{ product.id }}{% endif %}"
+      data-variant-id="{{ selected_variant_id }}"
+    >
+      <span class="nv-amz-btn__label">{{ amazon_label }}</span>
+      <span class="nv-btn__amazon-arrow">→</span>
+      {%- if render_subtext and cta_subtext != blank -%}
+        <span class="nv-amz-btn__sub">{{ cta_subtext }}</span>
+      {%- endif -%}
+    </a>
+    {%- if render_disclosure -%}
+      {% render 'nv-external-checkout-disclosure', text: disclosure_text %}
+    {%- endif -%}
+  </div>
+{%- else -%}
+  <div class="{{ wrapper_class }} {{ wrapper_class }}--unavailable" data-nv-amazon-available="false">
+    <span
+      class="{{ button_class }} nv-amz-btn nv-amz-btn--disabled"
+      aria-disabled="true"
+      data-nv-cta="amazon-unavailable"
+      data-nv-analytics-context="{{ analytics_context }}"
+      data-product-id="{% if product %}{{ product.id }}{% endif %}"
+      data-variant-id="{{ selected_variant_id }}"
+    >
+      <span class="nv-amz-btn__label">{{ missing_link_text }}</span>
+    </span>
+    {%- if render_disclosure -%}
+      {% render 'nv-external-checkout-disclosure', text: disclosure_text %}
+    {%- endif -%}
+  </div>
+{%- endif -%}

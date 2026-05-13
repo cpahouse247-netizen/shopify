@@ -1,0 +1,521 @@
+{%- liquid
+  assign featured_product = section.settings.featured_product
+  assign current_variant = nil
+  assign feature_blocks = section.blocks | where: 'type', 'feature_bullet'
+  assign spec_blocks = section.blocks | where: 'type', 'spec_row'
+
+  if featured_product != blank
+    assign current_variant = featured_product.selected_or_first_available_variant
+  endif
+
+  assign spotlight_title = section.settings.heading_override
+  if spotlight_title == blank and featured_product != blank
+    assign spotlight_title = featured_product.title
+  endif
+
+  assign spotlight_description = section.settings.description_override
+  if spotlight_description == blank and featured_product != blank
+    assign benefit_subtitle = featured_product.metafields.custom.benefit_subtitle.value | default: featured_product.metafields.custom.benefit_subtitle
+    if benefit_subtitle != blank
+      assign spotlight_description = benefit_subtitle
+    elsif featured_product.description != blank
+      assign spotlight_description = featured_product.description | strip_html | truncatewords: 28
+    endif
+  endif
+
+  assign primary_button_link = section.settings.primary_button_link
+  if primary_button_link == blank and featured_product != blank
+    assign primary_button_link = featured_product.url
+  endif
+
+  assign primary_button_label = section.settings.primary_button_label
+  if primary_button_label == blank
+    assign primary_button_label = 'View product'
+  endif
+
+  assign media_image = section.settings.featured_image_override
+  if media_image == blank and featured_product != blank
+    assign media_image = featured_product.featured_media
+  endif
+-%}
+
+<section
+  class="section nv-featured-spotlight nv-featured-spotlight--{{ section.settings.background_tone }} nv-featured-spotlight--{{ section.settings.image_layout }}"
+  style="
+    --nv-featured-spotlight-padding-top: {{ section.settings.padding_top }}px;
+    --nv-featured-spotlight-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --nv-featured-spotlight-container-width: {{ section.settings.container_max_width }}px;
+    --nv-featured-spotlight-content-width: {{ section.settings.content_max_width }}px;
+    --nv-featured-spotlight-title-width: {{ section.settings.title_max_width }}ch;
+    --nv-featured-spotlight-content-gap: {{ section.settings.content_gap }}px;
+    --nv-featured-spotlight-heading-font-family: {{ section.settings.heading_font_family }};
+    --nv-featured-spotlight-body-font-family: {{ section.settings.body_font_family }};
+    --nv-featured-spotlight-eyebrow-size: {{ section.settings.eyebrow_font_size }}px;
+    --nv-featured-spotlight-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-featured-spotlight-body-size: {{ section.settings.body_font_size }}px;
+    --nv-featured-spotlight-bullet-size: {{ section.settings.bullet_font_size }}px;
+    --nv-featured-spotlight-spec-label-size: {{ section.settings.spec_label_font_size }}px;
+    --nv-featured-spotlight-spec-value-size: {{ section.settings.spec_value_font_size }}px;
+    --nv-featured-spotlight-button-size: {{ section.settings.button_font_size }}px;
+  "
+>
+  <div class="container">
+    <div class="nv-featured-spotlight__panel">
+      <div class="nv-featured-spotlight__media" data-nv-animate="fade-right">
+        <div class="nv-featured-spotlight__media-frame">
+          {% if section.settings.secondary_image != blank %}
+            <div class="nv-featured-spotlight__secondary" aria-hidden="true">
+              {{ section.settings.secondary_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400,600,800,1000', sizes: '(max-width: 768px) 100vw, 50vw' }}
+            </div>
+          {% endif %}
+
+          {% if media_image != blank %}
+            {{
+              media_image
+              | image_url: width: 1600
+              | image_tag:
+                loading: 'lazy',
+                widths: '400,600,800,1000',
+                class: 'nv-featured-spotlight__image',
+                sizes: '(max-width: 768px) 100vw, 50vw'
+            }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'nv-featured-spotlight__placeholder' }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="nv-featured-spotlight__content" data-nv-animate="fade-left" data-nv-delay="200">
+        {% if section.settings.eyebrow != blank %}
+          <p class="eyebrow nv-featured-spotlight__eyebrow nv-eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        {% if spotlight_title != blank %}
+          <h2 class="nv-featured-spotlight__title nv-h2">{{ spotlight_title }}</h2>
+        {% endif %}
+
+        {% if featured_product != blank and section.settings.show_price or featured_product != blank and section.settings.show_availability %}
+          <div class="nv-featured-spotlight__meta">
+            {% if section.settings.show_price %}
+              {% render 'price', product: featured_product, show_compare_at_price: true %}
+            {% endif %}
+            {% if section.settings.show_availability and current_variant != nil %}
+              <span class="nv-featured-spotlight__availability {% unless current_variant.available %}is-unavailable{% endunless %}">
+                {% if current_variant.available %}Available now{% else %}Currently unavailable{% endif %}
+              </span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if spotlight_description != blank %}
+          <div class="rte nv-featured-spotlight__description nv-body-lg">
+            {% if spotlight_description contains '<' %}
+              {{ spotlight_description }}
+            {% else %}
+              <p>{{ spotlight_description }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if feature_blocks.size > 0 %}
+          <div class="nv-featured-spotlight__features" aria-label="Product highlights">
+            {% for block in feature_blocks %}
+              {% if block.settings.bullet_text != blank %}
+                {%- liquid
+                  assign animation_delay = forloop.index0 | times: 100 | plus: 300
+                  if animation_delay > 800
+                    assign animation_delay = 800
+                  endif
+                -%}
+                <div class="nv-featured-spotlight__feature" data-nv-animate="fade-up" data-nv-delay="{{ animation_delay }}" {{ block.shopify_attributes }}>
+                  {% if block.settings.icon_text != blank %}
+                    <span class="nv-featured-spotlight__feature-icon" aria-hidden="true">{{ block.settings.icon_text }}</span>
+                  {% endif %}
+                  <span class="nv-featured-spotlight__feature-text">{{ block.settings.bullet_text }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if spec_blocks.size > 0 %}
+          <div class="nv-featured-spotlight__spec-grid">
+            {% for block in spec_blocks %}
+              {% if block.settings.label != blank or block.settings.value != blank %}
+                <div class="nv-featured-spotlight__spec" {{ block.shopify_attributes }}>
+                  {% if block.settings.label != blank %}
+                    <p class="nv-featured-spotlight__spec-label">{{ block.settings.label }}</p>
+                  {% endif %}
+                  {% if block.settings.value != blank %}
+                    <p class="nv-featured-spotlight__spec-value">{{ block.settings.value }}</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="nv-featured-spotlight__actions" data-nv-animate="fade-up" data-nv-delay="600">
+          {% if primary_button_link != blank %}
+            <a class="btn nv-featured-spotlight__button nv-btn nv-btn--amazon nv-btn--md" href="{{ primary_button_link }}" target="_blank" rel="noopener noreferrer">
+              {{ primary_button_label }}
+            </a>
+          {% endif %}
+
+          {% if section.settings.secondary_button_label != blank and section.settings.secondary_button_link != blank %}
+            {% assign secondary_button_label_downcase = section.settings.secondary_button_label | downcase %}
+            <a class="btn btn--ghost nv-featured-spotlight__button nv-featured-spotlight__button--secondary{% if secondary_button_label_downcase contains 'amazon' %} nv-featured-spotlight__button--amazon{% endif %} nv-btn nv-btn--outline nv-btn--md" href="{{ section.settings.secondary_button_link }}"{% if secondary_button_label_downcase contains 'amazon' %} target="_blank" rel="noopener noreferrer"{% endif %}>
+              {{ section.settings.secondary_button_label }}
+            </a>
+          {% endif %}
+        </div>
+
+        {% if featured_product == blank %}
+          <p class="nv-featured-spotlight__empty">
+            Select a featured product in the Theme Editor to power this spotlight section.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Spotlight",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Featured product"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_family",
+      "label": "Heading font family",
+      "default": "inherit",
+      "options": [
+        { "value": "inherit", "label": "Theme default" },
+        { "value": "sans-serif", "label": "Sans-serif" },
+        { "value": "serif", "label": "Serif" },
+        { "value": "monospace", "label": "Monospace" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "body_font_family",
+      "label": "Body font family",
+      "default": "inherit",
+      "options": [
+        { "value": "inherit", "label": "Theme default" },
+        { "value": "sans-serif", "label": "Sans-serif" },
+        { "value": "serif", "label": "Serif" },
+        { "value": "monospace", "label": "Monospace" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Featured formula"
+    },
+    {
+      "type": "text",
+      "id": "heading_override",
+      "label": "Heading override"
+    },
+    {
+      "type": "richtext",
+      "id": "description_override",
+      "label": "Description override"
+    },
+    {
+      "type": "image_picker",
+      "id": "featured_image_override",
+      "label": "Custom image override"
+    },
+    {
+      "type": "image_picker",
+      "id": "secondary_image",
+      "label": "Secondary image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "Show availability",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "background_tone",
+      "label": "Background tone",
+      "default": "cream",
+      "options": [
+        { "value": "cream", "label": "Soft cream" },
+        { "value": "white", "label": "White" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "label": "Section container width",
+      "min": 980,
+      "max": 1320,
+      "step": 20,
+      "default": 1160,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content column max width",
+      "min": 360,
+      "max": 620,
+      "step": 10,
+      "default": 460,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_max_width",
+      "label": "Title max width",
+      "min": 8,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "ch"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_font_size",
+      "label": "Eyebrow font size",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 22,
+      "max": 42,
+      "step": 1,
+      "default": 22,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "bullet_font_size",
+      "label": "Bullet font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "spec_label_font_size",
+      "label": "Spec label font size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "spec_value_font_size",
+      "label": "Spec value font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_layout",
+      "label": "Image layout",
+      "default": "balanced",
+      "options": [
+        { "value": "balanced", "label": "Balanced" },
+        { "value": "visual-heavy", "label": "Visual heavy" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Internal spacing",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "label": "Primary button label",
+      "default": "View product"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link override"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link override"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature_bullet",
+      "name": "Feature bullet",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon_text",
+          "label": "Icon text",
+          "default": "•"
+        },
+        {
+          "type": "text",
+          "id": "bullet_text",
+          "label": "Bullet text",
+          "default": "Add one clean, concise product highlight for shoppers scanning this module."
+        }
+      ]
+    },
+    {
+      "type": "spec_row",
+      "name": "Spec row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Format"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "Softgels"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Spotlight",
+      "blocks": [
+        {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "Use concise benefit framing that helps customers understand why this formula matters."
+          }
+        },
+        {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "Keep supporting language premium, readable, and clearly separate from stronger product page detail."
+          }
+        },
+        {
+          "type": "feature_bullet",
+          "settings": {
+            "icon_text": "•",
+            "bullet_text": "Create a strong bridge into the product page or preferred Amazon-first journey."
+          }
+        },
+        {
+          "type": "spec_row",
+          "settings": {
+            "label": "Format",
+            "value": "Softgels"
+          }
+        },
+        {
+          "type": "spec_row",
+          "settings": {
+            "label": "Bottle size",
+            "value": "Merchant editable"
+          }
+        },
+        {
+          "type": "spec_row",
+          "settings": {
+            "label": "Positioning",
+            "value": "Daily wellness support"
+          }
+        },
+        {
+          "type": "spec_row",
+          "settings": {
+            "label": "Best for",
+            "value": "High-intent product discovery"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

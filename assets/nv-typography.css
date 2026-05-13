@@ -1,0 +1,206 @@
+/* ============================================
+   NutraVora Typography System
+   Premium Supplement Brand - v1.0
+   ============================================ */
+
+/* Base Body Typography */
+body {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-base);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-normal);
+  color: var(--nv-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Heading Scale */
+h1, .nv-h1 {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-hero);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-tight);
+  letter-spacing: var(--nv-tracking-tight);
+  color: var(--nv-text-primary);
+}
+
+h2, .nv-h2 {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-3xl);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-tight);
+  letter-spacing: var(--nv-tracking-tight);
+  color: var(--nv-text-primary);
+}
+
+h3, .nv-h3 {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-2xl);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-snug);
+  color: var(--nv-text-primary);
+}
+
+h4, .nv-h4 {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-xl);
+  font-weight: var(--nv-weight-semibold);
+  line-height: var(--nv-leading-snug);
+  color: var(--nv-text-primary);
+}
+
+h5, .nv-h5 {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-lg);
+  font-weight: var(--nv-weight-semibold);
+  line-height: var(--nv-leading-snug);
+  color: var(--nv-text-primary);
+}
+
+h6, .nv-h6 {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-base);
+  font-weight: var(--nv-weight-semibold);
+  line-height: var(--nv-leading-normal);
+  color: var(--nv-text-primary);
+}
+
+/* Eyebrow / Label */
+.nv-eyebrow {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-xs);
+  font-weight: var(--nv-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--nv-tracking-widest);
+  color: var(--nv-green-primary);
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Body Text Variants */
+.nv-body-lg {
+  font-size: var(--nv-text-md);
+  line-height: var(--nv-leading-relaxed);
+  color: var(--nv-text-secondary);
+}
+
+.nv-body-base {
+  font-size: var(--nv-text-base);
+  line-height: var(--nv-leading-normal);
+  color: var(--nv-text-secondary);
+}
+
+.nv-body-sm {
+  font-size: var(--nv-text-sm);
+  line-height: var(--nv-leading-normal);
+  color: var(--nv-text-muted);
+}
+
+.nv-body-xs {
+  font-size: var(--nv-text-xs);
+  line-height: var(--nv-leading-normal);
+  color: var(--nv-text-subtle);
+}
+
+/* Section Headings */
+.nv-section-heading {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-3xl);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-tight);
+  letter-spacing: var(--nv-tracking-tight);
+  color: var(--nv-text-primary);
+  margin-bottom: 12px;
+}
+
+.nv-section-subheading {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-base);
+  line-height: var(--nv-leading-relaxed);
+  color: var(--nv-text-muted);
+  max-width: 560px;
+  margin: 0 auto 40px;
+}
+
+/* Hero Typography */
+.nv-hero-heading {
+  font-family: var(--nv-font-heading);
+  font-size: var(--nv-text-hero);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-tight);
+  letter-spacing: var(--nv-tracking-tight);
+  color: var(--nv-text-inverse);
+  margin-bottom: 16px;
+}
+
+.nv-hero-subheading {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-md);
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-relaxed);
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 24px;
+}
+
+/* Product Title (PDP) */
+.nv-product-title {
+  font-family: var(--nv-font-heading);
+  font-size: 34px;
+  font-weight: var(--nv-weight-regular);
+  line-height: var(--nv-leading-snug);
+  letter-spacing: var(--nv-tracking-tight);
+  color: var(--nv-text-primary);
+}
+
+/* Price Typography */
+.nv-price {
+  font-family: var(--nv-font-body);
+  font-size: var(--nv-text-2xl);
+  font-weight: var(--nv-weight-bold);
+  color: var(--nv-text-primary);
+  letter-spacing: var(--nv-tracking-tight);
+}
+
+.nv-price-compare {
+  font-size: var(--nv-text-lg);
+  font-weight: var(--nv-weight-regular);
+  color: var(--nv-text-subtle);
+  text-decoration: line-through;
+  margin-left: 8px;
+}
+
+/* CTA Button Typography */
+.nv-btn {
+  font-family: var(--nv-font-body);
+  font-size: 14px;
+  font-weight: var(--nv-weight-semibold);
+  letter-spacing: var(--nv-tracking-wide);
+}
+
+/* Italic Accent (DM Serif Display italic) */
+.nv-italic-accent {
+  font-family: var(--nv-font-heading);
+  font-style: italic;
+  color: var(--nv-gold-primary);
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  h1, .nv-h1, .nv-hero-heading {
+    font-size: var(--nv-text-hero-mobile);
+  }
+  h2, .nv-h2, .nv-section-heading {
+    font-size: var(--nv-text-3xl-mobile);
+  }
+  h3, .nv-h3 {
+    font-size: var(--nv-text-2xl-mobile);
+  }
+  .nv-section-subheading {
+    font-size: var(--nv-text-sm);
+    margin-bottom: 28px;
+  }
+  .nv-product-title {
+    font-size: 26px;
+  }
+}

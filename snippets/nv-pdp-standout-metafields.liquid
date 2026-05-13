@@ -1,0 +1,69 @@
+{%- liquid
+  assign standout_heading = product.metafields.custom.standout_heading.value | default: product.metafields.custom.standout_heading | strip
+
+  assign card_1_title = product.metafields.custom.standout_card_1_title.value | default: product.metafields.custom.standout_card_1_title | strip
+  assign card_1_text = product.metafields.custom.standout_card_1_text.value | default: product.metafields.custom.standout_card_1_text | strip
+
+  assign card_2_title = product.metafields.custom.standout_card_2_title.value | default: product.metafields.custom.standout_card_2_title | strip
+  assign card_2_text = product.metafields.custom.standout_card_2_text.value | default: product.metafields.custom.standout_card_2_text | strip
+
+  assign card_3_title = product.metafields.custom.standout_card_3_title.value | default: product.metafields.custom.standout_card_3_title | strip
+  assign card_3_text = product.metafields.custom.standout_card_3_text.value | default: product.metafields.custom.standout_card_3_text | strip
+
+  assign has_cards = false
+  if card_1_title != blank or card_1_text != blank
+    assign has_cards = true
+  endif
+  if card_2_title != blank or card_2_text != blank
+    assign has_cards = true
+  endif
+  if card_3_title != blank or card_3_text != blank
+    assign has_cards = true
+  endif
+-%}
+
+{%- if standout_heading != blank and has_cards -%}
+  <section class="nv-standout" aria-labelledby="nvStandoutHeading-{{ product.id }}">
+    <div class="nv-standout__header">
+      <h2 id="nvStandoutHeading-{{ product.id }}" class="nv-standout__title">{{ standout_heading }}</h2>
+      <div class="nv-standout__rule">
+        <span class="nv-standout__accent"></span>
+      </div>
+    </div>
+
+    <div class="nv-standout__grid">
+      {%- if card_1_title != blank or card_1_text != blank -%}
+        <article class="nv-standout__card">
+          {%- if card_1_title != blank -%}
+            <h3 class="nv-standout__card-title">{{ card_1_title }}</h3>
+          {%- endif -%}
+          {%- if card_1_text != blank -%}
+            <p class="nv-standout__card-text">{{ card_1_text }}</p>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+
+      {%- if card_2_title != blank or card_2_text != blank -%}
+        <article class="nv-standout__card">
+          {%- if card_2_title != blank -%}
+            <h3 class="nv-standout__card-title">{{ card_2_title }}</h3>
+          {%- endif -%}
+          {%- if card_2_text != blank -%}
+            <p class="nv-standout__card-text">{{ card_2_text }}</p>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+
+      {%- if card_3_title != blank or card_3_text != blank -%}
+        <article class="nv-standout__card">
+          {%- if card_3_title != blank -%}
+            <h3 class="nv-standout__card-title">{{ card_3_title }}</h3>
+          {%- endif -%}
+          {%- if card_3_text != blank -%}
+            <p class="nv-standout__card-text">{{ card_3_text }}</p>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}

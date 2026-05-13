@@ -1,0 +1,418 @@
+{% comment %}Section: Product Recommendations{% endcomment %}
+{%- liquid
+  assign products_limit = section.settings.products_to_show | default: 4
+  assign has_recommendations = false
+  if recommendations.performed and recommendations.products_count > 0
+    assign has_recommendations = true
+  elsif recommendations.products_count > 0
+    assign has_recommendations = true
+  endif
+
+  assign fallback_collection = product.collections.first
+  assign fallback_count = 0
+-%}
+
+<section
+  class="section nv-product-recommendations nv-product-recommendations--{{ section.settings.related_layout_style }}"
+  style="
+    --nv-reco-max-width: {{ section.settings.content_max_width }}px;
+    --nv-reco-pad-top: {{ section.settings.section_padding_top }}px;
+    --nv-reco-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-reco-card-gap: {{ section.settings.card_gap }}px;
+    --nv-reco-card-radius: {{ section.settings.card_radius }}px;
+    --nv-reco-title-size: {{ section.settings.title_font_size }}px;
+    --nv-reco-price-size: {{ section.settings.price_font_size }}px;
+    --nv-reco-compare-size: {{ section.settings.compare_price_font_size }}px;
+    --nv-reco-meta-size: {{ section.settings.meta_font_size }}px;
+    --nv-reco-desktop-cols: {{ section.settings.cards_per_row_desktop }};
+    --nv-reco-mobile-cols: {{ section.settings.cards_per_row_mobile }};
+  "
+>
+  <div class="container nv-product-recommendations__container">
+    {% if section.settings.section_heading != blank or section.settings.section_subheading != blank %}
+      <div class="nv-product-recommendations__head section-heading{% if section.settings.heading_alignment == 'center' %} section-heading--centered{% endif %}">
+        <div class="nv-product-recommendations__heading-group">
+          {% if section.settings.section_subheading != blank %}
+            <p class="eyebrow nv-product-recommendations__eyebrow">{{ section.settings.section_subheading }}</p>
+          {% endif %}
+          {% if section.settings.section_heading != blank %}
+            <h2>{{ section.settings.section_heading }}</h2>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {%- liquid
+      assign reco_card_class = 'product-card product-card--premium product-card--recommendation'
+      if section.settings.card_surface_style == 'minimal'
+        assign reco_card_class = reco_card_class | append: ' product-card--surface-minimal'
+      endif
+      if section.settings.card_hover_style == 'zoom_only'
+        assign reco_card_class = reco_card_class | append: ' product-card--hover-zoom'
+      elsif section.settings.card_hover_style == 'none'
+        assign reco_card_class = reco_card_class | append: ' product-card--hover-none'
+      else
+        assign reco_card_class = reco_card_class | append: ' product-card--hover-lift'
+      endif
+    -%}
+
+    {% if has_recommendations %}
+      <div class="nv-product-recommendations__track">
+        <div class="nv-product-recommendations__grid">
+          {% for recommendation_product in recommendations.products limit: products_limit %}
+            {% if recommendation_product.id != product.id %}
+              {% render 'nv-product-card',
+                product: recommendation_product,
+                card_class: reco_card_class,
+                show_price: section.settings.show_price,
+                show_compare_at_price: section.settings.show_compare_price,
+                show_sale_badge: section.settings.show_sale_badge,
+                show_sold_out_badge: section.settings.show_sold_out_badge,
+                show_prime_note: section.settings.show_prime_note,
+                show_prime_tag_on_cards: section.settings.show_prime_tag_on_cards,
+                show_delivery_tag_on_cards: section.settings.show_delivery_tag_on_cards,
+                prime_tag_position: section.settings.prime_tag_position,
+                show_cta: section.settings.show_quick_add,
+                show_vendor: section.settings.show_product_vendor,
+                card_border_radius: section.settings.card_radius,
+                card_padding: section.settings.card_padding,
+                card_gap: section.settings.card_gap_internal,
+                image_area_height: section.settings.image_area_height,
+                image_fit: section.settings.image_fit,
+                title_font_size: section.settings.title_font_size,
+                price_font_size: section.settings.price_font_size,
+                compare_price_font_size: section.settings.compare_price_font_size,
+                meta_font_size: section.settings.meta_font_size
+              %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% elsif fallback_collection != blank and fallback_collection.products_count > 1 %}
+      <div class="nv-product-recommendations__track">
+        <div class="nv-product-recommendations__grid">
+          {% for recommendation_product in fallback_collection.products %}
+            {% if recommendation_product.id != product.id %}
+              {% render 'nv-product-card',
+                product: recommendation_product,
+                card_class: reco_card_class,
+                show_price: section.settings.show_price,
+                show_compare_at_price: section.settings.show_compare_price,
+                show_sale_badge: section.settings.show_sale_badge,
+                show_sold_out_badge: section.settings.show_sold_out_badge,
+                show_prime_note: section.settings.show_prime_note,
+                show_prime_tag_on_cards: section.settings.show_prime_tag_on_cards,
+                show_delivery_tag_on_cards: section.settings.show_delivery_tag_on_cards,
+                prime_tag_position: section.settings.prime_tag_position,
+                show_cta: section.settings.show_quick_add,
+                show_vendor: section.settings.show_product_vendor,
+                card_border_radius: section.settings.card_radius,
+                card_padding: section.settings.card_padding,
+                card_gap: section.settings.card_gap_internal,
+                image_area_height: section.settings.image_area_height,
+                image_fit: section.settings.image_fit,
+                title_font_size: section.settings.title_font_size,
+                price_font_size: section.settings.price_font_size,
+                compare_price_font_size: section.settings.compare_price_font_size,
+                meta_font_size: section.settings.meta_font_size
+              %}
+              {% assign fallback_count = fallback_count | plus: 1 %}
+            {% endif %}
+            {% if fallback_count >= products_limit %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "text",
+      "id": "section_subheading",
+      "label": "Subheading",
+      "default": "Curated picks to pair with your routine"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "related_layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "slider", "label": "Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "cards_per_row_desktop",
+      "label": "Cards per row desktop",
+      "options": [
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "select",
+      "id": "cards_per_row_mobile",
+      "label": "Cards per row mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Show compare price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_out_badge",
+      "label": "Show sold out badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_note",
+      "label": "Show Prime note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prime_tag_on_cards",
+      "label": "Show Prime tag on cards",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delivery_tag_on_cards",
+      "label": "Show delivery tag on cards",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "prime_tag_position",
+      "label": "Prime tag position",
+      "default": "under_price",
+      "options": [
+        { "value": "under_image", "label": "Under image" },
+        { "value": "under_price", "label": "Under price" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 15,
+      "max": 22,
+      "step": 1,
+      "default": 17,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Price font size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "compare_price_font_size",
+      "label": "Compare price font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "meta_font_size",
+      "label": "Meta font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap_internal",
+      "label": "Card content gap",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_area_height",
+      "label": "Image area height",
+      "min": 220,
+      "max": 340,
+      "step": 10,
+      "default": 280,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "contain", "label": "Contain" },
+        { "value": "cover", "label": "Cover" }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "select",
+      "id": "card_surface_style",
+      "label": "Card surface style",
+      "options": [
+        { "value": "soft", "label": "Soft" },
+        { "value": "minimal", "label": "Minimal" }
+      ],
+      "default": "soft"
+    },
+    {
+      "type": "select",
+      "id": "card_hover_style",
+      "label": "Card hover style",
+      "options": [
+        { "value": "lift", "label": "Lift" },
+        { "value": "zoom_only", "label": "Image zoom only" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "lift"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 24,
+      "max": 96,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 1040,
+      "max": 1440,
+      "step": 20,
+      "default": 1280,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+}
+{% endschema %}

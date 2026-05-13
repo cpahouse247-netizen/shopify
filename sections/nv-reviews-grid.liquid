@@ -1,0 +1,631 @@
+{%- liquid
+  assign review_count = 0
+  for block in section.blocks
+    if block.type == 'review_item'
+      assign review_count = review_count | plus: 1
+    endif
+  endfor
+
+  assign initial_limit = section.settings.reviews_to_show_initial | default: 3
+  if initial_limit > review_count
+    assign initial_limit = review_count
+  endif
+
+  assign show_aggregate_bar = true
+  if section.settings.show_aggregate_bar == false
+    assign show_aggregate_bar = false
+  endif
+  assign aggregate_rating = section.settings.aggregate_rating | default: '4.8'
+  assign aggregate_review_count = section.settings.aggregate_review_count | default: '221+ verified Amazon reviews'
+-%}
+
+<section
+  class="section nv-reviews-grid"
+  style="
+    --nv-reviews-grid-bg: {{ section.settings.section_background_color }};
+    --nv-reviews-grid-card-bg: {{ section.settings.card_background_color | default: 'var(--nv-cream-warm)' }};
+    --nv-reviews-grid-card-border: {{ section.settings.card_border_color | default: 'var(--nv-border-light)' }};
+    --nv-reviews-grid-card-radius: {{ section.settings.card_border_radius | default: 26 }}px;
+    --nv-reviews-grid-card-padding: {{ section.settings.card_padding | default: 24 }}px;
+    --nv-reviews-grid-card-shadow-opacity: {{ section.settings.card_shadow_opacity | default: 8 | divided_by: 100.0 }};
+    --nv-reviews-grid-card-text: {{ section.settings.card_text_color }};
+    --nv-reviews-grid-divider: {{ section.settings.card_divider_color }};
+    --nv-reviews-grid-star: {{ section.settings.star_color | default: 'var(--nv-gold-primary)' }};
+    --nv-reviews-grid-name: {{ section.settings.reviewer_name_color }};
+    --nv-reviews-grid-linked: {{ section.settings.linked_product_color }};
+    --nv-reviews-grid-heading-size: {{ section.settings.heading_font_size }}px;
+    --nv-reviews-grid-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --nv-reviews-grid-name-size: {{ section.settings.card_name_font_size }}px;
+    --nv-reviews-grid-body-size: {{ section.settings.card_body_font_size }}px;
+    --nv-reviews-grid-linked-size: {{ section.settings.linked_product_font_size }}px;
+    --nv-reviews-grid-columns: {{ section.settings.columns_desktop }};
+    --nv-reviews-grid-columns-mobile: {{ section.settings.columns_mobile }};
+    --nv-reviews-grid-padding-top: {{ section.settings.section_padding_top }}px;
+    --nv-reviews-grid-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --nv-reviews-grid-max-width: {{ section.settings.content_max_width }}px;
+  "
+>
+  <div class="container nv-reviews-grid__inner">
+    <div class="nv-reviews-grid__intro nv-reviews-grid__intro--{{ section.settings.heading_alignment }}">
+      {% if section.settings.section_heading != blank %}
+        <h2 class="nv-reviews-grid__heading nv-section-heading" data-nv-animate="fade-up">{{ section.settings.section_heading }}</h2>
+      {% endif %}
+      {% if section.settings.section_subheading != blank %}
+        <p class="nv-reviews-grid__subheading nv-section-subheading" data-nv-animate="fade-up" data-nv-delay="100">{{ section.settings.section_subheading }}</p>
+      {% endif %}
+    </div>
+
+    {% if review_count > 0 %}
+      {% if show_aggregate_bar %}
+        <div class="nv-reviews-grid__aggregate" aria-label="{{ aggregate_rating }} stars from {{ aggregate_review_count }}" data-nv-animate="fade-up">
+          <div class="nv-reviews-grid__aggregate-score">{{ aggregate_rating }} <span aria-hidden="true">★</span></div>
+          <p class="nv-reviews-grid__aggregate-label">from {{ aggregate_review_count }}</p>
+        </div>
+      {% endif %}
+
+      <div
+        class="nv-reviews-grid__grid"
+        data-nv-reviews-grid
+        data-initial-limit="{{ initial_limit }}"
+        data-show-more-enabled="{{ section.settings.enable_show_more }}"
+      >
+        {% assign review_animation_index = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'review_item' %}
+            {%- liquid
+              assign featured_product = block.settings.featured_product
+              assign linked_text = block.settings.linked_product_text
+              assign linked_url = block.settings.linked_product_url
+              assign linked_image = block.settings.product_image_url
+
+              if linked_image == blank
+                assign linked_image = block.settings.linked_product_image
+              endif
+
+              if block.settings.use_product_picker_data and featured_product != blank
+                if linked_text == blank
+                  assign linked_text = featured_product.title
+                endif
+                if linked_url == blank
+                  assign linked_url = featured_product.url
+                endif
+                if linked_image == blank and featured_product.featured_media != blank
+                  assign linked_image = featured_product.featured_media.preview_image
+                endif
+              endif
+
+              assign should_hide = false
+              if section.settings.enable_show_more and forloop.index > initial_limit
+                assign should_hide = true
+              endif
+
+              assign avatar_alt = block.settings.reviewer_name
+              if avatar_alt == blank
+                assign avatar_alt = 'Reviewer avatar'
+              endif
+
+              assign show_verified_badge = true
+              if block.settings.show_verified_badge == false
+                assign show_verified_badge = false
+              endif
+              assign verified_badge_label = block.settings.verified_badge_label | default: 'Verified Amazon Purchase'
+              assign review_delay_step = review_animation_index | modulo: 3
+              assign review_delay = review_delay_step | times: 100 | plus: 200
+              assign review_animation_index = review_animation_index | plus: 1
+            -%}
+
+            <article
+              class="nv-reviews-grid__card{% if should_hide %} is-hidden{% endif %}"
+              {% if should_hide %}hidden{% endif %}
+              data-review-card
+              data-nv-animate="fade-up"
+              data-nv-delay="{{ review_delay }}"
+              {{ block.shopify_attributes }}
+            >
+              {% if show_verified_badge and verified_badge_label != blank %}
+                <span class="nv-reviews-grid__verified-badge">{{ verified_badge_label }}</span>
+              {% endif %}
+
+              <div class="nv-reviews-grid__card-main">
+                <div class="nv-reviews-grid__header">
+                  {% if section.settings.show_avatars %}
+                    <div class="nv-reviews-grid__avatar-wrap">
+                      {% if block.settings.reviewer_avatar != blank %}
+                        {{ block.settings.reviewer_avatar | image_url: width: 120 | image_tag: loading: 'lazy', class: 'nv-reviews-grid__avatar', alt: avatar_alt, sizes: '56px' }}
+                      {% else %}
+                        <span class="nv-reviews-grid__avatar-placeholder" aria-hidden="true"></span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+
+                  {% if block.settings.reviewer_name != blank %}
+                    <h3 class="nv-reviews-grid__name">{{ block.settings.reviewer_name }}</h3>
+                  {% endif %}
+                </div>
+
+                {% if section.settings.show_star_rating %}
+                  <div class="nv-reviews-grid__stars" aria-label="{{ block.settings.star_rating }} out of 5 stars">
+                    {% for i in (1..5) %}
+                      <span class="nv-reviews-grid__star{% if i <= block.settings.star_rating %} is-filled{% endif %}" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                          <path d="M12 2.3l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.11l-5.8 3.05 1.11-6.46-4.7-4.58 6.49-.94L12 2.3z"></path>
+                        </svg>
+                      </span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% if block.settings.review_text != blank %}
+                  <div class="nv-reviews-grid__body rte">
+                    <p>{{ block.settings.review_text }}</p>
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if section.settings.show_linked_product and linked_text != blank %}
+                <div class="nv-reviews-grid__linked">
+                  <span class="nv-reviews-grid__linked-divider" aria-hidden="true"></span>
+                  {% if linked_url != blank %}
+                    <a class="nv-reviews-grid__linked-link" href="{{ linked_url }}">
+                      {% if linked_image != blank %}
+                        <span class="nv-reviews-grid__linked-thumb-wrap">
+                          {{ linked_image | image_url: width: 80 | image_tag: loading: 'lazy', class: 'nv-reviews-grid__linked-thumb', alt: linked_text, sizes: '28px' }}
+                        </span>
+                      {% endif %}
+                      <span class="nv-reviews-grid__linked-text">{{ linked_text }}</span>
+                    </a>
+                  {% else %}
+                    <div class="nv-reviews-grid__linked-link">
+                      {% if linked_image != blank %}
+                        <span class="nv-reviews-grid__linked-thumb-wrap">
+                          {{ linked_image | image_url: width: 80 | image_tag: loading: 'lazy', class: 'nv-reviews-grid__linked-thumb', alt: linked_text, sizes: '28px' }}
+                        </span>
+                      {% endif %}
+                      <span class="nv-reviews-grid__linked-text">{{ linked_text }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if section.settings.enable_show_more and review_count > initial_limit %}
+        <div class="nv-reviews-grid__actions">
+          <button
+            type="button"
+            class="nv-reviews-grid__toggle btn"
+            data-nv-reviews-toggle
+            aria-expanded="false"
+            data-show-more-label="{{ section.settings.show_more_label | escape }}"
+            data-show-less-label="{{ section.settings.show_less_label | escape }}"
+          >
+            {{ section.settings.show_more_label }}
+          </button>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="nv-reviews-grid__empty">
+        <p>Add review blocks in the Theme Editor to build this testimonials section.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    (() => {
+      const section = document.currentScript.closest('.nv-reviews-grid');
+      if (!section) return;
+      const grid = section.querySelector('[data-nv-reviews-grid]');
+      const toggle = section.querySelector('[data-nv-reviews-toggle]');
+      if (!grid || !toggle) return;
+
+      const cards = Array.from(grid.querySelectorAll('[data-review-card]'));
+      const initialLimit = Number(grid.dataset.initialLimit || cards.length);
+      let expanded = false;
+
+      const sync = () => {
+        cards.forEach((card, index) => {
+          const shouldHide = !expanded && index >= initialLimit;
+          card.hidden = shouldHide;
+          card.classList.toggle('is-hidden', shouldHide);
+        });
+        toggle.textContent = expanded ? toggle.dataset.showLessLabel : toggle.dataset.showMoreLabel;
+        toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      };
+
+      toggle.addEventListener('click', () => {
+        expanded = !expanded;
+        sync();
+      });
+
+      sync();
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "NV Reviews Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "What Customers Are Saying"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subheading",
+      "label": "Section subheading",
+      "default": "Real product feedback presented in a clean, premium format."
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_aggregate_bar",
+      "label": "Show aggregate rating bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "aggregate_rating",
+      "label": "Aggregate rating",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "aggregate_review_count",
+      "label": "Review count label",
+      "default": "221+ verified Amazon reviews"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#FAF8F2"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#D9DED8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card radius",
+      "min": 14,
+      "max": 36,
+      "step": 2,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Card shadow",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "card_divider_color",
+      "label": "Card divider color",
+      "default": "#BCD19F"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#C8A96B"
+    },
+    {
+      "type": "color",
+      "id": "reviewer_name_color",
+      "label": "Reviewer name color",
+      "default": "#1F3A2F"
+    },
+    {
+      "type": "color",
+      "id": "linked_product_color",
+      "label": "Linked product color",
+      "default": "#315C4A"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 26,
+      "max": 60,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_name_font_size",
+      "label": "Reviewer name font size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_body_font_size",
+      "label": "Review text font size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "linked_product_font_size",
+      "label": "Linked product font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "reviews_to_show_initial",
+      "label": "Reviews to show initially",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_show_more",
+      "label": "Enable Show More / Show Less",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "show_more_label",
+      "label": "Show more label",
+      "default": "Show More"
+    },
+    {
+      "type": "text",
+      "id": "show_less_label",
+      "label": "Show less label",
+      "default": "Show Less"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_avatars",
+      "label": "Show avatars",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_star_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_linked_product",
+      "label": "Show linked product area",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 96,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "default": 96,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "default": 1240,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review_item",
+      "name": "Review item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer name",
+          "default": "Taylor"
+        },
+        {
+          "type": "image_picker",
+          "id": "reviewer_avatar",
+          "label": "Reviewer avatar"
+        },
+        {
+          "type": "range",
+          "id": "star_rating",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "select",
+          "id": "rating",
+          "label": "Schema star rating",
+          "options": [
+            { "value": "5", "label": "5 stars" },
+            { "value": "4", "label": "4 stars" },
+            { "value": "3", "label": "3 stars" }
+          ],
+          "default": "5"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text",
+          "default": "Use this space for concise customer feedback in a clear, premium tone."
+        },
+        {
+          "type": "text",
+          "id": "review_date",
+          "label": "Review date (YYYY-MM-DD)",
+          "default": "2024-11-15",
+          "info": "Used in structured data schema"
+        },
+        {
+          "type": "text",
+          "id": "linked_product",
+          "label": "Linked product handle",
+          "info": "Optional: links review to specific product schema"
+        },
+        {
+          "type": "text",
+          "id": "linked_product_text",
+          "label": "Linked product text",
+          "default": "Featured formula"
+        },
+        {
+          "type": "url",
+          "id": "linked_product_url",
+          "label": "Linked product URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "linked_product_image",
+          "label": "Linked product image"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image_url",
+          "label": "Product thumbnail"
+        },
+        {
+          "type": "product",
+          "id": "featured_product",
+          "label": "Featured product"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_product_picker_data",
+          "label": "Use product picker data as fallback",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_verified_badge",
+          "label": "Show verified badge",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "verified_badge_label",
+          "label": "Badge label",
+          "default": "Verified Amazon Purchase"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NV Reviews Grid",
+      "blocks": [
+        { "type": "review_item", "settings": { "reviewer_name": "Taylor", "review_text": "Use this space for concise customer feedback in a clear, premium tone.", "linked_product_text": "Daily wellness support" } },
+        { "type": "review_item", "settings": { "reviewer_name": "Jordan", "review_text": "Keep each testimonial readable, trustworthy, and easy to scan across the card grid.", "linked_product_text": "Clean formulation focus" } },
+        { "type": "review_item", "settings": { "reviewer_name": "Morgan", "review_text": "The section is designed to feel polished and editorial without adding noisy review-platform elements.", "linked_product_text": "Targeted routine support" } },
+        { "type": "review_item", "settings": { "reviewer_name": "Avery", "review_text": "Additional reviews can stay hidden initially and reveal through the Show More control.", "linked_product_text": "Ingredient quality story" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

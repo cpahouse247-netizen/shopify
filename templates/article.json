@@ -1,0 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-article-premium",
+      "settings": {
+        "eyebrow": "",
+        "show_breadcrumbs": true,
+        "show_blog_name": false,
+        "show_featured_image": false,
+        "show_author": false,
+        "show_date": true,
+        "show_tags": true,
+        "show_share": true,
+        "background_color": "#FAF8F3",
+        "surface_color": "#FFFFFF",
+        "border_color": "#D9DED8",
+        "accent_color": "#C9A24A",
+        "text_color": "#1F2A24",
+        "muted_text_color": "#5F6B64",
+        "title_font_size": 50,
+        "title_mobile_font_size": 32,
+        "meta_font_size": 14,
+        "body_font_size": 16,
+        "body_mobile_font_size": 15,
+        "content_heading_font_size": 30,
+        "hero_padding_top": 44,
+        "hero_padding_bottom": 40,
+        "featured_image_radius": 30,
+        "featured_image_max_width": 1120,
+        "content_max_width": 780,
+        "show_related_articles": true,
+        "related_heading": "More from NutraVora",
+        "show_bottom_cta": true,
+        "bottom_cta_heading": "Explore NutraVora formulas",
+        "bottom_cta_text": "Pair education with premium daily wellness support from the NutraVora collection.",
+        "bottom_cta_button_label": "Shop Best Sellers",
+        "bottom_cta_button_link": "shopify://collections/all"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

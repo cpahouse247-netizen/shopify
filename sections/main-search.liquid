@@ -1,0 +1,23 @@
+{% comment %}Section: Main Search{% endcomment %}
+<section class="section">
+  <div class="container">
+    <h1>Search</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" style="display:flex;gap:10px;margin:12px 0 24px">
+      <input class="input" type="search" name="q" value="{{ search.terms | escape }}">
+      <button class="btn" type="submit">Search</button>
+    </form>
+    {% if search.performed %}
+      <div class="product-grid">
+      {% for item in search.results %}
+        <article class="product-card">
+          <a href="{{ item.url }}">
+            <div class="product-card__media">{% if item.featured_media %}<img src="{{ item.featured_media | image_url: width: 600 }}" alt="{{ item.title }}" loading="lazy">{% endif %}</div>
+            <div class="product-card__body"><h3 style="margin:0 0 6px">{{ item.title }}</h3></div>
+          </a>
+        </article>
+      {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% schema %}{"name":"Main search","settings":[],"presets":[{"name":"Main search"}]}{% endschema %}

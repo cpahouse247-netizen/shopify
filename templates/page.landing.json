@@ -1,0 +1,145 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+ {
+  "sections": {
+    "nv_lp_hero_XiccfK": {
+      "type": "nv-lp-hero",
+      "name": "LP Hero",
+      "settings": {
+        "eyebrow": "NutraVora Premium Supplements",
+        "heading": "Natural Immune Support You Can Trust",
+        "subheading": "Third-party tested. Non-GMO. Gluten-free. Trusted by thousands of daily wellness routines.",
+        "primary_cta_label": "Shop on Amazon →",
+        "primary_cta_url": "",
+        "secondary_cta_label": "See Our Products",
+        "secondary_cta_url": "shopify://collections/all",
+        "show_rating_bar": true,
+        "rating_text": "4.8★ rated · 1,000+ Amazon reviews",
+        "show_money_back": true,
+        "money_back_text": "30-Day Satisfaction Guarantee"
+      }
+    },
+    "nv_lp_trust_bar_YpJVx9": {
+      "type": "nv-lp-trust-bar",
+      "name": "LP Trust Bar",
+      "settings": {
+        "background_color": "#1f3a2f",
+        "text_color": "#ffffff",
+        "item_1_label": "Non-GMO Formula",
+        "item_2_label": "Lab Tested",
+        "item_3_label": "Gluten-Free",
+        "item_4_label": "30-Day Guarantee"
+      }
+    },
+    "nv_lp_product_focus_X3agPq": {
+      "type": "nv-lp-product-focus",
+      "name": "LP Product Focus",
+      "settings": {
+        "product": "nutravora-oil-of-oregano-with-black-seed-oil-capsules-dietary-supplement-for-immune-respiratory-wellness-support-with-carvacrol-thymoquinone-non-gmo-gluten-free-300-softgels",
+        "eyebrow": "Featured Formula",
+        "heading_override": "",
+        "description_override": "",
+        "primary_cta_label": "Buy on Amazon →",
+        "primary_cta_url": "",
+        "secondary_cta_label": "View Full Details",
+        "secondary_cta_url": "",
+        "show_price": true,
+        "show_supply_callout": true,
+        "supply_text": "300 Softgels — ~10 Month Supply",
+        "show_certifications": true,
+        "layout": "image_left",
+        "background_tone": "cream"
+      }
+    },
+    "nv_lp_benefits_Jz938t": {
+      "type": "nv-lp-benefits",
+      "blocks": {
+        "benefit_m4ymRk": {
+          "type": "benefit",
+          "settings": {
+            "icon": "🧪",
+            "title": "Third-Party Tested",
+            "body": "Every formula verified by independent labs for purity and potency."
+          }
+        },
+        "benefit_rXYiYR": {
+          "type": "benefit",
+          "settings": {
+            "icon": "🌿",
+            "title": "Clean Ingredients",
+            "body": "Non-GMO, gluten-free formulas with no unnecessary fillers."
+          }
+        },
+        "benefit_arMDxW": {
+          "type": "benefit",
+          "settings": {
+            "icon": "💊",
+            "title": "High-Value Supply",
+            "body": "Large-format pouches designed for consistent long-term daily use."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_m4ymRk",
+        "benefit_rXYiYR",
+        "benefit_arMDxW"
+      ],
+      "name": "LP Benefits",
+      "settings": {
+        "heading": "Why Choose NutraVora",
+        "subheading": "Premium quality you can see, feel, and trust.",
+        "background": "white"
+      }
+    },
+    "nv_lp_reviews_bWnhMW": {
+      "type": "nv-lp-reviews",
+      "name": "LP Reviews",
+      "settings": {
+        "heading": "What Customers Are Saying",
+        "show_aggregate": true,
+        "aggregate_rating": "4.8",
+        "aggregate_count": "1,000+ Amazon reviews"
+      }
+    },
+    "nv_lp_faq_w3bqT7": {
+      "type": "nv-lp-faq",
+      "name": "LP FAQ",
+      "settings": {
+        "heading": "Common Questions",
+        "background": "#faf8f2"
+      }
+    },
+    "nv_lp_final_cta_w4t7Uk": {
+      "type": "nv-lp-final-cta",
+      "name": "LP Final CTA",
+      "settings": {
+        "eyebrow": "Ready to Start?",
+        "heading": "Premium Supplements. Prime Delivery.",
+        "body": "Join thousands of daily wellness routines. Shop NutraVora on Amazon today.",
+        "primary_cta_label": "Shop on Amazon →",
+        "primary_cta_url": "",
+        "secondary_cta_label": "Browse All Products",
+        "secondary_cta_url": "shopify://collections/all",
+        "show_trust_icons": true,
+        "background_color": "#1f3a2f",
+        "text_color": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "nv_lp_hero_XiccfK",
+    "nv_lp_trust_bar_YpJVx9",
+    "nv_lp_product_focus_X3agPq",
+    "nv_lp_benefits_Jz938t",
+    "nv_lp_reviews_bWnhMW",
+    "nv_lp_faq_w3bqT7",
+    "nv_lp_final_cta_w4t7Uk"
+  ]
+}

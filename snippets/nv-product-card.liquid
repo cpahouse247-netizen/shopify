@@ -1,0 +1,318 @@
+{% comment %}
+  NutraVora reusable premium product card.
+
+  Inputs:
+  - product: Product object
+  - card_class: optional outer card class
+  - show_price: optional boolean
+  - show_compare_at_price: optional boolean
+  - show_sale_badge: optional boolean
+  - show_sold_out_badge: optional boolean
+  - show_prime_note: optional boolean
+  - show_prime_tag_on_cards: optional boolean
+  - show_delivery_tag_on_cards: optional boolean
+  - prime_tag_position: optional value
+  - show_cta: optional boolean
+  - show_amazon_overlay: optional boolean
+  - show_overlay_actions: optional boolean
+  - show_vendor: optional boolean
+  - card_border_radius: optional number
+  - card_padding: optional number
+  - card_gap: optional number
+  - image_area_height: optional number
+  - image_fit: optional value
+  - title_font_size: optional number
+  - price_font_size: optional number
+  - compare_price_font_size: optional number
+  - meta_font_size: optional number
+{% endcomment %}
+{%- if product != blank -%}
+  {%- liquid
+    assign card_class = card_class | default: 'product-card product-card--premium'
+    assign current_variant = product.selected_or_first_available_variant
+    assign show_price = show_price
+    if show_price == blank
+      assign show_price = true
+    endif
+    assign show_compare_at_price = show_compare_at_price
+    if show_compare_at_price == blank
+      assign show_compare_at_price = true
+    endif
+    assign show_sale_badge = show_sale_badge
+    if show_sale_badge == blank
+      assign show_sale_badge = true
+    endif
+    assign show_sold_out_badge = show_sold_out_badge
+    if show_sold_out_badge == blank
+      assign show_sold_out_badge = true
+    endif
+    assign show_prime_note = show_prime_note
+    if show_prime_note == blank
+      assign show_prime_note = true
+    endif
+    assign show_prime_tag_on_cards = show_prime_tag_on_cards
+    if show_prime_tag_on_cards == blank
+      assign show_prime_tag_on_cards = show_prime_note
+    endif
+    assign show_delivery_tag_on_cards = show_delivery_tag_on_cards
+    if show_delivery_tag_on_cards == blank
+      assign show_delivery_tag_on_cards = false
+    endif
+    assign prime_tag_position = prime_tag_position | default: 'under_price'
+    assign should_render_prime_slot = false
+    if show_prime_note and show_prime_tag_on_cards
+      assign should_render_prime_slot = true
+    endif
+    if show_delivery_tag_on_cards
+      assign should_render_prime_slot = true
+    endif
+    assign product_prime_enabled = product.metafields.custom.buy_with_prime_enabled.value | default: product.metafields.custom.buy_with_prime_enabled
+    assign variant_prime_enabled = current_variant.metafields.custom.buy_with_prime_enabled.value | default: current_variant.metafields.custom.buy_with_prime_enabled
+    assign prime_eligible = false
+    if product_prime_enabled == true or product_prime_enabled == 'true' or variant_prime_enabled == true or variant_prime_enabled == 'true'
+      assign prime_eligible = true
+    endif
+    if should_render_prime_slot and prime_eligible == false
+      assign should_render_prime_slot = false
+    endif
+    assign show_cta = show_cta
+    if show_cta == nil
+      assign show_cta = true
+    endif
+    assign show_amazon_overlay = show_amazon_overlay
+    if show_amazon_overlay == nil
+      assign show_amazon_overlay = true
+    endif
+    assign show_overlay_actions = show_overlay_actions
+    if show_overlay_actions == blank
+      assign show_overlay_actions = false
+    endif
+    assign show_vendor = show_vendor
+    if show_vendor == blank
+      assign show_vendor = false
+    endif
+    assign card_border_radius = card_border_radius | default: 24
+    assign card_padding = card_padding | default: 22
+    assign card_gap = card_gap | default: 14
+    assign image_area_height = image_area_height | default: 284
+    assign image_fit = image_fit | default: 'contain'
+    assign title_font_size = title_font_size | default: 14
+    assign price_font_size = price_font_size | default: 20
+    assign compare_price_font_size = compare_price_font_size | default: 13
+    assign meta_font_size = meta_font_size | default: 12
+    assign quick_view_image = ''
+    if product.featured_media
+      assign quick_view_image = product.featured_media | image_url: width: 900
+    else
+      assign quick_view_image = 'hero_square.jpeg' | asset_url
+    endif
+    assign quick_view_images = ''
+    for media in product.media
+      if media.media_type == 'image'
+        assign quick_view_media_url = media | image_url: width: 900
+        if quick_view_images == ''
+          assign quick_view_images = quick_view_media_url
+        else
+          assign quick_view_images = quick_view_images | append: '||' | append: quick_view_media_url
+        endif
+      endif
+    endfor
+    if quick_view_images == ''
+      assign quick_view_images = quick_view_image
+    endif
+    assign quick_view_description = product.description | strip_html | strip
+    assign discount_percent = 0
+    if current_variant.compare_at_price > current_variant.price
+      assign discount_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price | round
+    endif
+    assign amazon_url = product.metafields.custom.amazon_attribution_link.value | default: product.metafields.custom.amazon_attribution_link
+    if amazon_url == blank
+      assign amazon_url = 'https://www.amazon.com/stores/NutraVora/page/E68A61C0-D855-4B15-ABB5-1E777FB44294'
+    endif
+    assign supply_label = product.metafields.custom.supply_label.value | default: product.metafields.custom.supply_label
+  -%}
+
+  <article
+    class="{{ card_class }} nv-product-card{% if show_overlay_actions %} product-card--has-overlay-actions{% endif %}"
+    data-product-id="{{ product.id }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-price="{{ product.price }}"
+    data-product-sku="{{ product.selected_or_first_available_variant.sku | escape }}"
+    data-product-handle="{{ product.handle }}"
+    style="
+      --product-card-radius: {{ card_border_radius }}px;
+      --product-card-padding: {{ card_padding }}px;
+      --product-card-gap: {{ card_gap }}px;
+      --product-card-media-height: {{ image_area_height }}px;
+      --product-card-fit: {{ image_fit }};
+      --product-card-title-size: {{ title_font_size }}px;
+      --product-card-price-size: {{ price_font_size }}px;
+      --product-card-compare-size: {{ compare_price_font_size }}px;
+      --product-card-meta-size: {{ meta_font_size }}px;
+    "
+  >
+    <div class="product-card__badge-area nv-product-card__badges">
+      {% if prime_eligible and show_prime_tag_on_cards %}
+        <span class="product-card__badge nv-product-card__badge nv-product-card__badge--prime">Prime</span>
+      {% endif %}
+      {% if show_sold_out_badge and current_variant.available == false %}
+        <span class="product-card__badge nv-product-card__badge nv-product-card__badge--sold-out">Sold out</span>
+      {% elsif show_sale_badge and current_variant.compare_at_price > current_variant.price %}
+        <span class="product-card__badge nv-product-card__badge nv-product-card__badge--sale">Sale</span>
+      {% endif %}
+    </div>
+
+    <div class="product-card__media-shell">
+      <a href="{{ product.url }}" class="product-card__link">
+        <div class="product-card__media nv-product-card__image-wrapper">
+          {% if product.featured_media %}
+            {{ product.featured_media | image_url: width: 720 | image_tag: alt: product.title, loading: 'lazy', class: 'product-card__media-image nv-product-card__image' }}
+          {% else %}
+            <img src="{{ 'hero_square.jpeg' | asset_url }}" alt="{{ product.title }}" loading="lazy" class="product-card__media-image nv-product-card__image" width="720" height="720">
+          {% endif %}
+        </div>
+      </a>
+
+      {% if show_amazon_overlay %}
+        <div class="nv-product-card__amazon-overlay">
+          <a
+            href="{{ amazon_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="nv-product-card__amazon-btn"
+            aria-label="Buy {{ product.title | escape }} on Amazon"
+          >
+            Buy on Amazon →
+          </a>
+        </div>
+      {% endif %}
+
+      {% if show_overlay_actions %}
+        <div class="product-card__overlay-actions" aria-label="Product actions">
+          {% if current_variant.available %}
+            {% if product.has_only_default_variant %}
+              {% form 'product', product, class: 'product-card__quick-form' %}
+                <input type="hidden" name="id" value="{{ current_variant.id }}">
+                <button type="submit" class="product-card__quick-action product-card__quick-action--cart" data-nv-cta="add-to-cart" aria-label="Add {{ product.title | escape }} to cart">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M6.2 6.5h14.1l-1.6 8.1H8L6.2 4.4H3.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9.5" cy="19" r="1.2" fill="currentColor"/>
+                    <circle cx="17" cy="19" r="1.2" fill="currentColor"/>
+                  </svg>
+                </button>
+              {% endform %}
+            {% else %}
+              <a href="{{ product.url }}" class="product-card__quick-action product-card__quick-action--cart" aria-label="Choose options for {{ product.title | escape }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                </svg>
+              </a>
+            {% endif %}
+          {% else %}
+            <button type="button" class="product-card__quick-action product-card__quick-action--disabled" disabled aria-label="{{ product.title | escape }} is unavailable">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+              </svg>
+            </button>
+          {% endif %}
+
+          <a
+            href="{{ product.url }}"
+            class="product-card__quick-action product-card__quick-action--view"
+            aria-label="View {{ product.title | escape }}"
+            data-nv-quick-view-trigger
+            data-product-title="{{ product.title | escape }}"
+            data-product-id="{{ product.id }}"
+            data-product-url="{{ product.url | escape }}"
+            data-product-vendor="{{ product.vendor | escape }}"
+            data-product-description="{{ quick_view_description | escape }}"
+            data-product-image="{{ quick_view_image | escape }}"
+            data-product-images="{{ quick_view_images | strip | escape }}"
+            data-product-price="{{ current_variant.price | money | escape }}"
+            data-product-compare="{{ current_variant.compare_at_price | money | escape }}"
+            data-product-on-sale="{% if current_variant.compare_at_price > current_variant.price %}true{% else %}false{% endif %}"
+            data-product-available="{% if current_variant.available %}true{% else %}false{% endif %}"
+            data-product-variant-id="{{ current_variant.id }}"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3.8 12s3-5.2 8.2-5.2S20.2 12 20.2 12s-3 5.2-8.2 5.2S3.8 12 3.8 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if prime_tag_position == 'under_image' and should_render_prime_slot %}
+      <div class="product-card__prime-slot product-card__prime-slot--under-image nv-product-card__prime-note">
+        {% if show_prime_note and show_prime_tag_on_cards %}
+          {% render 'nv-prime-tag-card', product: product, variant: current_variant %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="product-card__body nv-product-card__content">
+      <div class="product-card__content">
+        {% if show_vendor and product.vendor != blank %}
+          <p class="product-card__vendor">{{ product.vendor }}</p>
+        {% endif %}
+        <h3 class="product-card__title nv-product-card__title">
+          <a href="{{ product.url }}">{{ product.title }}</a>
+        </h3>
+        {% if supply_label != blank %}
+          <span class="nv-product-card__supply">{{ supply_label }}</span>
+        {% endif %}
+        <div class="product-card__areviews-rating nv-product-card__rating" aria-label="Product reviews">
+          <div class="areviews_product_item areviews_stars{{ product.id }} nv-product-card__stars" data-product-id="{{ product.id }}"></div>
+        </div>
+      </div>
+
+      <div class="product-card__meta">
+        <div class="product-card__commerce">
+          {% if show_price %}
+            <div class="product-card__price-row nv-product-card__price-row">
+              <div class="price nv-product-card__price">{% render 'price', product: product, show_compare_at_price: show_compare_at_price %}</div>
+              {% if discount_percent > 0 %}
+                <span class="product-card__discount-badge">{{ discount_percent }}% off</span>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if prime_tag_position == 'under_price' and should_render_prime_slot %}
+            <div class="product-card__prime-slot nv-product-card__prime-note">
+              {% if show_prime_note and show_prime_tag_on_cards %}
+                {% render 'nv-prime-tag-card', product: product, variant: current_variant %}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if show_cta %}
+          <div class="product-card__actions">
+            {% if current_variant.available %}
+              {% if product.has_only_default_variant %}
+                {% form 'product', product, class: 'product-card__cart-form' %}
+                  <input type="hidden" name="id" value="{{ current_variant.id }}">
+                  <button type="submit" class="btn product-card__cart-button" data-nv-cta="add-to-cart">
+                    Add to cart
+                  </button>
+                {% endform %}
+              {% else %}
+                <div class="product-card__cart-form">
+                  <a href="{{ product.url }}" class="btn product-card__cart-button">
+                    Choose options
+                  </a>
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="product-card__cart-form">
+                <button type="button" class="btn product-card__cart-button product-card__cart-button--disabled" disabled aria-disabled="true">
+                  Unavailable
+                </button>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+{%- endif -%}

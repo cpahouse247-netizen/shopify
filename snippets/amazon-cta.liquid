@@ -1,0 +1,11 @@
+{% comment %}
+Legacy compatibility wrapper.
+Routes existing Amazon-only render calls through the new centralized CTA stack.
+{% endcomment %}
+{% render 'nv-amazon-cta',
+  product: product,
+  label: label,
+  subtext: subtext,
+  wrapper_class: 'nv-amz-cta',
+  class: 'nv-amz-btn'
+%}

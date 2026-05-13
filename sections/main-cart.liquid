@@ -1,0 +1,240 @@
+{% comment %}Section: Main Cart{% endcomment %}
+<section class="section nv-cart-page">
+  <div class="container">
+    <div class="cart-shell">
+      <div class="nv-cart-page__header">
+        <p class="nv-cart-page__eyebrow">NutraVora Checkout</p>
+        <h1 class="nv-cart-page__title">Cart</h1>
+        <p class="nv-cart-page__sub">Review your selected formulas, update quantities, and continue to secure checkout.</p>
+      </div>
+
+      {% if cart.item_count > 0 %}
+        {% render 'nv-cart-fulfillment-summary', context: 'cart' %}
+
+        <form action="{{ routes.cart_url }}" method="post" novalidate class="nv-cart-page__form">
+          <div class="nv-cart-page__layout">
+            <div class="nv-cart-list" role="table" aria-label="Cart items">
+              {% for item in cart.items %}
+                <article class="nv-cart-item" role="row">
+                  <div class="nv-cart-item__media" role="cell">
+                    <a href="{{ item.url }}" class="nv-cart-item__image-link" aria-label="{{ item.product.title | escape }}">
+                      {% if item.image %}
+                        {{
+                          item.image
+                          | image_url: width: 320
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '120,160,220,320',
+                            class: 'nv-cart-item__image',
+                            alt: item.product.title
+                        }}
+                      {% else %}
+                        {{ 'product-1' | placeholder_svg_tag: 'nv-cart-item__image nv-cart-item__image--placeholder' }}
+                      {% endif %}
+                    </a>
+                  </div>
+
+                  <div class="nv-cart-item__content" role="cell">
+                    <div class="nv-cart-item__top">
+                      <div class="nv-cart-item__text">
+                        <a href="{{ item.url }}" class="nv-cart-item__title">{{ item.product.title }}</a>
+
+                        {% unless item.product.has_only_default_variant %}
+                          <p class="nv-cart-item__variant">{{ item.variant.title }}</p>
+                        {% endunless %}
+
+                        {% if item.selling_plan_allocation != blank %}
+                          <p class="nv-cart-item__meta">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                        {% endif %}
+
+                        {% if item.properties.size > 0 %}
+                          <div class="nv-cart-item__properties">
+                            {% for property in item.properties %}
+                              {% assign property_first_char = property.first | slice: 0 %}
+                              {% if property.last != blank and property_first_char != '_' %}
+                                <p class="nv-cart-item__property">
+                                  <span>{{ property.first }}:</span>
+                                  <span>
+                                    {% if property.last contains '/uploads/' %}
+                                      <a href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                                    {% else %}
+                                      {{ property.last }}
+                                    {% endif %}
+                                  </span>
+                                </p>
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                      </div>
+
+                      <div class="nv-cart-item__pricing">
+                        {% if item.original_line_price != item.final_line_price %}
+                          <span class="nv-cart-item__price-compare">{{ item.original_line_price | money }}</span>
+                        {% endif %}
+                        <strong class="nv-cart-item__price">{{ item.final_line_price | money }}</strong>
+                        {% if item.unit_price_measurement %}
+                          <span class="nv-cart-item__unit">
+                            {{ item.unit_price | money }}
+                            /
+                            {% if item.unit_price_measurement.reference_value != 1 %}
+                              {{ item.unit_price_measurement.reference_value }}
+                            {% endif %}
+                            {{ item.unit_price_measurement.reference_unit }}
+                          </span>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="nv-cart-item__signals">
+                      <div class="cart-line__prime-tag">
+                        {% render 'nv-prime-tag-cart', item: item %}
+                      </div>
+                      {% render 'nv-cart-line-messaging', item: item, context: 'cart' %}
+                    </div>
+
+                    <div class="nv-cart-item__bottom">
+                      <label class="nv-cart-item__qty" for="CartQty-{{ forloop.index }}">
+                        <span class="nv-cart-item__qty-label">Quantity</span>
+                        <div class="nv-cart-item__qty-stepper" data-cart-stepper>
+                          <button
+                            type="button"
+                            class="nv-cart-item__qty-button"
+                            data-cart-qty-change="-1"
+                            data-target-input="CartQty-{{ forloop.index }}"
+                            aria-label="Decrease quantity for {{ item.product.title | escape }}"
+                          >
+                            <span aria-hidden="true">−</span>
+                          </button>
+                          <input
+                            id="CartQty-{{ forloop.index }}"
+                            class="input cart-qty-input nv-cart-item__qty-input"
+                            name="updates[{{ item.key }}]"
+                            value="{{ item.quantity }}"
+                            type="number"
+                            min="0"
+                            inputmode="numeric"
+                            data-cart-qty-input
+                          >
+                          <button
+                            type="button"
+                            class="nv-cart-item__qty-button"
+                            data-cart-qty-change="1"
+                            data-target-input="CartQty-{{ forloop.index }}"
+                            aria-label="Increase quantity for {{ item.product.title | escape }}"
+                          >
+                            <span aria-hidden="true">+</span>
+                          </button>
+                        </div>
+                      </label>
+
+                      <div class="nv-cart-item__utilities">
+                        <a class="nv-cart-item__remove" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">
+                          Remove
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+
+            <aside class="nv-cart-summary-card">
+              <div class="nv-cart-summary-card__panel">
+                <div class="nv-cart-summary-card__top">
+                  <p class="nv-cart-summary-card__label">Order Summary</p>
+                  <div class="cart-summary">
+                    <span>Subtotal</span>
+                    <strong>{{ cart.total_price | money }}</strong>
+                  </div>
+                  <p class="nv-cart-summary-card__note">Taxes, shipping, and any final fulfillment details are calculated at checkout.</p>
+                  <p class="nv-cart-summary-card__microcopy">You can adjust quantities before continuing to checkout.</p>
+                </div>
+
+                <div class="cart-actions cart-actions--spaced">
+                  {%- capture cart_state -%}{% render 'nv-cart-fulfillment-state', field: 'state' %}{%- endcapture -%}
+                  {%- assign cart_state = cart_state | strip -%}
+                  {% unless cart_state == 'amazon_only' %}
+                    <button class="btn nv-cart-summary-card__checkout" name="checkout">Checkout</button>
+                  {% endunless %}
+                  <button class="visually-hidden" name="update" data-cart-update-trigger>Update cart</button>
+                  {% if cart_state == 'amazon_only' %}
+                    <a class="btn nv-cart-summary-card__browse" href="{{ routes.all_products_collection_url }}">Continue browsing</a>
+                  {% endif %}
+                </div>
+
+                {% if settings.show_return_trust_microcopy or settings.show_delivery_confidence_message %}
+                  <div class="nv-cart-summary-card__trust" aria-label="Checkout reassurance">
+                    {% if settings.show_delivery_confidence_message %}
+                      <p>Secure checkout with final delivery details confirmed in the next step.</p>
+                    {% endif %}
+                    {% if settings.show_return_trust_microcopy %}
+                      <p>Support timing, returns, and fulfillment messaging depend on the final checkout path.</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </aside>
+          </div>
+        </form>
+      {% else %}
+        <div class="nv-cart-empty">
+          <h2>Your cart is empty</h2>
+          <p>Discover premium wellness formulas crafted to support a calm, confident routine.</p>
+          <a class="btn" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<script>
+  (function() {
+    const section = document.currentScript && document.currentScript.previousElementSibling;
+    if (!section) return;
+
+    const form = section.querySelector('.nv-cart-page__form');
+    const updateTrigger = section.querySelector('[data-cart-update-trigger]');
+    if (!form || !updateTrigger) return;
+
+    let submitTimer = null;
+    let isSubmitting = false;
+
+    const submitUpdate = () => {
+      if (isSubmitting) return;
+      isSubmitting = true;
+      updateTrigger.click();
+    };
+
+    const queueSubmit = () => {
+      window.clearTimeout(submitTimer);
+      submitTimer = window.setTimeout(submitUpdate, 240);
+    };
+
+    form.addEventListener('submit', () => {
+      isSubmitting = true;
+    });
+
+    section.querySelectorAll('[data-cart-qty-change]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const inputId = button.getAttribute('data-target-input');
+        const input = inputId ? section.querySelector('#' + CSS.escape(inputId)) : null;
+        if (!input) return;
+
+        const delta = Number(button.getAttribute('data-cart-qty-change')) || 0;
+        const currentValue = Number(input.value) || 0;
+        const nextValue = Math.max(0, currentValue + delta);
+        input.value = nextValue;
+        queueSubmit();
+      });
+    });
+
+    section.querySelectorAll('[data-cart-qty-input]').forEach((input) => {
+      input.addEventListener('change', () => {
+        const nextValue = Math.max(0, Number(input.value) || 0);
+        input.value = nextValue;
+        queueSubmit();
+      });
+    });
+  })();
+</script>
+{% schema %}{"name":"Main cart","settings":[],"presets":[{"name":"Main cart"}]}{% endschema %}

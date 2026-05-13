@@ -1,0 +1,24 @@
+{%- comment -%}
+  NutraVora Search Console Verification
+  Add your verification codes below after verifying ownership in Google Search Console.
+
+  HOW TO VERIFY:
+  1. Go to search.google.com/search-console
+  2. Add property: https://www.nutravora.com
+  3. Choose "HTML tag" verification method
+  4. Copy the content value from the meta tag
+  5. Paste it in the setting below
+  6. Click "Verify" in Search Console
+{%- endcomment -%}
+
+{%- if settings.google_search_console_code != blank -%}
+  <meta name="google-site-verification" content="{{ settings.google_search_console_code }}">
+{%- endif -%}
+
+{%- if settings.bing_webmaster_code != blank -%}
+  <meta name="msvalidate.01" content="{{ settings.bing_webmaster_code }}">
+{%- endif -%}
+
+{%- if settings.pinterest_verify_code != blank -%}
+  <meta name="p:domain_verify" content="{{ settings.pinterest_verify_code }}">
+{%- endif -%}

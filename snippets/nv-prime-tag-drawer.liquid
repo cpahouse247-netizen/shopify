@@ -1,0 +1,18 @@
+{% comment %}
+  Cart drawer Prime tag placeholder.
+
+  Inputs:
+  - item: cart item / line item object
+
+  This theme does not currently include a cart drawer implementation. Use this
+  snippet when a drawer surface is added so merchant-console markup stays
+  isolated to one drawer-specific file.
+{% endcomment %}
+{% if item != blank %}
+  {% render 'nv-prime-tag-base',
+    product: item.product,
+    variant: item.variant,
+    context: 'drawer',
+    class: 'nv-prime-tag nv-prime-tag--drawer'
+  %}
+{% endif %}

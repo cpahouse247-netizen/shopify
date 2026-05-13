@@ -1,0 +1,67 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-wholesale-premium",
+      "settings": {
+        "eyebrow": "Wholesale",
+        "title": "Partner with NutraVora",
+        "intro": "<p>NutraVora works with select wholesale and business partners interested in premium wellness formulas, clean-label presentation, and long-term brand growth.</p><p>Whether you run a retail store, wellness business, ecommerce operation, or distribution business, we welcome qualified inquiries from partners who align with the NutraVora brand.</p>",
+        "show_why_cards": true,
+        "why_1_title": "Premium formulas",
+        "why_1_text": "Thoughtfully positioned wellness products with a clean, premium brand presentation.",
+        "why_2_title": "Quality-focused brand",
+        "why_2_text": "A modern supplement brand designed for trust, clarity, and long-term customer appeal.",
+        "why_3_title": "Wholesale-ready support",
+        "why_3_text": "Clear communication for product inquiries, partnership discussions, and wholesale onboarding.",
+        "why_4_title": "Business-friendly positioning",
+        "why_4_text": "A brand built to support premium retail, digital, and marketplace growth.",
+        "show_audience_cards": true,
+        "audience_title": "Who this is for",
+        "audience_1": "Retail stores",
+        "audience_2": "Wellness shops",
+        "audience_3": "Ecommerce sellers",
+        "audience_4": "Distributors and bulk buyers",
+        "contact_heading": "Wholesale inquiries",
+        "contact_email": "support@nutravora.com",
+        "contact_text": "For wholesale, retail, and partnership inquiries, contact our team or use the form below with your business details.",
+        "hours_label": "Business support hours",
+        "hours_line_1": "Monday to Friday",
+        "hours_line_2": "9:00 AM to 5:00 PM EST",
+        "address_label": "Office address",
+        "address": "7901 4th St N, Ste 300, St. Petersburg, FL 33702",
+        "form_title": "Submit a wholesale inquiry",
+        "form_text": "<p>Tell us about your business, sales channel, and estimated requirements. Our team will review your inquiry and respond as soon as possible.</p>",
+        "bottom_cta_heading": "Ready to discuss a wholesale opportunity?",
+        "bottom_cta_text": "Connect with the NutraVora team to explore business and partnership inquiries.",
+        "bottom_cta_button_label": "Email Wholesale Support",
+        "bottom_cta_button_link": "mailto:support@nutravora.com",
+        "background_color": "#FAF8F3",
+        "surface_color": "#FFFFFF",
+        "border_color": "#D9DED8",
+        "accent_color": "#C9A24A",
+        "text_color": "#1F2A24",
+        "muted_text_color": "#5F6B64",
+        "title_font_size": 54,
+        "title_mobile_font_size": 36,
+        "intro_font_size": 16,
+        "body_font_size": 15,
+        "card_radius": 28,
+        "card_padding": 28,
+        "section_padding_top": 48,
+        "section_padding_bottom": 72
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

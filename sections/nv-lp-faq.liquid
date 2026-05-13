@@ -1,0 +1,72 @@
+{%- liquid
+  assign default_questions = 'Is this available on Amazon?|What makes NutraVora different?|Is there a money-back guarantee?|Are these supplements non-GMO?|How long does one pouch last?|How do I contact support?' | split: '|'
+  assign default_answers = "Yes! All NutraVora products are available on Amazon with Prime shipping. Click 'Buy on Amazon' above for fast delivery.|We focus on clean-label formulas, third-party testing, and large-supply formats that deliver real daily value.|Yes. If you're not satisfied, contact us at support@nutravora.com and we'll make it right.|Many NutraVora formulas follow a non-GMO, gluten-free approach. Check each product page for specific details.|Most NutraVora formulas come in 300-count pouches designed for long-term daily use.|Email us at support@nutravora.com — we respond quickly." | split: '|'
+-%}
+
+<section class="nv-lp-faq nv-lp-section" style="background: {{ section.settings.background }};">
+  <div class="nv-lp-inner">
+    <div class="nv-lp-header">
+      <h2 class="nv-section-heading">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="nv-lp-faq__panel">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <details {{ block.shopify_attributes }}>
+            <summary>{{ block.settings.question }}</summary>
+            <p>{{ block.settings.answer }}</p>
+          </details>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for question in default_questions -%}
+          <details>
+            <summary>{{ question }}</summary>
+            <p>{{ default_answers[forloop.index0] }}</p>
+          </details>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nv-lp-faq__panel {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--nv-white);
+    border: 1px solid var(--nv-border-light);
+    border-radius: var(--nv-radius-2xl);
+    padding: var(--nv-space-5) var(--nv-space-8);
+    box-shadow: var(--nv-shadow-sm);
+  }
+
+  @media (max-width: 640px) {
+    .nv-lp-faq__panel {
+      padding: var(--nv-space-3) var(--nv-space-5);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "LP FAQ",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Common Questions" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#faf8f2" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Is this available on Amazon?" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "Yes! All NutraVora products are available on Amazon with Prime shipping." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    { "name": "LP FAQ" }
+  ]
+}
+{% endschema %}

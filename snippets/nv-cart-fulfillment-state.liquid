@@ -1,0 +1,69 @@
+{% comment %}
+  Shared cart fulfillment-state resolver.
+
+  Returns one field at a time for use in cart page and cart drawer.
+
+  Supported fields:
+  - state
+  - any_attribution_only
+  - any_bwp_capable
+  - all_attribution_only
+{% endcomment %}
+{%- liquid
+  assign any_attribution_only = false
+  assign any_bwp_capable = false
+  assign all_attribution_only = false
+
+  if cart.item_count > 0
+    assign all_attribution_only = true
+  endif
+
+  for item in cart.items
+    assign line_mode = item.product.metafields.custom.conversion_mode.value | default: item.product.metafields.custom.conversion_mode | default: settings.default_conversion_mode | downcase | strip
+    assign line_bwp_enabled = item.product.metafields.custom.buy_with_prime_enabled.value | default: item.product.metafields.custom.buy_with_prime_enabled
+
+    if line_mode == 'amazon_attribution'
+      assign any_attribution_only = true
+    else
+      assign all_attribution_only = false
+    endif
+
+    if line_mode == 'buy_with_prime' or line_mode == 'hybrid' or line_bwp_enabled
+      assign any_bwp_capable = true
+    endif
+  endfor
+
+  assign state = 'standard'
+  if all_attribution_only
+    assign state = 'amazon_only'
+  elsif any_attribution_only and any_bwp_capable
+    assign state = 'mixed_modes'
+  elsif any_attribution_only
+    assign state = 'amazon_present'
+  elsif any_bwp_capable
+    assign state = 'prime_supported'
+  endif
+
+  case field
+    when 'state'
+      echo state
+    when 'any_attribution_only'
+      if any_attribution_only
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'any_bwp_capable'
+      if any_bwp_capable
+        echo 'true'
+      else
+        echo 'false'
+      endif
+    when 'all_attribution_only'
+      if all_attribution_only
+        echo 'true'
+      else
+        echo 'false'
+      endif
+  endcase
+-%}
