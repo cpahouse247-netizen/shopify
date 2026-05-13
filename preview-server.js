@@ -12,6 +12,45 @@ const engine = new Liquid({
   extname: '.liquid'
 });
 
+// Register custom Shopify tags
+engine.registerTag('section', {
+  parse(tagToken) {
+    this.args = tagToken.args;
+  },
+  async render(scope) {
+    const sectionName = this.args.trim().replace(/['"]|{%|%}/g, '');
+    const sectionPath = `sections/${sectionName}.liquid`;
+    try {
+      if (fs.existsSync(path.join(__dirname, sectionPath))) {
+        const tpl = await engine.parseFile(sectionPath);
+        return await engine.render(tpl, scope.environments[0]);
+      }
+    } catch (err) {
+      console.error(`Error rendering section ${sectionPath}:`, err.message);
+    }
+    return '';
+  }
+});
+
+engine.registerTag('render', {
+  parse(tagToken) {
+    this.args = tagToken.args;
+  },
+  async render(scope) {
+    const snippetName = this.args.split(' ')[0].replace(/['"]|{%|%}/g, '');
+    const snippetPath = `snippets/${snippetName}.liquid`;
+    try {
+      if (fs.existsSync(path.join(__dirname, snippetPath))) {
+        const tpl = await engine.parseFile(snippetPath);
+        return await engine.render(tpl, scope.environments[0]);
+      }
+    } catch (err) {
+      console.error(`Error rendering snippet ${snippetPath}:`, err.message);
+    }
+    return '';
+  }
+});
+
 // Mock Shopify data
 const mockData = {
   shop: {
